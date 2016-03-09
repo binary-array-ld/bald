@@ -6,7 +6,7 @@ import numpy as np
 from bald.tests import BaldTestCase
 
 
-class ATest(BaldTestCase):
+class Test(BaldTestCase):
     def setUp(self):
         self.this = 'this'
 
