@@ -12,28 +12,19 @@ class HttpStatusCache(object):
         self.cache = {}
 
     def __getitem__(self, item):
-        uri = item
-        if item not in self.cache:
-            if not uri.startswith('http://') or uri.startswith('https://'):
-                raise ValueError('{} is not a HTTP URI.'.format(item))
-        if item in self.cache:
-            result = self.cache[item]
-        else:
-            r = requests.get(uri)
-            if r.status_code == 200:
-                headers={'Accept':'text/turtle'}
-                rraw = requests.get(uri, headers=headers)
-                self.cache[item] = rraw.status_code
-            else:
-                self.cache[item] = r.status_code
 
-            result = self.cache[item]
-        return result
+        if not item.startswith('http://') or item.startswith('https://'):
+            raise ValueError('{} is not a HTTP URI.'.format(item))
+        if item not in self.cache:
+            headers={'Accept':'text/turtle'}
+            self.cache[item] = requests.get(item, headers=headers)
+
+        return self.cache[item]
         
 
     def check_uri(self, uri):
         result = False
-        if self[uri] == 200:
+        if self[uri].status_code == 200:
             result = True
         return result
 
@@ -95,7 +86,7 @@ def validate_hdf5(afilepath):
         valid = True
         cache = {}
         root_container = Subject(fhandle.attrs)
-        root_val = ContainerValidation(subject=root_container)
+        root_val = ContainerValidation(subject=root_container, fhandle=fhandle)
         if not root_val.is_valid():
             valid = False
         # iterate through the datasets
@@ -105,7 +96,7 @@ def validate_hdf5(afilepath):
             sattrs = dict(fhandle.attrs).copy()
             sattrs.update(dataset.attrs)
             dset = Subject(sattrs)
-            dset_val = DatasetValidation(name, dataset, fhandle, subject=dset)
+            dset_val = DatasetValidation(name, dataset, fhandle=fhandle, subject=dset)
             if not dset_val.is_valid():
                 valid = False
         
