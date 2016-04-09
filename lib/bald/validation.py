@@ -54,6 +54,7 @@ class SubjectValidation(Validation):
     def exceptions(self):
         exceptions = []
         exceptions = self.check_attr_uris(exceptions)
+        exceptions = self.check_attr_domain_range(exceptions)
         return exceptions
 
     def check_attr_uris(self, exceptions):
@@ -73,6 +74,9 @@ class SubjectValidation(Validation):
             if isinstance(value, str):
                 exceptions = _check_uri(self.subject.unpack_uri(value),
                                         exceptions)
+        return exceptions
+
+    def check_attr_domain_range(self, exceptions):
         return exceptions
     
 
@@ -112,15 +116,8 @@ class DatasetValidation(SubjectValidation):
                 exceptions.append(ValueError(msg))
             return exceptions
 
-        # for dataset in ?????
-        # for parent child relation in dataset
-        # check the broadcasting relationship
-        # parray = np.array((1,2))
-        # carray = np.array((3,4))
-
         for attr, value in self.subject.attrs.iteritems():
             # should support subtypes
-            #import pdb; pdb.set_trace()
             if attr == 'bald_._reference':
                 # check if it's this type, otherwise exception)
                 # if isinstance(value,
@@ -139,5 +136,3 @@ class ValidationList(Validation):
     pass
 
 
-
-#if __name__ == '__main__':
