@@ -1,19 +1,8 @@
 
 import numpy as np
-import requests
 
 import bald
 
-def check_uri(uri):
-    result = False
-    if uri.startswith('http://') or uri.startswith('https://'):
-        r = requests.get(uri)
-        if r.status_code == 200:
-            headers={'Accept':'text/turtle'}
-            rraw = requests.get(uri, headers=headers)
-            if rraw.status_code == 200:
-                result = True
-    return result
 
 def valid_array_reference(parray, carray):
     """
@@ -51,8 +40,13 @@ class Validation(object):
 
 class SubjectValidation(Validation):
 
-    def __init__(self, subject):
+    def __init__(self, subject, httpcache=None): 
         self.subject = subject
+        if isinstance(httpcache, bald.HttpStatusCache):
+            self.cache = httpcache
+        else:
+            self.cache = bald.HttpStatusCache()
+            
 
     def is_valid(self):
         return not self.exceptions()
@@ -64,8 +58,7 @@ class SubjectValidation(Validation):
 
     def check_attr_uris(self, exceptions):
         def _check_uri(uri, exceptions):
-            if not check_uri(uri):
-                check_uri(uri)
+            if not self.cache.check_uri(uri):
                 msg = '{} is not resolving as a resource (404).'
                 msg = msg.format(uri)
                 exceptions.append(ValueError(msg))
@@ -85,9 +78,8 @@ class SubjectValidation(Validation):
 
 class ContainerValidation(SubjectValidation):
 
-    def __init__(self, container):
-        self.container = container
-        self.subject = container
+    def __init__(self, **kwargs):
+        super(ContainerValidation, self).__init__(**kwargs)
 
     def exceptions(self):
         exceptions = []
@@ -97,11 +89,12 @@ class ContainerValidation(SubjectValidation):
 class DatasetValidation(SubjectValidation):
 
 
-    def __init__(self, name, dataset, subject, fhandle):
+    def __init__(self, name, dataset, fhandle, **kwargs):
+        
         self.dataset = dataset
-        self.subject = subject
         self.name = name
         self.fhandle = fhandle
+        super(DatasetValidation, self).__init__(**kwargs)
 
     def exceptions(self):
         exceptions = []

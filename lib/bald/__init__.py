@@ -2,8 +2,40 @@ import contextlib
 import re
 
 import h5py
+import requests
 
 from bald.validation import ContainerValidation, DatasetValidation
+
+
+class HttpStatusCache(object):
+    def __init__(self):
+        self.cache = {}
+
+    def __getitem__(self, item):
+        uri = item
+        if item not in self.cache:
+            if not uri.startswith('http://') or uri.startswith('https://'):
+                raise ValueError('{} is not a HTTP URI.'.format(item))
+        if item in self.cache:
+            result = self.cache[item]
+        else:
+            r = requests.get(uri)
+            if r.status_code == 200:
+                headers={'Accept':'text/turtle'}
+                rraw = requests.get(uri, headers=headers)
+                self.cache[item] = rraw.status_code
+            else:
+                self.cache[item] = r.status_code
+
+            result = self.cache[item]
+        return result
+        
+
+    def check_uri(self, uri):
+        result = False
+        if self[uri] == 200:
+            result = True
+        return result
 
 class Subject(object):
     def __init__(self, attrs=None):
@@ -61,14 +93,19 @@ def validate_hdf5(afilepath):
     
     with load(afilepath) as fhandle:
         valid = True
+        cache = {}
         root_container = Subject(fhandle.attrs)
-        root_val = ContainerValidation(root_container)
+        root_val = ContainerValidation(subject=root_container)
         if not root_val.is_valid():
             valid = False
         # iterate through the datasets
         for name, dataset in fhandle.items():
-            dset = Subject(dataset.attrs)
-            dset_val = DatasetValidation(name, dataset, dset, fhandle)
+            # a dataset's attribute collection inherits from and specialises it's
+            # container's attrbiute collection
+            sattrs = dict(fhandle.attrs).copy()
+            sattrs.update(dataset.attrs)
+            dset = Subject(sattrs)
+            dset_val = DatasetValidation(name, dataset, fhandle, subject=dset)
             if not dset_val.is_valid():
                 valid = False
         

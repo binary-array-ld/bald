@@ -40,7 +40,7 @@ class Test(BaldTestCase):
             self.assertFalse(bald.validate_hdf5(tfile))
 
 class TestArrayReference(BaldTestCase):
-    def test_match_array_reference(self):
+    def test_match(self):
         with self.temp_filename('.hdf') as tfile:
             f = h5py.File(tfile, "w")
             f = _fattrs(f)
@@ -48,7 +48,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             self.assertTrue(bald.validate_hdf5(tfile))
 
-    def test_misatch_zeroth_array_reference(self):
+    def test_mismatch_zeroth(self):
         with self.temp_filename('.hdf') as tfile:
             f = h5py.File(tfile, "w")
             f = _fattrs(f)
@@ -56,7 +56,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             self.assertFalse(bald.validate_hdf5(tfile))
 
-    def test_misatch_oneth_array_reference(self):
+    def test_mismatch_oneth(self):
         with self.temp_filename('.hdf') as tfile:
             f = h5py.File(tfile, "w")
             f = _fattrs(f)
@@ -64,6 +64,52 @@ class TestArrayReference(BaldTestCase):
             f.close()
             self.assertFalse(bald.validate_hdf5(tfile))
 
+    def test_match_plead_dim(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            # parent has leading dimension wrt child
+            f = _create_parent_child(f, (4, 13, 17), (13, 17))
+            f.close()
+            self.assertTrue(bald.validate_hdf5(tfile))
+
+    def test_match_clead_dim(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            # child has leading dimension wrt parent
+            f = _create_parent_child(f, (13, 17), (7, 13, 17))
+            f.close()
+            self.assertTrue(bald.validate_hdf5(tfile))
+
+    def test_mismatch_pdisjc_lead_dim(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            # child and parent have disjoint leading dimensions
+            f = _create_parent_child(f, (4, 13, 17), (7, 13, 17))
+            f.close()
+            self.assertFalse(bald.validate_hdf5(tfile))
+
+    def test_mismatch_pdisjc_trail_dim(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            # child and parent have disjoint trailing dimensions
+            f = _create_parent_child(f, (13, 17, 2), (13, 17, 9))
+            f.close()
+            self.assertFalse(bald.validate_hdf5(tfile))
+
+
+
+    # def test_match_(self):
+    #      with self.temp_filename('.hdf') as tfile:
+    #         f = h5py.File(tfile, "w")
+    #         f = _fattrs(f)
+    #         # 
+    #         f = _create_parent_child(f, (), ())
+    #         f.close()
+    #         self.assert(bald.validate_hdf5(tfile))
 
 if __name__ == '__main__':
     unittest.main()
