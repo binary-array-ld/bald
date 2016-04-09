@@ -3,9 +3,9 @@ import re
 
 import h5py
 
-from bald.validation import ContainerValidation
+from bald.validation import ContainerValidation, DatasetValidation
 
-class Container(object):
+class Subject(object):
     def __init__(self, attrs=None):
         """
         attrs: an dictionary of key value pair attributes
@@ -60,9 +60,19 @@ def validate_hdf5(afilepath):
     """
     
     with load(afilepath) as fhandle:
-        root_container = Container(fhandle.attrs)
+        valid = True
+        root_container = Subject(fhandle.attrs)
         root_val = ContainerValidation(root_container)
-        return root_val.is_valid()
+        if not root_val.is_valid():
+            valid = False
+        # iterate through the datasets
+        for name, dataset in fhandle.items():
+            dset = Subject(dataset.attrs)
+            dset_val = DatasetValidation(name, dataset, dset, fhandle)
+            if not dset_val.is_valid():
+                valid = False
+        
+        return valid
         
         
 

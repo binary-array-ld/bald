@@ -39,14 +39,30 @@ class Test(BaldTestCase):
             f.close()
             self.assertFalse(bald.validate_hdf5(tfile))
 
-# class TestArrayReference(BaldTestCase):
-#     def test_match_array_reference(self):
-#         with self.temp_filename('.hdf') as tfile:
-#             f = h5py.File(tfile, "w")
-#             f = _fattrs(f)
-#             f = _create_parent_child(f, (11, 17), (11, 17))
-#             f.close()
+class TestArrayReference(BaldTestCase):
+    def test_match_array_reference(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            f = _create_parent_child(f, (11, 17), (11, 17))
+            f.close()
+            self.assertTrue(bald.validate_hdf5(tfile))
 
+    def test_misatch_zeroth_array_reference(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            f = _create_parent_child(f, (11, 17), (11, 13))
+            f.close()
+            self.assertFalse(bald.validate_hdf5(tfile))
+
+    def test_misatch_oneth_array_reference(self):
+        with self.temp_filename('.hdf') as tfile:
+            f = h5py.File(tfile, "w")
+            f = _fattrs(f)
+            f = _create_parent_child(f, (11, 17), (13, 17))
+            f.close()
+            self.assertFalse(bald.validate_hdf5(tfile))
 
 
 if __name__ == '__main__':
