@@ -88,6 +88,7 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             # child and parent have disjoint leading dimensions
             f = _create_parent_child(f, (4, 13, 17), (7, 13, 17))
+            
             f.close()
             self.assertFalse(bald.validate_hdf5(tfile))
 

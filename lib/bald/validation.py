@@ -5,7 +5,7 @@ import rdflib
 import bald
 
 
-def valid_array_reference(parray, carray):
+def valid_array_reference(parray, carray, broadcast_shape=None):
     """
     Returns boolean.
     Validates bald array broadcasting rules between a parent array and a child array.
@@ -14,6 +14,10 @@ def valid_array_reference(parray, carray):
         * parray - a numpy array: the parent of a bald array reference relation
 
         * carray - a numpy array: the child of a bald array reference relation 
+
+        * broadcast_shape - a string defining the ordered list of dimensions and sizes
+                            for the resulting array from broadcasting parry and carray;
+                            e.g. (1,1,
     """
     # https://github.com/SciTools/courses/blob/master/course_content/notebooks/numpy_intro.ipynb
     # https://cs231n.github.io/python-numpy-tutorial/#numpy-broadcasting
@@ -44,10 +48,10 @@ class SubjectValidation(Validation):
     def __init__(self, subject, fhandle, httpcache=None): 
         self.subject = subject
         self.fhandle = fhandle
-        if isinstance(httpcache, bald.HttpStatusCache):
+        if isinstance(httpcache, bald.HttpCache):
             self.cache = httpcache
         else:
-            self.cache = bald.HttpStatusCache()
+            self.cache = bald.HttpCache()
             
 
     def is_valid(self):

@@ -7,7 +7,10 @@ import requests
 from bald.validation import ContainerValidation, DatasetValidation
 
 
-class HttpStatusCache(object):
+class HttpCache(object):
+    """
+    Requests cache.
+    """
     def __init__(self):
         self.cache = {}
 
@@ -31,6 +34,8 @@ class HttpStatusCache(object):
 class Subject(object):
     def __init__(self, attrs=None):
         """
+        A subject of metadata statements.
+
         attrs: an dictionary of key value pair attributes
         """
         if attrs is None:
