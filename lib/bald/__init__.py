@@ -41,7 +41,7 @@ class Subject(object):
         if attrs is None:
             attrs = []
         self.attrs = attrs
-        self._prefix_suffix = re.compile('(^(?:(?!_._).)*)_._((?!.*_._).*$)')
+        self._prefix_suffix = re.compile('(^(?:(?!__).)*)__((?!.*__).*$)')
         _http_p = 'http[s]?://.*'
         self._http_uri = re.compile('{}'.format(_http_p))
         self._http_uri_prefix = re.compile('{}/|#'.format(_http_p))
@@ -50,8 +50,8 @@ class Subject(object):
     def prefixes(self):
         prefixes = {}
         for key, value in self.attrs.iteritems():
-            if key.endswith('_._') and self._http_uri_prefix.match(value):
-                pref = key.rstrip('_._')
+            if key.endswith('__') and self._http_uri_prefix.match(value):
+                pref = key.rstrip('__')
                 if prefixes.has_key(pref):
                     raise ValueError('This container has conflicting prefix definitions')
                 prefixes[pref] = value
@@ -65,7 +65,7 @@ class Subject(object):
 
             if self.prefixes().has_key(prefix):
                 if self._http_uri.match(self.prefixes()[prefix]):
-                    result = astring.replace('{}_._'.format(prefix), self.prefixes()[prefix])
+                    result = astring.replace('{}__'.format(prefix), self.prefixes()[prefix])
         return result
 
 @contextlib.contextmanager

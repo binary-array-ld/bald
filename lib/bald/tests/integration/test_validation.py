@@ -7,16 +7,19 @@ import bald
 from bald.tests import BaldTestCase
 
 def _fattrs(f):
-    f.attrs['bald_._'] = 'http://binary-array-ld.net/experimental/'
-    f.attrs['bald_._type'] = 'bald_._Container'
+    f.attrs['bald__'] = 'http://binary-array-ld.net/experimental/'
+    f.attrs['rdf__'] = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+    f.attrs['rdf__type'] = 'bald__Container'
     return f
 
 def _create_parent_child(f, pshape, cshape):
     dsetp = f.create_dataset("parent_dataset", pshape, dtype='i')
     dsetc = f.create_dataset("child_dataset", cshape, dtype='i')
-    dsetp.attrs['bald_._type'] = 'bald_._Dataset'
-    dsetp.attrs['bald_._reference'] = dsetc.ref
-    dsetc.attrs['bald_._type'] = 'bald_._Dataset'
+    dsetp.attrs['rdf__type'] = 'bald__Dataset'
+    dsetp.attrs['bald__references'] = dsetc.ref
+    dsetc.attrs['rdf__type'] = 'bald__Dataset'
+    dsetc.attrs['rdf__type'] = 'bald__Reference'
+    dsetc.attrs['bald__dataset'] = dsetc.ref
     return f
 
 
@@ -35,7 +38,7 @@ class Test(BaldTestCase):
             f = h5py.File(tfile, "w")
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
-            f.attrs['bald_._turtle'] = 'bald_._walnut'
+            f.attrs['bald__turtle'] = 'bald__walnut'
             f.close()
             self.assertFalse(bald.validate_hdf5(tfile))
 

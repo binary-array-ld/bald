@@ -156,7 +156,7 @@ class DatasetValidation(SubjectValidation):
 
         for attr, value in self.subject.attrs.iteritems():
             # should support subtypes
-            if attr == 'bald_._reference':
+            if attr == 'bald__references':
                 # check if it's this type, otherwise exception)
                 # if isinstance(value,
                 child_dset = self.fhandle[value]
