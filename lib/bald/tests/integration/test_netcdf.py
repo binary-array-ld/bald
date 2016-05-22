@@ -13,15 +13,19 @@ def _fattrs(f):
     f.rdf__type =  'bald__Container'
     return f
 
-# def _create_parent_child(f, pshape, cshape):
-#     dsetp = f.create_dataset("parent_dataset", pshape, dtype='i')
-#     dsetc = f.create_dataset("child_dataset", cshape, dtype='i')
-#     dsetp.attrs['rdf__type'] = 'bald__Dataset'
-#     dsetp.attrs['bald__references'] = dsetc.ref
-#     dsetc.attrs['rdf__type'] = 'bald__Dataset'
-#     dsetc.attrs['rdf__type'] = 'bald__Reference'
-#     dsetc.attrs['bald__dataset'] = dsetc.ref
-#     return f
+def _create_parent_child(f, pshape, cshape):
+    for i, pdimsize in enumerate(pshape):
+        f.createDimension("pdim{}".format(str(i)), pdimsize)
+    for i, cdimsize in enumerate(cshape):
+        f.createDimension("cdim{}".format(str(i)), cdimsize)
+    varp = f.createVariable("parent_variable", 'i4', tuple(["pdim{}".format(str(i)) for i, _ in enumerate(pshape)]))
+    varc = f.createVariable("child_variable", 'i4', tuple(["cdim{}".format(str(i)) for i, _ in enumerate(cshape)]))
+    varp.rdf__type = 'bald__Array'
+    varp.bald__references = "child_variable"
+    varc.rdf__type = 'bald__Array'
+    varc.rdf__type = 'bald__Reference'
+    varc.bald__array = "child_variable"
+    return f
 
 
 class Test(BaldTestCase):
@@ -45,25 +49,25 @@ class Test(BaldTestCase):
             validation = bald.validate_netcdf(tfile)
             self.assertFalse(validation.is_valid())
 
-# class TestArrayReference(BaldTestCase):
-#     def test_match(self):
-#         with self.temp_filename('.nc') as tfile:
-#             f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
-#             f = _fattrs(f)
-#             f = _create_parent_child(f, (11, 17), (11, 17))
-#             f.close()
-#             validation = bald.validate_netcdf(tfile)
-#             self.assertTrue(validation.is_valid())
 
-#     def test_mismatch_zeroth(self):
-#         with self.temp_filename('.nc') as tfile:
-#             f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
-#             f = _fattrs(f)
-#             f = _create_parent_child(f, (11, 17), (11, 13))
-#             f.close()
-#             validation = bald.validate_netcdf(tfile)
-#             self.assertFalse(validation.is_valid())
+class TestArrayReference(BaldTestCase):
+    def test_match(self):
+        with self.temp_filename('.nc') as tfile:
+            f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
+            f = _fattrs(f)
+            f = _create_parent_child(f, (11, 17), (11, 17))
+            f.close()
+            validation = bald.validate_netcdf(tfile)
+            self.assertTrue(validation.is_valid())
 
+    def test_mismatch_zeroth(self):
+        with self.temp_filename('.nc') as tfile:
+            f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
+            f = _fattrs(f)
+            f = _create_parent_child(f, (11, 17), (11, 13))
+            f.close()
+            validation = bald.validate_netcdf(tfile)
+            self.assertFalse(validation.is_valid())
 
 
 if __name__ == '__main__':

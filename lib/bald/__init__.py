@@ -104,13 +104,23 @@ def validate_netcdf(afilepath):
     """
 
     with load(afilepath) as fhandle:
+        sval = bv.StoredValidation()
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
         root_container = Subject(attrs)
         root_val = bv.ContainerValidation(subject=root_container,
                                           fhandle=fhandle)
-        return root_val
+        sval.stored_exceptions += root_val.exceptions()
+        for name in fhandle.variables:
+            sattrs = fhandle.__dict__.copy()
+            sattrs.update(fhandle.variables[name].__dict__.copy())
+            var = Subject(sattrs)
+            var_val = bv.ArrayValidation(name, fhandle.variables[name], fhandle=fhandle,
+                                         subject=var)
+            sval.stored_exceptions += var_val.exceptions()
+            
+        return sval
 
 
 def validate_hdf5(afilepath):
@@ -130,8 +140,8 @@ def validate_hdf5(afilepath):
         for name, dataset in fhandle.items():
             # a dataset's attribute collection inherits from and
             # specialises it's container's attrbiute collection
+            # this only helps with prefixes, afaik, hence:
             # #
-            # this only helps with prefixes, afaik
             sattrs = dict(fhandle.attrs).copy()
             sattrs.update(dataset.attrs)
             dset = Subject(sattrs)

@@ -170,16 +170,19 @@ class ArrayValidation(SubjectValidation):
         if self.subject.attrs.get('bald__references', ''):
             # then it must have a bald_array
             ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
-            if not ref_dset.attrs.get('bald__array', ''):
+            child_dset = None
+            if (hasattr(ref_dset, 'attrs')):
+                child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
+            elif 'bald__array' in ref_dset.ncattrs():
+                child_dset = self.fhandle[ref_dset.bald__array]
+            else:
                 exceptions.append(ValueError('A bald__Reference must link to '
                                              'one and only one bald__Array'))
-            else:
-                # and we impose bald broadcasting rules on it
-                child_dset = self.fhandle[ref_dset.attrs.get('bald__array')]
-                parray = np.zeros(self.array.shape)
-                carray = np.zeros(child_dset.shape)
+            # and we impose bald broadcasting rules on it
+            parray = np.zeros(self.array.shape)
+            carray = np.zeros(child_dset.shape)
 
-                exceptions = _check_ref('p', parray, 'c', carray)
+            exceptions = _check_ref('p', parray, 'c', carray)
 
         return exceptions
 
