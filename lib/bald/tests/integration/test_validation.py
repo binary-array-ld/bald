@@ -7,7 +7,7 @@ import bald
 from bald.tests import BaldTestCase
 
 def _fattrs(f):
-    f.attrs['bald__'] = 'http://binary-array-ld.net/experimental/'
+    f.attrs['bald__'] = 'http://binary-array-ld.net/latest/'
     f.attrs['rdf__'] = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
     f.attrs['rdf__type'] = 'bald__Container'
     return f
@@ -15,11 +15,11 @@ def _fattrs(f):
 def _create_parent_child(f, pshape, cshape):
     dsetp = f.create_dataset("parent_dataset", pshape, dtype='i')
     dsetc = f.create_dataset("child_dataset", cshape, dtype='i')
-    dsetp.attrs['rdf__type'] = 'bald__Dataset'
+    dsetp.attrs['rdf__type'] = 'bald__Array'
     dsetp.attrs['bald__references'] = dsetc.ref
-    dsetc.attrs['rdf__type'] = 'bald__Dataset'
+    dsetc.attrs['rdf__type'] = 'bald__Array'
     dsetc.attrs['rdf__type'] = 'bald__Reference'
-    dsetc.attrs['bald__dataset'] = dsetc.ref
+    dsetc.attrs['bald__array'] = dsetc.ref
     return f
 
 
@@ -31,7 +31,8 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            self.assertTrue(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertTrue(validation.is_valid())
 
     def test_invalid_uri(self):
         with self.temp_filename('.hdf') as tfile:
@@ -40,7 +41,8 @@ class Test(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.attrs['bald__turtle'] = 'bald__walnut'
             f.close()
-            self.assertFalse(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertFalse(validation.is_valid())
 
 class TestArrayReference(BaldTestCase):
     def test_match(self):
@@ -49,7 +51,8 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            self.assertTrue(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertTrue(validation.is_valid())
 
     def test_mismatch_zeroth(self):
         with self.temp_filename('.hdf') as tfile:
@@ -57,7 +60,8 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 13))
             f.close()
-            self.assertFalse(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertFalse(validation.is_valid())
 
     def test_mismatch_oneth(self):
         with self.temp_filename('.hdf') as tfile:
@@ -65,7 +69,8 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (13, 17))
             f.close()
-            self.assertFalse(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertFalse(validation.is_valid())
 
     def test_match_plead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -74,7 +79,8 @@ class TestArrayReference(BaldTestCase):
             # parent has leading dimension wrt child
             f = _create_parent_child(f, (4, 13, 17), (13, 17))
             f.close()
-            self.assertTrue(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertTrue(validation.is_valid())
 
     def test_match_clead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -83,7 +89,8 @@ class TestArrayReference(BaldTestCase):
             # child has leading dimension wrt parent
             f = _create_parent_child(f, (13, 17), (7, 13, 17))
             f.close()
-            self.assertTrue(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertTrue(validation.is_valid())
 
     def test_mismatch_pdisjc_lead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -93,7 +100,8 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (4, 13, 17), (7, 13, 17))
             
             f.close()
-            self.assertFalse(bald.validate_hdf5(tfile).is_valid())
+            validation = bald.validate_hdf5(tfile)
+            self.assertFalse(validation.is_valid())
 
     def test_mismatch_pdisjc_trail_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -102,8 +110,8 @@ class TestArrayReference(BaldTestCase):
             # child and parent have disjoint trailing dimensions
             f = _create_parent_child(f, (13, 17, 2), (13, 17, 9))
             f.close()
-            self.assertFalse(bald.validate_hdf5(tfile).is_valid())
-
+            validation = bald.validate_hdf5(tfile)
+            self.assertFalse(validation.is_valid())
 
 
     # def test_match_(self):

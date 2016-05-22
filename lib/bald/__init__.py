@@ -135,7 +135,7 @@ def validate_hdf5(afilepath):
             sattrs = dict(fhandle.attrs).copy()
             sattrs.update(dataset.attrs)
             dset = Subject(sattrs)
-            dset_val = bv.DatasetValidation(name, dataset, fhandle=fhandle,
+            dset_val = bv.ArrayValidation(name, dataset, fhandle=fhandle,
                                             subject=dset)
             sval.stored_exceptions += dset_val.exceptions()
 

@@ -59,7 +59,6 @@ class StoredValidation(Validation):
 
 
 class SubjectValidation(Validation):
-
     def __init__(self, subject, fhandle, httpcache=None):
         self.subject = subject
         self.fhandle = fhandle
@@ -145,39 +144,39 @@ class ContainerValidation(SubjectValidation):
         super(ContainerValidation, self).__init__(**kwargs)
 
 
-class DatasetValidation(SubjectValidation):
+class ArrayValidation(SubjectValidation):
 
-    def __init__(self, name, dataset, **kwargs):
-        self.dataset = dataset
+    def __init__(self, name, array, **kwargs):
+        self.array = array
         self.name = name
-        super(DatasetValidation, self).__init__(**kwargs)
+        super(ArrayValidation, self).__init__(**kwargs)
 
     def _extra_exceptions(self, exceptions):
         exceptions = self.check_array_references(exceptions)
         return exceptions
 
     def check_array_references(self, exceptions):
-        def _check_ref(pdataset, parray, cdataset, carray):
+        def _check_ref(parraysubj, parray, carraysubj, carray):
             if not valid_array_reference(parray, carray):
                 msg = ('{} declares a child of {} but the arrays'
                        'do not conform to the bald array reference'
                        'rules')
-                msg = msg.format(pdataset, cdataset)
+                msg = msg.format(parraysubj, carraysubj)
                 exceptions.append(ValueError(msg))
             return exceptions
 
-        # if this Dataset has a bald__references
+        # if this Array has a bald__references
         # not implemented yet: and it's a singleton
         if self.subject.attrs.get('bald__references', ''):
-            # then it must have a bald_dataset
+            # then it must have a bald_array
             ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
-            if not ref_dset.attrs.get('bald__dataset', ''):
+            if not ref_dset.attrs.get('bald__array', ''):
                 exceptions.append(ValueError('A bald__Reference must link to '
-                                             'one and only one bald__Dataset'))
+                                             'one and only one bald__Array'))
             else:
                 # and we impose bald broadcasting rules on it
-                child_dset = self.fhandle[ref_dset.attrs.get('bald__dataset')]
-                parray = np.zeros(self.dataset.shape)
+                child_dset = self.fhandle[ref_dset.attrs.get('bald__array')]
+                parray = np.zeros(self.array.shape)
                 carray = np.zeros(child_dset.shape)
 
                 exceptions = _check_ref('p', parray, 'c', carray)
