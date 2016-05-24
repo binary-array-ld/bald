@@ -8,16 +8,18 @@ import bald
 def valid_array_reference(parray, carray, broadcast_shape=None):
     """
     Returns boolean.
-    Validates bald array broadcasting rules between a parent array and a child array.
+    Validates bald array broadcasting rules between one parent array and
+    one child array.
 
     Args:
         * parray - a numpy array: the parent of a bald array reference relation
 
-        * carray - a numpy array: the child of a bald array reference relation 
+        * carray - a numpy array: the child of a bald array reference relation
 
-        * broadcast_shape - a string defining the ordered list of dimensions and sizes
-                            for the resulting array from broadcasting parry and carray;
-                            e.g. (1,1,
+        * broadcast_shape - a string defining the ordered list of dimensions
+                            and sizes for the resulting array from broadcasting
+                            parry and carray;
+                            e.g. (1, 1, 4, 9)
     """
     # https://github.com/SciTools/courses/blob/master/course_content/notebooks/numpy_intro.ipynb
     # https://cs231n.github.io/python-numpy-tutorial/#numpy-broadcasting
@@ -32,31 +34,42 @@ def valid_array_reference(parray, carray, broadcast_shape=None):
         result = False
 
     return result
-    
+
 
 class Validation(object):
-                 
+
     def is_valid(self):
         return not self.exceptions()
-        
+
     def exceptions(self):
         exceptions = []
         return exceptions
 
-class SubjectValidation(Validation):
 
-    def __init__(self, subject, fhandle, httpcache=None): 
+class StoredValidation(Validation):
+
+    def __init__(self, exceptions=None):
+        if exceptions is None:
+            self.stored_exceptions = []
+
+    def exceptions(self):
+        return self.stored_exceptions
+
+# class ValidationSet(Validation):?
+
+
+class SubjectValidation(Validation):
+    def __init__(self, subject, fhandle, httpcache=None):
         self.subject = subject
         self.fhandle = fhandle
         if isinstance(httpcache, bald.HttpCache):
             self.cache = httpcache
         else:
             self.cache = bald.HttpCache()
-            
 
     def is_valid(self):
         return not self.exceptions()
-        
+
     def exceptions(self):
         exceptions = []
         exceptions = self.check_attr_uris(exceptions)
@@ -90,19 +103,21 @@ class SubjectValidation(Validation):
         for attr, value in self.subject.attrs.iteritems():
             uri = self.subject.unpack_uri(attr)
             if self.cache.check_uri(uri):
-                #thus we have a payload
+                # thus we have a payload
                 # go rdf
                 g = rdflib.Graph()
                 g.parse(data=self.cache[uri].text, format="n3")
                 query = ('SELECT ?s \n'
-                         '(GROUP_CONCAT(?domain; SEPARATOR=" | ") AS ?domains) \n'
+                         '(GROUP_CONCAT(?domain; SEPARATOR=" | ") AS ?domains)'
+                         ' \n'
                          '(GROUP_CONCAT(?type; SEPARATOR=" | ") AS ?types) \n'
                          'WHERE {{ \n'
                          '?s a ?type . \n'
                          'OPTIONAL{{ ?s rdfs:domain ?domain . }} \n'
                          'FILTER(?s = <{uria}> || ?s = <{urib}>) \n'
                          '}} \n'
-                         'GROUP BY ?s \n'.format(uria=uri, urib= uri.rstrip('/')))
+                         'GROUP BY ?s \n'.format(uria=uri,
+                                                 urib=uri.rstrip('/')))
                 qres = list(g.query(query))
                 if len(qres) != 1:
                     raise ValueError('{} does not define one and only one \n'
@@ -121,7 +136,7 @@ class SubjectValidation(Validation):
                 #     msg = ('The attribute {} references ')
                 #     exceptions.appen(ValueError(msg))
         return exceptions
-    
+
 
 class ContainerValidation(SubjectValidation):
 
@@ -129,55 +144,52 @@ class ContainerValidation(SubjectValidation):
         super(ContainerValidation, self).__init__(**kwargs)
 
 
-        
+class ArrayValidation(SubjectValidation):
 
-class DatasetValidation(SubjectValidation):
-
-
-    def __init__(self, name, dataset, **kwargs):
-        
-        self.dataset = dataset
+    def __init__(self, name, array, **kwargs):
+        self.array = array
         self.name = name
-        super(DatasetValidation, self).__init__(**kwargs)
+        super(ArrayValidation, self).__init__(**kwargs)
 
     def _extra_exceptions(self, exceptions):
         exceptions = self.check_array_references(exceptions)
         return exceptions
 
     def check_array_references(self, exceptions):
-        def _check_ref(pdataset, parray, cdataset, carray):
+        def _check_ref(parraysubj, parray, carraysubj, carray):
             if not valid_array_reference(parray, carray):
                 msg = ('{} declares a child of {} but the arrays'
                        'do not conform to the bald array reference'
                        'rules')
-                msg = msg.format(pdataset, cdataset)
+                msg = msg.format(parraysubj, carraysubj)
                 exceptions.append(ValueError(msg))
             return exceptions
 
-        # if this Dataset has a bald__references
+        # if this Array has a bald__references
         # not implemented yet: and it's a singleton
         if self.subject.attrs.get('bald__references', ''):
-            # then it must have a bald_dataset
+            # then it must have a bald_array
             ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
-            if not ref_dset.attrs.get('bald__dataset', ''):
-                exceptions.append(ValueError('A bald__Reference must reference'
-                                             ' one and only one bald__Dataset')
-                                 )
+            child_dset = None
+            if (hasattr(ref_dset, 'attrs')):
+                child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
+            elif 'bald__array' in ref_dset.ncattrs():
+                child_dset = self.fhandle[ref_dset.bald__array]
             else:
-                # and we impose bald broadcasting rules on it
-                child_dset = self.fhandle[ref_dset.attrs.get('bald__dataset')]
-                parray = np.zeros(self.dataset.shape)
-                carray = np.zeros(child_dset.shape)
-        
-                exceptions = _check_ref('p', parray, 'c', carray)
-               
+                exceptions.append(ValueError('A bald__Reference must link to '
+                                             'one and only one bald__Array'))
+            # and we impose bald broadcasting rules on it
+            parray = np.zeros(self.array.shape)
+            carray = np.zeros(child_dset.shape)
+
+            exceptions = _check_ref('p', parray, 'c', carray)
+
         return exceptions
 
 
 class ValidationSet(Validation):
     pass
 
+
 class ValidationList(Validation):
     pass
-
-
