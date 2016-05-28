@@ -8,11 +8,9 @@ import bald
 from bald.tests import BaldTestCase
 
 def _fattrs(f):
+    f.bald__ = 'http://binary-array-ld.net/latest/'
+    f.rdf__ = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
     f.rdf__type =  'bald__Container'
-    group_pref = f.createGroup('bald__prefix_list')
-    group_pref.bald__ = 'http://binary-array-ld.net/latest/'
-    group_pref.rdf__ = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-    f.bald__isPrefixedBy = 'bald__prefix_list'
     return f
 
 def _create_parent_child(f, pshape, cshape):
@@ -34,7 +32,7 @@ class Test(BaldTestCase):
         
     def test_valid_uri(self):
         with self.temp_filename('.nc') as tfile:
-            f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
+            f = netCDF4.Dataset(tfile, "w", format="NETCDF4_CLASSIC")
 
             f = _fattrs(f)
             f.close()
@@ -43,7 +41,7 @@ class Test(BaldTestCase):
 
     def test_invalid_uri(self):
         with self.temp_filename('.nc') as tfile:
-            f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
+            f = netCDF4.Dataset(tfile, "w", format="NETCDF4_CLASSIC")
 
             f = _fattrs(f)
             setattr(f, 'bald__turtle', 'bald__walnut')
@@ -55,7 +53,7 @@ class Test(BaldTestCase):
 class TestArrayReference(BaldTestCase):
     def test_match(self):
         with self.temp_filename('.nc') as tfile:
-            f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
+            f = netCDF4.Dataset(tfile, "w", format="NETCDF4_CLASSIC")
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
@@ -64,7 +62,7 @@ class TestArrayReference(BaldTestCase):
 
     def test_mismatch_zeroth(self):
         with self.temp_filename('.nc') as tfile:
-            f = netCDF4.Dataset(tfile, "w", format="NETCDF4")
+            f = netCDF4.Dataset(tfile, "w", format="NETCDF4_CLASSIC")
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 13))
             f.close()
