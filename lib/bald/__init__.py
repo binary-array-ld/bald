@@ -33,15 +33,18 @@ class HttpCache(object):
 
 
 class Subject(object):
-    def __init__(self, attrs=None):
+    def __init__(self, attrs=None, prefixes=None):
         """
         A subject of metadata statements.
 
         attrs: an dictionary of key value pair attributes
         """
         if attrs is None:
-            attrs = []
+            attrs = {}
+        if prefixes is None:
+            prefixes = {}
         self.attrs = attrs
+        self._prefixes = prefixes
         self._prefix_suffix = re.compile('(^(?:(?!__).)*)__((?!.*__).*$)')
         _http_p = 'http[s]?://.*'
         self._http_uri = re.compile('{}'.format(_http_p))
@@ -49,7 +52,7 @@ class Subject(object):
 
     def prefixes(self):
         prefixes = {}
-        for key, value in self.attrs.iteritems():
+        for key, value in self._prefixes.iteritems():
             if key.endswith('__') and self._http_uri_prefix.match(value):
                 pref = key.rstrip('__')
                 if pref in prefixes:
@@ -105,17 +108,21 @@ def validate_netcdf(afilepath):
 
     with load(afilepath) as fhandle:
         sval = bv.StoredValidation()
+        prefix_group = fhandle[fhandle.bald__prefixes] if hasattr(fhandle, 'bald__prefixes') else {}
+        prefixes = {}
+        if prefix_group:
+            prefixes = dict([(prefix, getattr(prefix_group, prefix)) for prefix in prefix_group.ncattrs()])
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
-        root_container = Subject(attrs)
+        root_container = Subject(attrs, prefixes=prefixes)
         root_val = bv.ContainerValidation(subject=root_container,
                                           fhandle=fhandle)
         sval.stored_exceptions += root_val.exceptions()
         for name in fhandle.variables:
             sattrs = fhandle.__dict__.copy()
             sattrs.update(fhandle.variables[name].__dict__.copy())
-            var = Subject(sattrs)
+            var = Subject(sattrs, prefixes=prefixes)
             var_val = bv.ArrayValidation(name, fhandle.variables[name], fhandle=fhandle,
                                          subject=var)
             sval.stored_exceptions += var_val.exceptions()
@@ -132,7 +139,11 @@ def validate_hdf5(afilepath):
     with load(afilepath) as fhandle:
         sval = bv.StoredValidation()
         cache = {}
-        root_container = Subject(fhandle.attrs)
+        prefix_group = fhandle.attrs.get('bald__prefixes')
+        prefixes = {}
+        if prefix_group:
+            prefixes = fhandle[prefix_group].attrs
+        root_container = Subject(fhandle.attrs, prefixes=prefixes)
         root_val = bv.ContainerValidation(subject=root_container,
                                           fhandle=fhandle)
         sval.stored_exceptions += root_val.exceptions()
@@ -144,7 +155,7 @@ def validate_hdf5(afilepath):
             # #
             sattrs = dict(fhandle.attrs).copy()
             sattrs.update(dataset.attrs)
-            dset = Subject(sattrs)
+            dset = Subject(sattrs, prefixes)
             dset_val = bv.ArrayValidation(name, dataset, fhandle=fhandle,
                                             subject=dset)
             sval.stored_exceptions += dset_val.exceptions()
