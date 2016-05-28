@@ -108,10 +108,14 @@ def validate_netcdf(afilepath):
 
     with load(afilepath) as fhandle:
         sval = bv.StoredValidation()
-        prefix_group = fhandle[fhandle.bald__prefixes] if hasattr(fhandle, 'bald__prefixes') else {}
+        prefix_group = fhandle[fhandle.bald__isPrefixedBy] if hasattr(fhandle, 'bald__isPrefixedBy') else {}
         prefixes = {}
         if prefix_group:
             prefixes = dict([(prefix, getattr(prefix_group, prefix)) for prefix in prefix_group.ncattrs()])
+        else:
+            for k in fhandle.ncattrs():
+                if k.endswith('__'):
+                    prefixes[k] = getattr(fhandle, k)            
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
@@ -139,7 +143,7 @@ def validate_hdf5(afilepath):
     with load(afilepath) as fhandle:
         sval = bv.StoredValidation()
         cache = {}
-        prefix_group = fhandle.attrs.get('bald__prefixes')
+        prefix_group = fhandle.attrs.get('bald__isPrefixedBy')
         prefixes = {}
         if prefix_group:
             prefixes = fhandle[prefix_group].attrs

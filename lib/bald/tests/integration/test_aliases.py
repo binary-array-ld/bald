@@ -8,10 +8,10 @@ from bald.tests import BaldTestCase
 
 def _fattrs(f):
     f.attrs['rdf__type'] = 'bald__Container'
-    group_pref = f.create_group('bald__prefix_list')
+    group_alias = f.create_group('bald__alias_list')
     group_pref.attrs['bald__'] = 'http://binary-array-ld.net/latest/'
     group_pref.attrs['rdf__'] = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-    f.attrs['bald__isPrefixedBy'] = group_pref.ref
+    f.attrs['bald__aliases'] = group_alias.ref
     return f
 
 def _create_parent_child(f, pshape, cshape):
