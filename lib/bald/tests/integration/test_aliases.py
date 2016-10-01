@@ -32,8 +32,8 @@ class Test(BaldTestCase):
             f = h5py.File(tfile, "w")
             f = _fattrs(f)
             group_alias = f.create_group('bald__alias_list')
-            f.attrs['bald__aliases'] = group_alias.ref
-            group_alias['skosPrefLabel'] = 'http://www.w3.org/2004/02/skos/core#prefLabel'
+            f.attrs['bald__isAliasedBy'] = group_alias.ref
+            group_alias.attrs['skosPrefLabel'] = 'http://www.w3.org/2004/02/skos/core#prefLabel'
             dsetp = f.create_dataset("parent_dataset", (11, 17), dtype='i')
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
@@ -46,8 +46,8 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             f.attrs['bald__turtle'] = 'bald__walnut'
             group_alias = f.create_group('bald__alias_list')
-            f.attrs['bald__aliases'] = group_alias.ref            
-            group_alias['skosPrefLabel'] = 'http://www.w3.org/2004/02/skos/core#notThisPrefLabel'
+            f.attrs['bald__isAliasedBy'] = group_alias.ref            
+            group_alias.attrs['skosPrefLabel'] = 'http://www.w3.org/2004/02/skos/core#notThisPrefLabel'
             dsetp = f.create_dataset("parent_dataset", (11, 17), dtype='i')
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
