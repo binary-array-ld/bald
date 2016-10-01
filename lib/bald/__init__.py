@@ -15,9 +15,12 @@ class HttpCache(object):
     def __init__(self):
         self.cache = {}
 
+    def is_http_uri(self, item):
+        return item.startswith('http://') or item.startswith('https://')
+
     def __getitem__(self, item):
 
-        if not item.startswith('http://') or item.startswith('https://'):
+        if not self.is_http_uri(item):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
             headers = {'Accept': 'text/turtle'}
@@ -33,7 +36,7 @@ class HttpCache(object):
 
 
 class Subject(object):
-    def __init__(self, attrs=None, prefixes=None):
+    def __init__(self, attrs=None, prefixes=None, aliases=None):
         """
         A subject of metadata statements.
 
@@ -43,7 +46,10 @@ class Subject(object):
             attrs = {}
         if prefixes is None:
             prefixes = {}
+        if aliases is None:
+            aliases = {}
         self.attrs = attrs
+        self.aliases = aliases
         self._prefixes = prefixes
         self._prefix_suffix = re.compile('(^(?:(?!__).)*)__((?!.*__).*$)')
         _http_p = 'http[s]?://.*'
@@ -69,6 +75,8 @@ class Subject(object):
                 if self._http_uri.match(self.prefixes()[prefix]):
                     result = astring.replace('{}__'.format(prefix),
                                              self.prefixes()[prefix])
+        elif astring in self.aliases:
+            result = self.aliases[astring]
         return result
 
 
@@ -147,7 +155,11 @@ def validate_hdf5(afilepath):
         prefixes = {}
         if prefix_group:
             prefixes = fhandle[prefix_group].attrs
-        root_container = Subject(fhandle.attrs, prefixes=prefixes)
+        alias_group = fhandle.attrs.get('bald__isAliasedBy')
+        aliases = {}
+        if alias_group:
+            aliases = dict(fhandle[alias_group].attrs.iteritems())
+        root_container = Subject(fhandle.attrs, prefixes=prefixes, aliases=aliases)
         root_val = bv.ContainerValidation(subject=root_container,
                                           fhandle=fhandle)
         sval.stored_exceptions += root_val.exceptions()
@@ -159,7 +171,7 @@ def validate_hdf5(afilepath):
             # #
             sattrs = dict(fhandle.attrs).copy()
             sattrs.update(dataset.attrs)
-            dset = Subject(sattrs, prefixes)
+            dset = Subject(sattrs, prefixes, aliases)
             dset_val = bv.ArrayValidation(name, dataset, fhandle=fhandle,
                                             subject=dset)
             sval.stored_exceptions += dset_val.exceptions()
