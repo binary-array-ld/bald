@@ -113,7 +113,7 @@ class SubjectValidation(Validation):
                 data=self.cache[uri].text
                 try:
                     g.parse(data=self.cache[uri].text, format="n3")
-                except Exception, e:
+                except Exception:
                     g.parse(data=self.cache[uri].text, format="xml")
                 query = ('SELECT ?s \n'
                          '(GROUP_CONCAT(?domain; SEPARATOR=" | ") AS ?domains)'
