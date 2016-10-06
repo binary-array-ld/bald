@@ -91,12 +91,16 @@ class SubjectValidation(Validation):
         for pref, uri in self.subject.prefixes().iteritems():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
+        for alias, uri in self.subject.aliases.iteritems():
+            exceptions = _check_uri(self.subject.unpack_uri(uri),
+                                    exceptions)
         for attr, value in self.subject.attrs.iteritems():
             exceptions = _check_uri(self.subject.unpack_uri(attr),
                                     exceptions)
             if isinstance(value, str):
-                exceptions = _check_uri(self.subject.unpack_uri(value),
-                                        exceptions)
+                val = self.subject.unpack_uri(value)
+                if self.cache.is_http_uri(val):
+                    exceptions = _check_uri(val, exceptions)
         return exceptions
 
     def check_attr_domain_range(self, exceptions):
@@ -106,7 +110,11 @@ class SubjectValidation(Validation):
                 # thus we have a payload
                 # go rdf
                 g = rdflib.Graph()
-                g.parse(data=self.cache[uri].text, format="n3")
+                data=self.cache[uri].text
+                try:
+                    g.parse(data=self.cache[uri].text, format="n3")
+                except Exception, e:
+                    g.parse(data=self.cache[uri].text, format="xml")
                 query = ('SELECT ?s \n'
                          '(GROUP_CONCAT(?domain; SEPARATOR=" | ") AS ?domains)'
                          ' \n'
