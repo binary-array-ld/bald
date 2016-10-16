@@ -2,8 +2,7 @@
 from __future__ import print_function
 
 import os
-from setuptools import setup
-
+from distutils.core import setup
 
 DESCRIPTION = 'Binary Array Linked Data'
 NAME = 'bald'
@@ -56,7 +55,9 @@ setup_args = dict(
     license='BSD',
     url='https://github.com/binary-array-ld/bald',
     package_dir={'': 'lib'},
-    packages=[NAME],
+    packages=[NAME, '{}.tests'.format(NAME),
+              '{}.tests.unit'.format(NAME),
+              '{}.tests.integration'.format(NAME)],
     # package_data=extract_package_data(),
     classifiers=[
         # For full license details, see
