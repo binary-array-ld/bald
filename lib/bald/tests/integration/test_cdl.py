@@ -18,11 +18,13 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, 'array_reference.cdl')
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_alias(self):
         with self.temp_filename('.nc') as tfile:
             cdl_file = os.path.join(self.cdl_path, 'array_alias.cdl')
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))

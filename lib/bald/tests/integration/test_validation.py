@@ -34,7 +34,8 @@ class Test(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_invalid_uri(self):
         with self.temp_filename('.hdf') as tfile:
@@ -44,7 +45,17 @@ class Test(BaldTestCase):
             f.attrs['bald__turtle'] = 'bald__walnut'
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
 class TestArrayReference(BaldTestCase):
     def test_match(self):
@@ -54,7 +65,8 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_mismatch_zeroth(self):
         with self.temp_filename('.hdf') as tfile:
@@ -63,7 +75,10 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 13))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['p declares a child of c but the arrays do not conform to the bald array reference rules']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
     def test_mismatch_oneth(self):
         with self.temp_filename('.hdf') as tfile:
@@ -72,7 +87,10 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (13, 17))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['p declares a child of c but the arrays do not conform to the bald array reference rules']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
     def test_match_plead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -82,7 +100,8 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (4, 13, 17), (13, 17))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_match_clead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -92,7 +111,8 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (13, 17), (7, 13, 17))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_mismatch_pdisjc_lead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -103,7 +123,10 @@ class TestArrayReference(BaldTestCase):
             
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['p declares a child of c but the arrays do not conform to the bald array reference rules']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
     def test_mismatch_pdisjc_trail_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -113,17 +136,11 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (13, 17, 2), (13, 17, 9))
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['p declares a child of c but the arrays do not conform to the bald array reference rules']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
-
-    # def test_match_(self):
-    #      with self.temp_filename('.hdf') as tfile:
-    #         f = h5py.File(tfile, "w")
-    #         f = _fattrs(f)
-    #         # 
-    #         f = _create_parent_child(f, (), ())
-    #         f.close()
-    #         self.assert(bald.validate_hdf5(tfile).is_valid())
 
 if __name__ == '__main__':
     unittest.main()

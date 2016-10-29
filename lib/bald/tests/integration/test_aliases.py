@@ -38,7 +38,8 @@ class Test(BaldTestCase):
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_invalid_uri(self):
         with self.temp_filename('.hdf') as tfile:
@@ -52,7 +53,17 @@ class Test(BaldTestCase):
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
 
 if __name__ == '__main__':
