@@ -2,13 +2,11 @@ netcdf tmpMwXy8U {
 dimensions:
 	pdim0 = 11 ;
 	pdim1 = 17 ;
-	cdim0 = 11 ;
-	cdim1 = 17 ;
 variables:
 	int parent_variable(pdim0, pdim1) ;
 		parent_variable:rdf__type = "bald__Array" ;
 		parent_variable:bald__references = "child_variable" ;
-	int child_variable(cdim0, cdim1) ;
+	int child_variable(pdim0, pdim1) ;
 		child_variable:rdf__type = "bald__Reference" ;
 		child_variable:bald__array = "child_variable" ;
 
