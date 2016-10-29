@@ -9,10 +9,10 @@ from bald.tests import BaldTestCase
 
 def _fattrs(f):
     f.rdf__type =  'bald__Container'
-    group_pref = f.createGroup('bald__prefix_list')
+    group_pref = f.createGroup('prefix_list')
     group_pref.bald__ = 'http://binary-array-ld.net/latest/'
     group_pref.rdf__ = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-    f.bald__isPrefixedBy = 'bald__prefix_list'
+    f.bald__isPrefixedBy = 'prefix_list'
     return f
 
 def _create_parent_child(f, pshape, cshape):

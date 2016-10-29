@@ -95,9 +95,11 @@ class SubjectValidation(Validation):
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
         for attr, value in self.subject.attrs.iteritems():
-            exceptions = _check_uri(self.subject.unpack_uri(attr),
-                                    exceptions)
-            if isinstance(value, str):
+            if isinstance(attr, basestring):
+                att = self.subject.unpack_uri(attr)
+                if self.cache.is_http_uri(att):
+                    exceptions = _check_uri(att, exceptions)
+            if isinstance(value, basestring):
                 val = self.subject.unpack_uri(value)
                 if self.cache.is_http_uri(val):
                     exceptions = _check_uri(val, exceptions)
@@ -106,7 +108,7 @@ class SubjectValidation(Validation):
     def check_attr_domain_range(self, exceptions):
         for attr, value in self.subject.attrs.iteritems():
             uri = self.subject.unpack_uri(attr)
-            if self.cache.check_uri(uri):
+            if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
                 # thus we have a payload
                 # go rdf
                 g = rdflib.Graph()

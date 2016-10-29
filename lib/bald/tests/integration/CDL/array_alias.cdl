@@ -2,20 +2,17 @@ netcdf tmpMwXy8U {
 dimensions:
 	pdim0 = 11 ;
 	pdim1 = 17 ;
-	cdim0 = 11 ;
-	cdim1 = 17 ;
 variables:
 	int parent_variable(pdim0, pdim1) ;
 		parent_variable:rdf__type = "bald__Array" ;
-		parent_variable:bald__references = "child_variable" ;
-	int child_variable(cdim0, cdim1) ;
-		child_variable:rdf__type = "bald__Reference" ;
-		child_variable:bald__array = "child_variable" ;
+		parent_variable:SDN_ParameterDiscoveryCode = "BactTaxaAbundSed" ;
+		parent_variable:submursible_name = "Nautilus" ;
 
 // global attributes:
 		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
 		:rdf__type = "bald__Container" ;
 		:bald__isPrefixedBy = "prefix_list" ;
+		:bald__isAliasedBy = "alias_list" ;
 data:
 
  parent_variable =
@@ -31,18 +28,6 @@ data:
   _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
   _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ;
 
- child_variable =
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ;
 
 group: prefix_list {
 
@@ -50,4 +35,11 @@ group: prefix_list {
   		:bald__ = "http://binary-array-ld.net/latest/" ;
   		:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
   } // group bald__prefix_list
+
+group: alias_list {
+
+  // group attributes:
+  		:SDN_ParameterDiscoveryCode = "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#SDN_ParameterDiscoveryCode" ;
+		:BactTaxaAbundSed = "http://vocab.nerc.ac.uk/collection/P02/current/BAUC/" ;
+  } // group bald__alias_list
 }
