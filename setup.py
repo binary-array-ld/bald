@@ -43,6 +43,8 @@ setup_args = dict(
     packages=[NAME, '{}.tests'.format(NAME),
               '{}.tests.unit'.format(NAME),
               '{}.tests.integration'.format(NAME)],
+    package_data={'{}.tests.integration'.format(NAME):
+                  ['CDL/*.cdl']},
     classifiers=[
         'License :: OSI Approved :: BSD License',
         'Development Status :: 1 - Planning Development Status',
