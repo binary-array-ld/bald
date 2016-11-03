@@ -8,7 +8,7 @@ from bald.tests import BaldTestCase
 
 def _fattrs(f):
     f.attrs['rdf__type'] = 'bald__Container'
-    group_pref = f.create_group('bald__prefix_list')
+    group_pref = f.create_group('prefix_list')
     group_pref.attrs['bald__'] = 'http://binary-array-ld.net/latest/'
     group_pref.attrs['rdf__'] = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
     f.attrs['bald__isPrefixedBy'] = group_pref.ref
@@ -38,7 +38,8 @@ class Test(BaldTestCase):
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_invalid_uri(self):
         with self.temp_filename('.hdf') as tfile:
@@ -52,7 +53,17 @@ class Test(BaldTestCase):
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
             validation = bald.validate_hdf5(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
 
 if __name__ == '__main__':

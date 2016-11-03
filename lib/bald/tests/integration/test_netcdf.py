@@ -9,10 +9,10 @@ from bald.tests import BaldTestCase
 
 def _fattrs(f):
     f.rdf__type =  'bald__Container'
-    group_pref = f.createGroup('bald__prefix_list')
+    group_pref = f.createGroup('prefix_list')
     group_pref.bald__ = 'http://binary-array-ld.net/latest/'
     group_pref.rdf__ = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-    f.bald__isPrefixedBy = 'bald__prefix_list'
+    f.bald__isPrefixedBy = 'prefix_list'
     return f
 
 def _create_parent_child(f, pshape, cshape):
@@ -39,7 +39,8 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             f.close()
             validation = bald.validate_netcdf(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_invalid_uri(self):
         with self.temp_filename('.nc') as tfile:
@@ -49,7 +50,11 @@ class Test(BaldTestCase):
             setattr(f, 'bald__turtle', 'bald__walnut')
             f.close()
             validation = bald.validate_netcdf(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
+                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
 
 class TestArrayReference(BaldTestCase):
@@ -60,7 +65,8 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
             validation = bald.validate_netcdf(tfile)
-            self.assertTrue(validation.is_valid())
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
     def test_mismatch_zeroth(self):
         with self.temp_filename('.nc') as tfile:
@@ -69,7 +75,10 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 13))
             f.close()
             validation = bald.validate_netcdf(tfile)
-            self.assertFalse(validation.is_valid())
+            exns = validation.exceptions()
+            expected = ['p declares a child of c but the arrays do not conform to the bald array reference rules']
+            self.assertTrue((not validation.is_valid()) and exns == expected,
+                             msg='{}  != {}'.format(exns, expected))
 
 
 if __name__ == '__main__':
