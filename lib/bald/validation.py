@@ -25,7 +25,7 @@ def valid_array_reference(parray, carray, broadcast_shape=None):
     # http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
     # http://scipy.github.io/old-wiki/pages/EricsBroadcastingDoc
 
-    result = True
+    result = True    
     # try numpy broadcast
     try:
         _ = np.broadcast(parray, carray)
@@ -58,9 +58,8 @@ class StoredValidation(Validation):
 
 
 class SubjectValidation(Validation):
-    def __init__(self, subject, fhandle, httpcache=None):
+    def __init__(self, subject, httpcache=None):
         self.subject = subject
-        self.fhandle = fhandle
         if isinstance(httpcache, bald.HttpCache):
             self.cache = httpcache
         else:
@@ -155,43 +154,55 @@ class ContainerValidation(SubjectValidation):
 
 class ArrayValidation(SubjectValidation):
 
-    def __init__(self, name, array, **kwargs):
+    def __init__(self, array, httpcache=None):
         self.array = array
-        self.name = name
-        super(ArrayValidation, self).__init__(**kwargs)
+        super(ArrayValidation, self).__init__(array, httpcache)
 
     def _extra_exceptions(self, exceptions):
         exceptions = self.check_array_references(exceptions)
         return exceptions
 
     def check_array_references(self, exceptions):
-        def _check_ref(parraysubj, parray, carraysubj, carray):
+
+        # if this Array has a bald__references
+        # # not implemented yet: and it's a singleton
+        # if refs:
+        #     # then it must have a bald_array
+        #     ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
+        #     child_dset = None
+        #     if (hasattr(ref_dset, 'attrs')):
+        #         child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
+        #     elif 'bald__array' in ref_dset.ncattrs():
+        #         child_dset = self.fhandle[ref_dset.bald__array]
+        #     else:
+        #         exceptions.append('A bald__Reference must link to '
+        #                           'one and only one bald__Array')
+        #     # and we impose bald broadcasting rules on it
+        parray = None
+        if self.array.shape:
+            parray = np.zeros(self.array.shape)
+        for bald_array in self.array.array_references:
+            parraysubj = 'p'
+            carraysubj = 'c'
+            carray = None
+            if bald_array.shape:
+                carray = np.zeros(bald_array.shape)
             if not valid_array_reference(parray, carray):
                 msg = ('{} declares a child of {} but the arrays '
                        'do not conform to the bald array reference '
                        'rules')
                 msg = msg.format(parraysubj, carraysubj)
                 exceptions.append(msg)
-            return exceptions
-
-        # if this Array has a bald__references
-        # not implemented yet: and it's a singleton
-        if self.subject.attrs.get('bald__references', ''):
-            # then it must have a bald_array
-            ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
-            child_dset = None
-            if (hasattr(ref_dset, 'attrs')):
-                child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
-            elif 'bald__array' in ref_dset.ncattrs():
-                child_dset = self.fhandle[ref_dset.bald__array]
-            else:
-                exceptions.append('A bald__Reference must link to '
-                                  'one and only one bald__Array')
-            # and we impose bald broadcasting rules on it
-            parray = np.zeros(self.array.shape)
-            carray = np.zeros(child_dset.shape)
-
-            exceptions = _check_ref('p', parray, 'c', carray)
+            if parray is None and carray is not None:
+                msg = ('{} declares a child of {} but the parent array '
+                       'is not an extensive array')
+                msg = msg.format(parraysubj, carraysubj)
+                exceptions.append(msg)
+            if carray is None and parray is not None:
+                msg = ('{} declares a child of {} but the child array '
+                       'is not an extensive array')
+                msg = msg.format(parraysubj, carraysubj)
+                exceptions.append(msg)
 
         return exceptions
 

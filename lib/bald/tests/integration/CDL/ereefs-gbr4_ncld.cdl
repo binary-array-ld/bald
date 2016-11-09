@@ -3,7 +3,7 @@ dimensions:
 	i = 600 ;
 	j = 180 ;
 	k = 47 ;
-	time = 50521 ;
+	time = 5 ;
 variables:
 	double zc(k) ;
 		zc:axis = "Z" ;

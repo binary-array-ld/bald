@@ -35,7 +35,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
-            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
+            self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
 
     def test_ereef(self):
         with self.temp_filename('.nc') as tfile:
@@ -43,6 +43,10 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
-            #self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
-            self.assertFalse(validation.is_valid(), msg='AssertionError: [\'http://qudt.org/vocab/unit#Meter is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#DegreeCelsius is not resolving as a resource (404).\']. Also {} != []'.format(exns))
-            
+            xs = '{} is not resolving as a resource (404).'
+            expected = [xs.format('http://qudt.org/vocab/unit#Meter'),
+                        xs.format('http://qudt.org/vocab/unit#MeterPerSecond'),
+                        xs.format('http://qudt.org/vocab/unit#MeterPerSecond'),
+                        xs.format('http://qudt.org/vocab/unit#DegreeCelsius')]
+            self.assertTrue(not validation.is_valid() and exns == expected,
+                            msg='{} \n!= \n{}'.format(exns, expected))
