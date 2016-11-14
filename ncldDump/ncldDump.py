@@ -193,38 +193,123 @@ def loadAliasDict(aliasFilePath):
     return aliasDict
 
 
-def makeHotLink(word, pattern):
+def makeURL(word, pattern):
     '''
-    Create an <a> hot-link string from the word and pattern.
+    Create a URL from the word and pattern.
     
     word    [in] The word to build the hot-link around.
     pattern [in] The URL pattern to reference.
-    returns      An <a> hot-link string.
+    returns      A URL.
     '''
     
     # Insert the word into any replaceable part in the pattern.
     #
     theURL = pattern.format(word)
     
-    # Create the hot-link string. Make it open a new tab when dereferenced if
-    # the URL is not relative to the current document.
+    # Return the URL
     #
-    if '#' != theURL[0]:
-        hotLink = '<a href="{}" target="_blank">{}</a>'.format(theURL, word)
-    else:
-        hotLink = '<a href="{}">{}</a>'.format(theURL, word)
+    return theURL
+
+
+def resolveName(name, aliasDict):
+    '''
+    Determine if the name has a context part (the form is <context>__<name>).
+    If it does and the context alias exists, use it to build a URL.
+    If not, attempt to resolve the name into a URL using the names
+    part of the alias dictionary.
     
-    # Return the hot-link string.
+    name      [in] A name to attempt to resolve into a hot-link string.
+    aliasDict [in] A dictionary of URI patterns keyed by the elements they
+                   replace.
+    returns        A URL, or None if there was no resolution.
+    '''
+    
+    # Start with the result equal to None.
     #
-    return hotLink
+    result = None
+    
+    # Split the name on '__'.
+    #
+    nameParts = name.split('__')
+    
+    # Breakout context.
+    #
+    for _x in [0]:
+        # If there is a context part, attempt to use it.
+        #
+        if 2 == len(nameParts):
+            # Get the name and context parts.
+            #
+            contextPart = nameParts[0]
+            namePart    = nameParts[1]
+        
+            # If the context exists in the alias dictionary, create a hot-link
+            # string using the pattern for the context and the name part.
+            #
+            if contextPart in aliasDict['contexts']:
+                pattern = aliasDict['contexts'][contextPart]
+                
+                result = makeURL(namePart, pattern)
+                
+                break
+        
+        # If the name exists in the alias dictionary, create a hot-link string
+        # using the pattern for the name.
+        #
+        if name in aliasDict['names']:
+            pattern = aliasDict['names'][name]
+            
+            result = makeURL(name, pattern)
+            
+            break
+    
+    # Return the resolved URL if one was found.
+    #
+    return result
+
+
+def resolveValue(name, value, aliasDict):
+    '''
+    Determine if the value associated with the name has an entry in the alias
+    dictionary. If it does, build a URL and return it.
+    
+    name      [in] A name to attempt to resolve into a hot-link string.
+    value     [in] A value to attempt to resolve into a hot-link string.
+    aliasDict [in] A dictionary of URI patterns keyed by the elements they
+                   replace.
+    returns        A URL, or None if there was no resolution.
+    '''
+    
+    # Start with the result equal to None.
+    #
+    result = None
+    
+    # If the name exists in the alias dictionary, and if the value exists in
+    # the sub-dictionary for the name, create a hot-link string using the
+    # pattern for the value. A wildcard (*) for a value key in the dictionary
+    # matches any value.
+    #
+    if name in aliasDict['values']:
+        subDict = aliasDict['values'][name]
+        
+        if value in subDict:
+            pattern = subDict[value]
+            
+            result = makeURL(value, pattern)
+        
+    # Return the resolved name if one was found.
+    #
+    return result
 
 
 def parseAttributes(ncObj, aliasDict):
     '''
     Build a list of dictionaries for each netCDF attribute on the object.
     
-    ncObj [in] A netCDF object with attributes.
-    returns    A list of dictionaries for each attribute.
+    ncObj     [in] A netCDF object with attributes.
+    aliasDict [in] A dictionary of URI patterns keyed by the elements they
+                   replace.
+    returns        A list of dictionaries for each attribute.
     '''
     
     # Create the attribute list.
@@ -234,72 +319,51 @@ def parseAttributes(ncObj, aliasDict):
     # Fill the list with dictionaries describing each attribute.
     #
     for attrName in ncObj.ncattrs():
+        # Get the value and type for the attribute.
+        #
         attrValue = ncObj.getncattr(attrName)
         attrType  = parseType(attrValue)
         
-        # If the value is an array, create a list for the contents.
+        # If the value is not an array, make it a list.
         #
-        if True == isinstance(attrValue, numpy.ndarray):
-            valueList = []
+        if False == isinstance(attrValue, numpy.ndarray):
+            attrValue = [attrValue]
             
-            for value in attrValue:
-                # If the attribute name and value are in the alias dictionary
-                # values section, get a hot-link string for it.
-                #
-                if attrName in aliasDict['values']:
-                    subDict = aliasDict['values'][attrName]
-                    
-                    # If the key '*' is present in the sub-dictionary, get the
-                    # item, otherwise get the item keyed by the value.
-                    #
-                    if '*' in subDict:
-                        pattern = subDict['*']
-                    else:
-                        pattern = subDict[value]
-                    
-                    value = makeHotLink(value, pattern)
-                    
-                # If the value is a string, wrap it in '"' characters.
-                #
-                if True == isinstance(value, str) or True == isinstance(value, unicode):
-                    valueList.append('"' + str(value) + '"')
-                else:
-                    valueList.append(str(value))
-            
-            attrValue = valueList
-        else:
-            # If the attribute name and value are in the alias dictionary
-            # values section, get a hot-link string for it.
+        # Get the URL (if any) for the attribute.
+        #
+        nameURL = resolveName(attrName, aliasDict)
+        
+        # Construct a list of attribute value and URL pairs.
+        #
+        valueList = []
+        
+        for value in attrValue:
+            # Get the URL (if any) for the value.
             #
-            if attrName in aliasDict['values']:
-                subDict = aliasDict['values'][attrName]
-                
-                # If the key '*' is present in the sub-dictionary, get the
-                # item, otherwise get the item keyed by the value.
-                #
-                if '*' in subDict:
-                    pattern = subDict['*']
-                else:
-                    pattern = subDict[attrValue]
-                
-                attrValue = makeHotLink(attrValue, pattern)
-                
+            valueURL = resolveValue(attrName, value, aliasDict)
+            
             # If the value is a string, wrap it in '"' characters.
             #
-            if True == isinstance(attrValue, str) or True == isinstance(attrValue, unicode):
-                attrValue = '"' + str(attrValue) + '"'
-            else:
-                attrValue = str(attrValue)
-        
-        # If the attribute name is in the alias dictionary names section, get a
-        # hot-link string for it.
-        #
-        if attrName in aliasDict['names']:
-            pattern = aliasDict['names'][attrName]
+            if True == isinstance(value, str) or True == isinstance(value, unicode):
+                value = '"' + str(value) + '"'
             
-            attrName = makeHotLink(attrName, pattern)
+            valueEntry = { 'element' : value }
+
+            if valueURL is not None:
+                valueEntry['url'] = valueURL
+            
+            valueList.append(valueEntry)
         
-        attrList.append({'name' : attrName, 'value' : attrValue, 'type' : attrType})
+        # Build the attribute entry. If there is a name URL add it.
+        #
+        attrEntry = {'name' : attrName, 'value' : valueList, 'type' : attrType}
+        
+        if nameURL is not None:
+            attrEntry['url'] = nameURL
+        
+        # Add the entry to the list.
+        #
+        attrList.append(attrEntry)
     
     # Return the list.
     #
@@ -310,16 +374,18 @@ def parseNcObj(ncObj, aliasDict):
     '''
     Build dimension, variable, and attribute lists for the object.
     
-    ncObj [in] The netCDF4 object to parse.
-    returns    A nested set of dictionaries and lists describing the object
-               contents.
+    ncObj     [in] The netCDF4 object to parse.
+    aliasDict [in] A dictionary of URI patterns keyed by the elements they
+                   replace.
+    returns        A nested set of dictionaries and lists describing the object
+                   contents.
     '''
     
     # Create the top-level dictionary.
     #
     dataDict = {}
     
-    # If there are any dimensions, add and populate a dimensions element.
+    # If there are any dimensions, add and populate a dimensions entry.
     #
     dimList = []
     
@@ -340,7 +406,7 @@ def parseNcObj(ncObj, aliasDict):
     if 0 < len(dimList):
         dataDict['dimensions'] = dimList
     
-    # If there are any variables, add and populate a variables element.
+    # If there are any variables, add and populate a variables entry.
     #
     varList = []
     
@@ -355,26 +421,23 @@ def parseNcObj(ncObj, aliasDict):
             for dimName in varObj.dimensions:
                 dimSize = ncObj.dimensions[dimName].size
                 
-                dimList.append('{}={}'.format(dimName, dimSize))
+                dimList.append(dimName)
             
             if 0 < len(dimList):
                 varEntry['dimensions'] = dimList
 
             # If the variable name is in the alias dictionary names section,
-            # get a hot-link string for it and add it to the entry for the
-            # variable. If not, just use the name.
+            # get a URL for it and add it to the entry for the variable.
             #
-            hotLink = varName
-            
             if varName in aliasDict['names']:
                 pattern = aliasDict['names'][varName]
                 
-                hotLink = makeHotLink(varName, pattern)
+                theURL = makeURL(varName, pattern)
             
-            varEntry['hotLink'] = hotLink
+                varEntry['url'] = theURL
             
             # If there are any attributes add and populate an attributes
-            # element.
+            # entry.
             #
             attrList = parseAttributes(varObj, aliasDict)
             
@@ -389,7 +452,7 @@ def parseNcObj(ncObj, aliasDict):
         dataDict['variables'] = varList
     
     # If there are any group-level attributes, add and populate an attributes
-    # element.
+    # entry.
     #
     attrList = parseAttributes(ncObj, aliasDict)
     
