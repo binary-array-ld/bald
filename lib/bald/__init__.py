@@ -124,18 +124,23 @@ def validate_netcdf(afilepath):
         else:
             for k in fhandle.ncattrs():
                 if k.endswith('__'):
-                    prefixes[k] = getattr(fhandle, k)            
+                    prefixes[k] = getattr(fhandle, k)
+        alias_group = fhandle[fhandle.bald__isAliasedBy] if hasattr(fhandle, 'bald__isAliasedBy') else {}
+        aliases = {}
+        if alias_group:
+            aliases = dict([(alias, getattr(alias_group, alias)) for alias in alias_group.ncattrs()])
+
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
-        root_container = Subject(attrs, prefixes=prefixes)
+        root_container = Subject(attrs, prefixes=prefixes, aliases=aliases)
         root_val = bv.ContainerValidation(subject=root_container,
                                           fhandle=fhandle)
         sval.stored_exceptions += root_val.exceptions()
         for name in fhandle.variables:
             sattrs = fhandle.__dict__.copy()
             sattrs.update(fhandle.variables[name].__dict__.copy())
-            var = Subject(sattrs, prefixes=prefixes)
+            var = Subject(sattrs, prefixes=prefixes, aliases=aliases)
             var_val = bv.ArrayValidation(name, fhandle.variables[name], fhandle=fhandle,
                                          subject=var)
             sval.stored_exceptions += var_val.exceptions()

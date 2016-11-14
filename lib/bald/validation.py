@@ -1,4 +1,3 @@
-
 import numpy as np
 import rdflib
 
@@ -85,7 +84,7 @@ class SubjectValidation(Validation):
             if not self.cache.check_uri(uri):
                 msg = '{} is not resolving as a resource (404).'
                 msg = msg.format(uri)
-                exceptions.append(ValueError(msg))
+                exceptions.append(msg)
             return exceptions
 
         for pref, uri in self.subject.prefixes().iteritems():
@@ -95,9 +94,11 @@ class SubjectValidation(Validation):
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
         for attr, value in self.subject.attrs.iteritems():
-            exceptions = _check_uri(self.subject.unpack_uri(attr),
-                                    exceptions)
-            if isinstance(value, str):
+            if isinstance(attr, basestring):
+                att = self.subject.unpack_uri(attr)
+                if self.cache.is_http_uri(att):
+                    exceptions = _check_uri(att, exceptions)
+            if isinstance(value, basestring):
                 val = self.subject.unpack_uri(value)
                 if self.cache.is_http_uri(val):
                     exceptions = _check_uri(val, exceptions)
@@ -106,7 +107,7 @@ class SubjectValidation(Validation):
     def check_attr_domain_range(self, exceptions):
         for attr, value in self.subject.attrs.iteritems():
             uri = self.subject.unpack_uri(attr)
-            if self.cache.check_uri(uri):
+            if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
                 # thus we have a payload
                 # go rdf
                 g = rdflib.Graph()
@@ -166,11 +167,11 @@ class ArrayValidation(SubjectValidation):
     def check_array_references(self, exceptions):
         def _check_ref(parraysubj, parray, carraysubj, carray):
             if not valid_array_reference(parray, carray):
-                msg = ('{} declares a child of {} but the arrays'
-                       'do not conform to the bald array reference'
+                msg = ('{} declares a child of {} but the arrays '
+                       'do not conform to the bald array reference '
                        'rules')
                 msg = msg.format(parraysubj, carraysubj)
-                exceptions.append(ValueError(msg))
+                exceptions.append(msg)
             return exceptions
 
         # if this Array has a bald__references
@@ -184,8 +185,8 @@ class ArrayValidation(SubjectValidation):
             elif 'bald__array' in ref_dset.ncattrs():
                 child_dset = self.fhandle[ref_dset.bald__array]
             else:
-                exceptions.append(ValueError('A bald__Reference must link to '
-                                             'one and only one bald__Array'))
+                exceptions.append('A bald__Reference must link to '
+                                  'one and only one bald__Array')
             # and we impose bald broadcasting rules on it
             parray = np.zeros(self.array.shape)
             carray = np.zeros(child_dset.shape)
