@@ -273,8 +273,9 @@ def resolveValue(name, value, aliasDict):
     Determine if the value associated with the name has an entry in the alias
     dictionary. If it does, build a URL and return it.
     
-    name      [in] A name to attempt to resolve into a hot-link string.
-    value     [in] A value to attempt to resolve into a hot-link string.
+    name      [in] A name associated with the value to attempt to resolve into
+                   a URL.
+    value     [in] A value to attempt to resolve into a URL.
     aliasDict [in] A dictionary of URI patterns keyed by the elements they
                    replace.
     returns        A URL, or None if there was no resolution.
@@ -285,18 +286,23 @@ def resolveValue(name, value, aliasDict):
     result = None
     
     # If the name exists in the alias dictionary, and if the value exists in
-    # the sub-dictionary for the name, create a hot-link string using the
-    # pattern for the value. A wildcard (*) for a value key in the dictionary
-    # matches any value.
+    # the sub-dictionary for the name, create a URL using the pattern for the
+    # value. A wildcard (*) for a value key in the dictionary matches any
+    # value.
     #
     if name in aliasDict['values']:
         subDict = aliasDict['values'][name]
         
+        pattern = None
+        
         if value in subDict:
             pattern = subDict[value]
-            
-            result = makeURL(value, pattern)
+        elif '*' in subDict:
+            pattern = subDict['*']
         
+        if pattern is not None:
+            result = makeURL(value, pattern)
+    
     # Return the resolved name if one was found.
     #
     return result

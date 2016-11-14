@@ -21,7 +21,7 @@
             <li>netcdf {{ filePath|e }} {
                 <ul>
                 {%- if dimensions is defined %}
-                    <li>dimensions: //<a href="#dimensions_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                    <li>dimensions: // <a href="#dimensions_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
                         <ul class="collapse in" id="dimensions_list">
                         {%- for dimension in dimensions %}
                             <li>{{ dimension.name|e }}&nbsp;=&nbsp;{{ dimension.value|e }} ;
@@ -32,10 +32,10 @@
                     </li>
                 {%- endif %}
                 {%- if variables is defined %}
-                    <li>variables: //<a href="#variables_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                    <li>variables: // <a href="#variables_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
                         <ul class="collapse in" id="variables_list">
                         {%- for variable in variables %}
-                        <li id="variable_{{ variable.name }}">{{ variable.type|e }}&nbsp;
+                            <li id="variable_{{ variable.name }}">{{ variable.type|e }}&nbsp;
                             {%- if variable.url is defined -%}
                                 <a href="{{ variable.url }}" target="_blank">{{ variable.name }}</a>
                             {%- else -%}
@@ -43,12 +43,12 @@
                             {%- endif -%}
                             {%- if variable.dimensions is defined -%}
                                 ({{ variable.dimensions|join(', ')|e }})
-                            {%- endif -%}&nbsp;; //
-                            <a href="#variable_{{ variable.name }}_attrs" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                            {%- endif -%}
+                            &nbsp;; // <a href="#variable_{{ variable.name }}_attrs" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
                             {%- if variable.attributes is defined %}
-                            <ul class="collapse in" id="variable_{{ variable.name }}_attrs">
+                                <ul class="collapse in" id="variable_{{ variable.name }}_attrs">
                                 {%- for attribute in variable.attributes %}
-                                <li>{{ variable.name }}:
+                                    <li>{{ variable.name }}:
                                     {%- if attribute.url is defined -%}
                                         <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
                                     {%- else -%}
@@ -68,7 +68,7 @@
                                         {%- endif -%}
                                     {%- endfor -%}
                                     &nbsp;;
-                                </li>
+                                    </li>
                                 {%- endfor %}
                                 </ul>
                             {% endif -%}
@@ -83,25 +83,25 @@
                         <ul class="collapse in" id="attribute_list">
                         {%- for attribute in attributes %}
                             <li>:
-                                {%- if attribute.url is defined -%}
-                                    <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
+                            {%- if attribute.url is defined -%}
+                                <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
+                            {%- else -%}
+                                {{ attribute.name }}
+                            {%- endif -%}
+                            &nbsp;=
+                            {%- for value in attribute.value -%}
+                                &nbsp;
+                                {%- if value.url is defined -%}
+                                    <a href="{{ value.url }}" target="_blank">{{ value.element }}</a>
                                 {%- else -%}
-                                    {{ attribute.name }}
+                                    {{ value.element }}
                                 {%- endif -%}
-                                &nbsp;=
-                                {%- for value in attribute.value -%}
-                                    &nbsp;
-                                    {%- if value.url is defined -%}
-                                        <a href="{{ value.url }}" target="_blank">{{ value.element }}</a>
-                                    {%- else -%}
-                                        {{ value.element }}
-                                    {%- endif -%}
-                                    {{ attribute.type }}
-                                    {%- if not loop.last -%}
-                                        ,
-                                    {%- endif -%}
-                                {%- endfor -%}
-                                &nbsp;;
+                                {{ attribute.type }}
+                                {%- if not loop.last -%}
+                                    ,
+                                {%- endif -%}
+                            {%- endfor -%}
+                            &nbsp;;
                             </li>
                         {%- endfor %}
                         </ul>
