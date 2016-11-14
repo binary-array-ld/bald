@@ -21,7 +21,7 @@
             <li>netcdf {{ filePath|e }} {
                 <ul>
                 {%- if dimensions is defined %}
-                    <li>dimensions: // <a href="#dimensions_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                    <li>dimensions: // <a href="#dimensions_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
                         <ul class="collapse in" id="dimensions_list">
                         {%- for dimension in dimensions %}
                             <li>{{ dimension.name|e }}&nbsp;=&nbsp;{{ dimension.value|e }} ;
@@ -32,7 +32,7 @@
                     </li>
                 {%- endif %}
                 {%- if variables is defined %}
-                    <li>variables: // <a href="#variables_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                    <li>variables: // <a href="#variables_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
                         <ul class="collapse in" id="variables_list">
                         {%- for variable in variables %}
                             <li id="variable_{{ variable.name }}">{{ variable.type|e }}&nbsp;
@@ -44,7 +44,7 @@
                             {%- if variable.dimensions is defined -%}
                                 ({{ variable.dimensions|join(', ')|e }})
                             {%- endif -%}
-                            &nbsp;; // <a href="#variable_{{ variable.name }}_attrs" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                            &nbsp;; // <a href="#variable_{{ variable.name }}_attrs" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
                             {%- if variable.attributes is defined %}
                                 <ul class="collapse in" id="variable_{{ variable.name }}_attrs">
                                 {%- for attribute in variable.attributes %}
@@ -79,7 +79,7 @@
                 {%- endif %}
                 {%- if attributes is defined %}
                     <br>
-                    <li>// global attributes: <a href="#attribute_list" class="btn btn-default btn-xs" data-toggle="collapse">&darr;</a>
+                    <li>// global attributes: <a href="#attribute_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
                         <ul class="collapse in" id="attribute_list">
                         {%- for attribute in attributes %}
                             <li>:
@@ -111,7 +111,13 @@
             </li>
             <li>}</li>
         </ul>
-        <script>
+        <script type='text/javascript'>
+            $(".btn").click(function () {
+                var curText = $(this).text();
+                
+                $(this).text($(this).attr("altText"));
+                $(this).attr("altText", curText);
+            });
         </script>
     </body>
 </html>
