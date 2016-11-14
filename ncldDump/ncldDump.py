@@ -197,7 +197,7 @@ def makeURL(word, pattern):
     '''
     Create a URL from the word and pattern.
     
-    word    [in] The word to build the hot-link around.
+    word    [in] The word to build the URL around.
     pattern [in] The URL pattern to reference.
     returns      A URL.
     '''
@@ -218,7 +218,7 @@ def resolveName(name, aliasDict):
     If not, attempt to resolve the name into a URL using the names
     part of the alias dictionary.
     
-    name      [in] A name to attempt to resolve into a hot-link string.
+    name      [in] A name to attempt to resolve into a URL string.
     aliasDict [in] A dictionary of URI patterns keyed by the elements they
                    replace.
     returns        A URL, or None if there was no resolution.
@@ -243,7 +243,7 @@ def resolveName(name, aliasDict):
             contextPart = nameParts[0]
             namePart    = nameParts[1]
         
-            # If the context exists in the alias dictionary, create a hot-link
+            # If the context exists in the alias dictionary, create a URL
             # string using the pattern for the context and the name part.
             #
             if contextPart in aliasDict['contexts']:
@@ -253,7 +253,7 @@ def resolveName(name, aliasDict):
                 
                 break
         
-        # If the name exists in the alias dictionary, create a hot-link string
+        # If the name exists in the alias dictionary, create a URL string
         # using the pattern for the name.
         #
         if name in aliasDict['names']:
@@ -285,12 +285,21 @@ def resolveValue(name, value, aliasDict):
     #
     result = None
     
+    # Attempt to split the value on '__'.
+    #
+    valueParts = value.split('__')
+    
+    # If there is a context part, resolve the value as a name.
+    #
+    if 2 == len(valueParts):
+        result = resolveName(value, aliasDict)
+    
     # If the name exists in the alias dictionary, and if the value exists in
     # the sub-dictionary for the name, create a URL using the pattern for the
     # value. A wildcard (*) for a value key in the dictionary matches any
     # value.
     #
-    if name in aliasDict['values']:
+    elif name in aliasDict['values']:
         subDict = aliasDict['values'][name]
         
         pattern = None
