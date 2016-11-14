@@ -1,6 +1,8 @@
 {
     "contexts" :
     {
+  		"bald" : "http://binary-array-ld.net/latest/{}",
+  		"rdf"  : "http://www.w3.org/1999/02/22-rdf-syntax-ns#{}"
     },
     "names" :
     {
@@ -99,7 +101,8 @@
         "units"                          : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#units",
         "valid_max"                      : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
         "valid_min"                      : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
-        "valid_range"                    : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions"
+        "valid_range"                    : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
+  		"SDN_ParameterDiscoveryCode"     : "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#{}"
     },
     "values" :
     {
@@ -131,6 +134,10 @@
         "standard_name" :
         {
             "*" : "http://mmisw.org/ont/cf/parameter/{}"
+        },
+  		"SDN_ParameterDiscoveryCode" :
+        {
+		    "BactTaxaAbundSed" : "http://vocab.nerc.ac.uk/collection/P02/current/BAUC/"
         }
     }
 }
