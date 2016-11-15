@@ -14,7 +14,7 @@ install:
   - ENV_NAME='testing'
   - conda create --quiet -n $ENV_NAME python=$TRAVIS_PYTHON_VERSION
   - source activate $ENV_NAME
-  - conda install --quiet --file conda-requirements.txt
+  - conda install --quiet --file requirements.txt
   - conda list
   - conda info -a
   - python setup.py --quiet install

@@ -3,3 +3,4 @@ h5py
 netCDF4
 requests
 rdflib
+jinja2

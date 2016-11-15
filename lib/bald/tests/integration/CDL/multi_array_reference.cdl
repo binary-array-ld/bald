@@ -1,0 +1,41 @@
+netcdf tmpMwXy8U {
+dimensions:
+	pdim0 = 11 ;
+	pdim1 = 17 ;
+variables:
+	int variable1(pdim0, pdim1) ;
+		variable1:bald__references = "location_variable" ;
+		variable1:long_name = "Gerald";
+		variable1:obtype = "metce__SamplingObservation";
+
+        int variable2(pdim0, pdim1) ;
+		variable2:bald__references = "location_variable" ;
+		variable2:long_name = "Imelda";
+		variable2:obtype = "metce__SamplingObservation";
+
+        int pdim0(pdim0) ;
+
+        int pdim1(pdim1) ;
+
+	int location_variable(pdim0, pdim1) ;
+	        location_variable:rdf__type = "bald__Reference";
+		location_variable:bald__array = "location_variable" ;
+		location_variable:bald__references = "location_reference_system" ;
+
+	int location_reference_system;
+	        location_variable:rdf__type = "bald__Reference";
+	        location_reference_system:bald__array = "location_reference_system";
+		location_reference_system:pcode = "4897";
+
+// global attributes:
+		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
+		:bald__isPrefixedBy = "prefix_list" ;
+
+group: prefix_list {
+
+  // group attributes:
+  		:bald__ = "http://binary-array-ld.net/latest/" ;
+		:metce__ = "http://codes.wmo.int/common/observation-type/METCE/2013/" ;
+  		:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+  } // group bald__prefix_list
+}
