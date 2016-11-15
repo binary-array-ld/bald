@@ -138,6 +138,10 @@
   		"SDN_ParameterDiscoveryCode" :
         {
 		    "BactTaxaAbundSed" : "http://vocab.nerc.ac.uk/collection/P02/current/BAUC/"
+        },
+        "units" :
+        {
+            "*" : "https://ncics.org/portfolio/other-resources/udunits2/#{}"
         }
     }
 }

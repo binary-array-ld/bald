@@ -285,32 +285,35 @@ def resolveValue(name, value, aliasDict):
     #
     result = None
     
-    # Attempt to split the value on '__'.
+    # If the value is a string, attempt to resolve it.
     #
-    valueParts = value.split('__')
-    
-    # If there is a context part, resolve the value as a name.
-    #
-    if 2 == len(valueParts):
-        result = resolveName(value, aliasDict)
-    
-    # If the name exists in the alias dictionary, and if the value exists in
-    # the sub-dictionary for the name, create a URL using the pattern for the
-    # value. A wildcard (*) for a value key in the dictionary matches any
-    # value.
-    #
-    elif name in aliasDict['values']:
-        subDict = aliasDict['values'][name]
+    if True == isinstance(value, str) or True == isinstance(value, unicode):
+        # Attempt to split the value on '__'.
+        #
+        valueParts = value.split('__')
         
-        pattern = None
+        # If there is a context part, resolve the value as a name.
+        #
+        if 2 == len(valueParts):
+            result = resolveName(value, aliasDict)
         
-        if value in subDict:
-            pattern = subDict[value]
-        elif '*' in subDict:
-            pattern = subDict['*']
-        
-        if pattern is not None:
-            result = makeURL(value, pattern)
+        # If the name exists in the alias dictionary, and if the value exists
+        # in the sub-dictionary for the name, create a URL using the pattern
+        # for the value. A wildcard (*) for a value key in the dictionary
+        # matches any value.
+        #
+        elif name in aliasDict['values']:
+            subDict = aliasDict['values'][name]
+            
+            pattern = None
+            
+            if value in subDict:
+                pattern = subDict[value]
+            elif '*' in subDict:
+                pattern = subDict['*']
+            
+            if pattern is not None:
+                result = makeURL(value, pattern)
     
     # Return the resolved name if one was found.
     #
@@ -507,7 +510,7 @@ def ncldDump(inputFile, aliasFile, outputFile):
     
     # Add a filePath entry.
     #
-    ncDict['filePath'] = inputFile
+    ncDict['filePath'] = os.path.split(inputFile)[-1]
     
     # Create a jinja environment and template object.
     #
