@@ -3,7 +3,7 @@ netcdf tmpcdltest {
 
 variables:
  gfsmos_process_chain;
- gfsmos_process_chain:OM_Process = ì(step1 step2)î;
+ gfsmos_process_chain:OM_Process = ‚Äú(step1 step2)‚Äù;
 
 
  step1;
@@ -17,7 +17,7 @@ variables:
 
 
 //global attribute
- :process_chain = ìgfsmos_process_chainî;
+ :process_chain = ‚Äúgfsmos_process_chain‚Äù;
  :bald__isPrefixedBy = "prefix_list" ;
  :bald__isAliasedBy = "alias_list" ;
 
@@ -27,7 +27,7 @@ group: alias_list {
 
 // group attributes:
  :DA = "https://codes.nws.noaa.gov/DataAssimilation" ;
- :NWP = ìhttps://codes.nws.noaa.gov/NumericalWeatherPredictionî ;
- :StatPP = ìhttps://codes.nws.noaa.gov/StatisticalPostProcessingî ;
+ :NWP = ‚Äúhttps://codes.nws.noaa.gov/NumericalWeatherPrediction‚Äù ;
+ :StatPP = ‚Äúhttps://codes.nws.noaa.gov/StatisticalPostProcessing‚Äù ;
   } // group bald__alias_list
 }
