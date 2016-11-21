@@ -31,7 +31,7 @@ class Test(BaldTestCase):
             
     def test_process_chain(self):
         with self.temp_filename('.nc') as tfile:
-            cdl_file = os.path.join(self.cdl_path, 'ProcessChain0200.cdl')
+            cdl_file = os.path.join(self.cdl_path, 'ProcessChain0300.cdl')
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
