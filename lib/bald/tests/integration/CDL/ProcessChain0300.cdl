@@ -1,18 +1,18 @@
 netcdf tmpcdltest {
 variables:
         int gfsmos_process_chain;
-        gfsmos_process_chain:OM_Process = “(step1 step2)”;
+        gfsmos_process_chain:OM_Process = "(step1 step2)";
 
 int step1;
         step1:LE_ProcessStep = "NWP/Models/GFS13" ;
         step1:LE_Source = "DA/Methods/GDAS13" ;
-        
+
 int step2 ;
         step2:LE_ProcessStep = "StatPP/Methods/GFSMOS05" ;
         step2:LE_Source = "NWP/Models/GFS13" ;
 
 //global attribute
-        :process_chain = “gfsmos_process_chain”;
+        :process_chain = "gfsmos_process_chain";
         :bald__isPrefixedBy = "prefix_list" ;
         :bald__isAliasedBy = "alias_list" ;
 
@@ -20,7 +20,7 @@ group: alias_list {
 
 // group attributes:
         :DA = "https://codes.nws.noaa.gov/DataAssimilation" ;
-        :NWP = “https://codes.nws.noaa.gov/NumericalWeatherPrediction” ;
-        :StatPP = “https://codes.nws.noaa.gov/StatisticalPostProcessing” ;
+        :NWP = "https://codes.nws.noaa.gov/NumericalWeatherPrediction" ;
+        :StatPP = "https://codes.nws.noaa.gov/StatisticalPostProcessing" ;
   } // group bald__alias_list
 }
