@@ -14,13 +14,14 @@ int step2 ;
 //global attribute
         :process_chain = "gfsmos_process_chain";
         :bald__isPrefixedBy = "prefix_list" ;
-        :bald__isAliasedBy = "alias_list" ;
 
-group: alias_list {
+group: prefix_list {
 
 // group attributes:
         :DA__ = "https://codes.nws.noaa.gov/DataAssimilation" ;
         :NWP__ = "https://codes.nws.noaa.gov/NumericalWeatherPrediction" ;
         :StatPP__ = "https://codes.nws.noaa.gov/StatisticalPostProcessing" ;
-  } // group bald__alias_list
+        :bald__ = "http://binary-array-ld.net/latest/" ;
+      
+  } // group bald__prefix_list
 }
