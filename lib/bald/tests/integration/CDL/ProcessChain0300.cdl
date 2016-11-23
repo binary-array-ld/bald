@@ -14,7 +14,6 @@ int step2 ;
 //global attribute
         :process_chain = "gfsmos_process_chain";
         :bald__isPrefixedBy = "prefix_list" ;
-        :bald__isAliasedBy = "alias_list" ;
 
 group: prefix_list {
 
