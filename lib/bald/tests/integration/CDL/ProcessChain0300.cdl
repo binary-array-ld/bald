@@ -22,5 +22,7 @@ group: prefix_list {
         :DA__ = "https://codes.nws.noaa.gov/DataAssimilation" ;
         :NWP__ = "https://codes.nws.noaa.gov/NumericalWeatherPrediction" ;
         :StatPP__ = "https://codes.nws.noaa.gov/StatisticalPostProcessing" ;
+        :bald__ = "http://binary-array-ld.net/latest/" ;
+      
   } // group bald__prefix_list
 }
