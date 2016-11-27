@@ -4,6 +4,8 @@ import re
 import h5py
 import jinja2
 import netCDF4
+import numpy as np
+import rdflib
 import requests
 
 import bald.validation as bv
@@ -244,13 +246,14 @@ class HttpCache(object):
 
 
 class Subject(object):
-    def __init__(self, attrs=None, prefixes=None, aliases=None,
-                 rdftype='bald__Subject'):
+    _rdftype = 'bald__Subject'
+    def __init__(self, identity, attrs=None, prefixes=None, aliases=None):
         """
         A subject of metadata statements.
 
         attrs: an dictionary of key value pair attributes
         """
+        self.identity = identity
         if attrs is None:
             attrs = {}
         if prefixes is None:
@@ -258,17 +261,8 @@ class Subject(object):
         if aliases is None:
             aliases = {}
         self.attrs = attrs
-        if 'rdf__type' not in attrs:
-            attrs['rdf__type'] = set([rdftype])
-        elif rdftype not in attrs['rdf__type']:
-            if isinstance(attrs['rdf__type'], list):
-                attrs['rdf__type'].append(rdftype)
-            elif isinstance(attrs['rdf__type'], set):
-                attrs['rdf__type'].add(rdftype)
-            else:
-                attrs['rdf__type'] = set((attrs['rdf__type'], rdftype))
-        elif isinstance(attrs['rdf__type'], basestring):
-            attrs['rdf__type'] = set([attrs['rdf__type']])
+        
+        self.rdf__type = self._rdftype
 
         self.aliases = aliases
         self._prefixes = prefixes
@@ -278,10 +272,29 @@ class Subject(object):
         self._http_uri_prefix = re.compile('{}/|#'.format(_http_p))
 
     def __str__(self):
-        return '{}: {}'.format(type(self), self.attrs)
+        return '{}:{}: {}'.format(self.identity, type(self), self.attrs)
 
     def __repr__(self):
         return str(self)
+
+    def __setattr__(self, attr, value):
+        reserved_attrs = ['identity', 'prefixes', '_prefixes', '_prefix_suffix',
+                          '_http_uri_prefix', '_http_uri', 'aliases', 'attrs', '_rdftype']
+        if attr in reserved_attrs:
+            object.__setattr__(self, attr, value)
+        else:
+            if attr not in self.attrs:
+                self.attrs[attr] = set([value])
+            elif value not in self.attrs[attr]:
+                if isinstance(self.attrs[attr], list):
+                    self.attrs[attr].append(value)
+                elif isinstance(self.attrs[attr], set):
+                    self.attrs[attr].add(value)
+                else:
+                    self.attrs[attr] = set((self.attrs[attr], value))
+            elif isinstance(self.attrs[attr], basestring):
+                self.attrs[attr] = set([self.attrs[attr]])
+
 
     def __getattr__(self, attr):
         if attr not in self.attrs:
@@ -301,6 +314,11 @@ class Subject(object):
         return prefixes
 
     def unpack_uri(self, astring):
+        """
+        Return a URI for the given input string, or return the astring unchanged if
+        none is available.
+
+        """
         result = astring
         if isinstance(astring, basestring) and self._prefix_suffix.match(astring):
             prefix, suffix = self._prefix_suffix.match(astring).groups()
@@ -316,7 +334,21 @@ class Subject(object):
     def link_template(self):
         return '<a xlink:href="{url}" xlink:show=new text-decoration="underline">{key}</a>'
 
-    def graph_elem_attrs(self, remaining_attrs):
+    def graph_elems(self):
+        instances = []
+        links = []
+        remaining_attrs = self.attrs.copy()
+        structural_attrs = ['rdf__type']
+        for att in structural_attrs:
+            if att in remaining_attrs:
+                _ = remaining_attrs.pop(att)
+
+        instances.append(self._graph_elem_attrs(remaining_attrs))
+
+        return instances, links
+
+
+    def _graph_elem_attrs(self, remaining_attrs):
         attrs = []
         for attr in remaining_attrs:
             if is_http_uri(self.unpack_uri(attr)):
@@ -355,12 +387,16 @@ class Subject(object):
         type_links = []
         for rdftype in self.rdf__type:
             type_links.append(atype.format(url=self.unpack_uri(rdftype), key=rdftype))
-        avar = avar.format(var=self.attrs['@id'], type=', '.join(type_links), attrs=attrs)
+        avar = avar.format(var=self.identity, type=', '.join(type_links), attrs=attrs)
 
         return avar
 
 
     def viewgraph(self):
+        """
+        Return html to render the Subject as a graph diagram, using the JointJS engine.
+
+        """
 
         instances, links = self.graph_elems()
         ascript = '\n'.join([_network_js(), '\n'.join(instances), '\n'.join(links),  _network_js_close()])
@@ -369,21 +405,41 @@ class Subject(object):
 
         return html
 
+    def rdfnode(self, graph):
+        selfnode = rdflib.URIRef(self.identity)
+        for attr in self.attrs:
+            objs = self.attrs[attr]
+            if not (isinstance(objs, set) or isinstance(objs, list)):
+                objs = set([objs])
+            for obj in objs:
+                if isinstance(obj, Subject):
+                    rdfobj = rdflib.URIRef(obj.identity)
+                elif is_http_uri(self.unpack_uri(obj)):
+                    rdfobj = rdflib.URIRef(self.unpack_uri(obj))
+                else:
+                    rdfobj = rdflib.Literal(obj)
+                graph.add((selfnode, rdflib.URIRef(self.unpack_uri(attr)), rdfobj))
+                if isinstance(obj, Subject):
+                    obj_ref = rdflib.URIRef(obj.identity)
+                    if (obj_ref, None, None) not in graph:
+                        graph = obj.rdfnode(graph)
+
+        return graph
+
     def rdfgraph(self):
+        """
+        Return an rdflib.Graph representing the Subject.
+
+        """
         graph = rdflib.Graph()
-        
+        graph.bind('bald', 'http://binary-array-ld.net/latest/')
+        graph = self.rdfnode(graph)
         
         return graph
         
 
 class Array(Subject):
-    def __init__(self, attrs=None, prefixes=None, aliases=None,
-                 shape=None):
-        self.shape = shape
-        rdftype = 'bald__Array'
-        super(Array, self).__init__(attrs, prefixes, aliases, rdftype)
-        if shape:
-            self.attrs['bald__shape'] = self.shape
+    _rdftype = 'bald__Array'
 
     @property
     def array_references(self):
@@ -393,22 +449,22 @@ class Array(Subject):
         instances = []
         links = []
         remaining_attrs = self.attrs.copy()
-        structural_attrs = ['@id', 'rdf__type']
+        structural_attrs = ['rdf__type']
         for att in structural_attrs:
             if att in remaining_attrs:
                 _ = remaining_attrs.pop(att)
-        instances.append(self.graph_elem_attrs(remaining_attrs))
+        instances.append(self._graph_elem_attrs(remaining_attrs))
 
         if hasattr(self, 'bald__references'):
             for aref in self.bald__references:
                 alink = "link({var}, {target}, 'bald__references');"
-                alink = alink.format(var=self.attrs['@id'], target=aref.attrs.get('@id', ''))
+                alink = alink.format(var=self.identity, target=aref.identity)
                 links.append(alink)
 
         if hasattr(self, 'bald__array'):
             for aref in self.bald__array:
                 alink = "link({var}, {target}, 'bald__array', 'bottom');"
-                alink = alink.format(var=self.attrs['@id'], target=aref.attrs.get('@id', ''))
+                alink = alink.format(var=self.identity, target=aref.identity)
                 links.append(alink)
 
 
@@ -416,30 +472,27 @@ class Array(Subject):
 
 
 class Container(Subject):
-    def __init__(self, attrs=None, prefixes=None, aliases=None,
-                 shape=None):
-        rdftype = 'bald__Container'
-        super(Container, self).__init__(attrs, prefixes, aliases, rdftype)
+    _rdftype = 'bald__Container'
 
     def graph_elems(self):
         instances = []
         links = []
 
         remaining_attrs = self.attrs.copy()
-        structural_attrs = ['@id', 'rdf__type',
+        structural_attrs = ['rdf__type',
                             'bald__isAliasedBy', 'bald__isPrefixedBy']
         for att in structural_attrs:
             if att in remaining_attrs:
                 _ = remaining_attrs.pop(att)
 
-        instances.append(self.graph_elem_attrs(remaining_attrs))
+        instances.append(self._graph_elem_attrs(remaining_attrs))
 
         for member in self.bald__contains:
             new_inst, new_links = member.graph_elems()
             instances = instances + new_inst
             links = links + new_links
             alink = "link({var}, {target}, 'bald__contains', 'top', true);"
-            alink = alink.format(var=self.attrs['@id'], target=member.attrs['@id'])
+            alink = alink.format(var=self.identity, target=member.identity)
             links.append(alink)
 
         return instances, links
@@ -472,7 +525,7 @@ def load(afilepath):
     finally:
         f.close()
 
-def load_netcdf(afilepath):
+def load_netcdf(afilepath, uri=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
@@ -499,9 +552,12 @@ def load_netcdf(afilepath):
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
-        # It would be nice to use the URI of the file if it is known. 
-        attrs['@id'] = 'root'
-        root_container = Container(attrs, prefixes=prefixes,
+        # It would be nice to use the URI of the file if it is known.
+        if uri is not None:
+            identity = uri
+        else:
+            identity = 'root'
+        root_container = Container(identity, attrs, prefixes=prefixes,
                                    aliases=aliases)
         root_container.attrs['bald__contains'] = []
         file_variables = {}
@@ -509,8 +565,7 @@ def load_netcdf(afilepath):
 
             sattrs = fhandle.variables[name].__dict__.copy()
             # inconsistent use of '/'; fix it
-            # sattrs['@id'] = '/{}'.format(name)
-            sattrs['@id'] = '{}'.format(name)
+            identity = name
 
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
@@ -518,8 +573,11 @@ def load_netcdf(afilepath):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
 
-            var = Array(sattrs, prefixes=prefixes, aliases=aliases,
-                        shape=fhandle.variables[name].shape)
+            if fhandle.variables[name].shape:
+                sattrs['bald__shape'] = fhandle.variables[name].shape
+                var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
+            else:
+                var = Subject(identity, sattrs, prefixes=prefixes, aliases=aliases)
             root_container.attrs['bald__contains'].append(var)
             file_variables[name] = var
                 
@@ -590,43 +648,83 @@ def validate(root_container):
 
     return sval
 
-def load_hdf5(afilepath):
+def careful_update(adict, bdict):
+    """
+    Carefully updates a dictionary with another dictionary, raising a
+    ValueError if keys are shared.
+    
+    """
+    if not set(adict.keys()).isdisjoint(set(bdict.keys())):
+        raise ValueError('adict shares keys with bdict')
+    else:
+        adict.update(bdict)
+        return adict
+
+def load_hdf5(afilepath, uri=None):
     with load(afilepath) as fhandle:
         # unused?
         cache = {}
-        prefix_group = fhandle.attrs.get('bald__isPrefixedBy')
-        prefixes = {}
-        if prefix_group:
-            prefixes = dict(fhandle[prefix_group].attrs)
-        alias_group = fhandle.attrs.get('bald__isAliasedBy')
-        aliases = {}
-        if alias_group:
-            aliases = dict(fhandle[alias_group].attrs)
-        attrs = dict(fhandle.attrs)
-        attrs['@id'] = 'root'
-        root_container = Container(attrs, prefixes=prefixes, aliases=aliases)
-
-        root_container.attrs['bald__contains'] = []
-
-        # iterate through the datasets
-        for name, dataset in fhandle.items():
-            if hasattr(dataset, 'shape'):
-                sattrs = dict(dataset.attrs)
-                sattrs['@id'] = dataset.name
-                ref = sattrs.get('bald__references', '')
-                if ref:
-                    ref_dset = fhandle[ref]
-                    child_dset = fhandle[ref_dset.attrs.get('bald__array',
-                                                            None)]
-                    if child_dset:
-                        cattrs = dict(child_dset.attrs)
-                        cattrs['@id'] = child_dset.name
-                        carray = Array(cattrs, prefixes, aliases,
-                                       child_dset.shape)
-                        sattrs['bald__references'] = [carray]
-                dset = Array(sattrs, prefixes, aliases, dataset.shape)
-                root_container.attrs['bald__contains'].append(dset)
-            
+        root_container, file_variables = _hdf_group(fhandle, uri=uri)
+        _hdf_references(fhandle, root_container, file_variables)
     return root_container
+
+def _hdf_group(fhandle, id='root', uri=None, prefixes=None, aliases=None):
+
+    prefix_group = fhandle.attrs.get('bald__isPrefixedBy')
+    if prefixes is None:
+        prefixes = {}
+    if prefix_group:
+        prefixes = careful_update(prefixes, dict(fhandle[prefix_group].attrs))
+    alias_group = fhandle.attrs.get('bald__isAliasedBy')
+    if aliases is None:
+        aliases = {}
+    if alias_group:
+        aliases = careful_update(aliases, dict(fhandle[alias_group].attrs))
+    attrs = dict(fhandle.attrs)
+    if uri is not None:
+        identity = uri + id
+    else:
+        identity = id
+    root_container = Container(identity, attrs, prefixes=prefixes, aliases=aliases)
+
+    root_container.attrs['bald__contains'] = []
+
+    file_variables = {}
+    # iterate through the datasets and groups
+    for name, dataset in fhandle.items():
+        # skip pattern
+        skip = ((prefix_group and dataset == fhandle[prefix_group]) or
+                (alias_group and dataset == fhandle[alias_group]))
+        if not skip:
+            if isinstance(dataset, h5py._hl.group.Group):
+                new_cont, new_fvars = _hdf_group(dataset, name, uri, prefixes, aliases)
+                root_container.attrs['bald__contains'].append(new_cont)
+                file_variables = careful_update(file_variables, new_fvars)
+            #if hasattr(dataset, 'shape'):
+            elif isinstance(dataset, h5py._hl.dataset.Dataset):
+                sattrs = dict(dataset.attrs)
+                sattrs['bald__shape'] = dataset.shape
+                dset = Array(name, sattrs, prefixes, aliases)
+                root_container.attrs['bald__contains'].append(dset)
+                file_variables[dataset.name] = dset
+    return root_container, file_variables
+
+def _hdf_references(fhandle, root_container, file_variables):
+    for member in root_container.bald__contains:
+        for attr in member.attrs:
+            vals = member.attrs[attr]
+            if not isinstance(vals, np.ndarray):
+                vals = [vals]
+            new_vals = set(())
+            for val in vals:
+                if isinstance(val, h5py.h5r.Reference):
+                    new_vals.add(file_variables[fhandle[val].name])
+            if new_vals:
+                member.attrs[attr] = new_vals
+        if isinstance(member, Container):
+            _hdf_references(fhandle, member, file_variables)
+
+
+
 
     
