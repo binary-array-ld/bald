@@ -179,30 +179,30 @@ class ArrayValidation(SubjectValidation):
         #                           'one and only one bald__Array')
         #     # and we impose bald broadcasting rules on it
         parray = None
-        if self.array.bald__shape:
+        if hasattr(self.array, 'bald__shape') and self.array.bald__shape:
             parray = np.zeros(self.array.bald__shape)
         for bald_array in self.array.array_references:
             parraysubj = 'p'
             carraysubj = 'c'
             carray = None
-            if bald_array.bald__shape:
+            if hasattr(bald_array, 'bald__shape') and bald_array.bald__shape:
                 carray = np.zeros(bald_array.bald__shape)
-            if not valid_array_reference(parray, carray):
-                msg = ('{} declares a child of {} but the arrays '
-                       'do not conform to the bald array reference '
-                       'rules')
-                msg = msg.format(parraysubj, carraysubj)
-                exceptions.append(msg)
-            if parray is None and carray is not None:
-                msg = ('{} declares a child of {} but the parent array '
-                       'is not an extensive array')
-                msg = msg.format(parraysubj, carraysubj)
-                exceptions.append(msg)
-            if carray is None and parray is not None:
-                msg = ('{} declares a child of {} but the child array '
-                       'is not an extensive array')
-                msg = msg.format(parraysubj, carraysubj)
-                exceptions.append(msg)
+                if not valid_array_reference(parray, carray):
+                    msg = ('{} declares a child of {} but the arrays '
+                           'do not conform to the bald array reference '
+                           'rules')
+                    msg = msg.format(parraysubj, carraysubj)
+                    exceptions.append(msg)
+                if parray is None and carray is not None:
+                    msg = ('{} declares a child of {} but the parent array '
+                           'is not an extensive array')
+                    msg = msg.format(parraysubj, carraysubj)
+                    exceptions.append(msg)
+                if carray is None and parray is not None:
+                    msg = ('{} declares a child of {} but the child array '
+                           'is not an extensive array')
+                    msg = msg.format(parraysubj, carraysubj)
+                    exceptions.append(msg)
 
         return exceptions
 

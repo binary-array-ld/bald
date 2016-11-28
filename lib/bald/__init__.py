@@ -184,7 +184,6 @@ Composition = joint.dia.Link.extend({
      var cell = new aclass({ 
          source: { id: source.id },
          target: { id: target.id },
-         labels: [{ position: .5, attrs: { text: { text: label || '', 'font-weight': 'bold' } } }],
 
          router: { 
                 name: 'manhattan', 
@@ -399,6 +398,8 @@ class Subject(object):
         """
 
         instances, links = self.graph_elems()
+        links.sort()
+        instances.sort()
         ascript = '\n'.join([_network_js(), '\n'.join(instances), '\n'.join(links),  _network_js_close()])
 
         html = jinja2.Environment().from_string(_graph_html()).render(title='agraph', script=ascript)
@@ -627,24 +628,26 @@ def validate_hdf5(afilepath):
     root_container = load_hdf5(afilepath)
     return validate(root_container)
 
-def validate(root_container):
+def validate(root_container, sval=None):
     """
     Validate a Container with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
 
     """
-    sval = bv.StoredValidation()
+    if sval is None:
+        sval = bv.StoredValidation()
 
     root_val = bv.ContainerValidation(subject=root_container)
     sval.stored_exceptions += root_val.exceptions()
     for subject in root_container.attrs.get('bald__contains', []):
-        
-        # a dataset's attribute collection inherits from and
-        # specialises it's container's attrbiute collection
-        # this only helps with prefixes, afaik, hence:
-        # #
-        array_val = bv.ArrayValidation(subject)
-        sval.stored_exceptions += array_val.exceptions()
+        if isinstance(subject, Array):
+            array_val = bv.ArrayValidation(subject)
+            sval.stored_exceptions += array_val.exceptions()
+        elif isinstance(subject, Container):
+            sval = validate(subject, sval=sval)
+        elif isinstance(subject, Subject):
+            subject_val = bv.SubjectValidation(subject)
+            sval.stored_exceptions += subject_val.exceptions()
 
     return sval
 
