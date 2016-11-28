@@ -1,5 +1,6 @@
 import numpy as np
 import rdflib
+import six
 
 import bald
 
@@ -86,25 +87,25 @@ class SubjectValidation(Validation):
                 exceptions.append(msg)
             return exceptions
 
-        for pref, uri in self.subject.prefixes().iteritems():
+        for pref, uri in self.subject.prefixes().items():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
-        for alias, uri in self.subject.aliases.iteritems():
+        for alias, uri in self.subject.aliases.items():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
-        for attr, value in self.subject.attrs.iteritems():
-            if isinstance(attr, basestring):
+        for attr, value in self.subject.attrs.items():
+            if isinstance(attr, six.string_types):
                 att = self.subject.unpack_uri(attr)
                 if self.cache.is_http_uri(att):
                     exceptions = _check_uri(att, exceptions)
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 val = self.subject.unpack_uri(value)
                 if self.cache.is_http_uri(val):
                     exceptions = _check_uri(val, exceptions)
         return exceptions
 
     def check_attr_domain_range(self, exceptions):
-        for attr, value in self.subject.attrs.iteritems():
+        for attr, value in self.subject.attrs.items():
             uri = self.subject.unpack_uri(attr)
             if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
                 # thus we have a payload

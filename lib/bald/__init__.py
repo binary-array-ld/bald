@@ -7,6 +7,7 @@ import netCDF4
 import numpy as np
 import rdflib
 import requests
+import six
 
 import bald.validation as bv
 
@@ -214,7 +215,7 @@ for (var i = 0; i < instance_list.length; i++) {
 
 
 def is_http_uri(item):
-    return isinstance(item, basestring) and (item.startswith('http://') or item.startswith('https://'))
+    return isinstance(item, six.string_types) and (item.startswith('http://') or item.startswith('https://'))
 
 
 class HttpCache(object):
@@ -225,7 +226,7 @@ class HttpCache(object):
         self.cache = {}
 
     def is_http_uri(self, item):
-        return isinstance(item, basestring) and (item.startswith('http://') or item.startswith('https://'))
+        return isinstance(item, six.string_types) and (item.startswith('http://') or item.startswith('https://'))
 
     def __getitem__(self, item):
 
@@ -291,7 +292,7 @@ class Subject(object):
                     self.attrs[attr].add(value)
                 else:
                     self.attrs[attr] = set((self.attrs[attr], value))
-            elif isinstance(self.attrs[attr], basestring):
+            elif isinstance(self.attrs[attr], six.string_types):
                 self.attrs[attr] = set([self.attrs[attr]])
 
 
@@ -303,7 +304,7 @@ class Subject(object):
 
     def prefixes(self):
         prefixes = {}
-        for key, value in self._prefixes.iteritems():
+        for key, value in self._prefixes.items():
             if key.endswith('__') and self._http_uri_prefix.match(value):
                 pref = key.rstrip('__')
                 if pref in prefixes:
@@ -319,13 +320,13 @@ class Subject(object):
 
         """
         result = astring
-        if isinstance(astring, basestring) and self._prefix_suffix.match(astring):
+        if isinstance(astring, six.string_types) and self._prefix_suffix.match(astring):
             prefix, suffix = self._prefix_suffix.match(astring).groups()
             if prefix in self.prefixes():
                 if self._http_uri.match(self.prefixes()[prefix]):
                     result = astring.replace('{}__'.format(prefix),
                                              self.prefixes()[prefix])
-        elif isinstance(astring, basestring) and astring in self.aliases:
+        elif isinstance(astring, six.string_types) and astring in self.aliases:
             result = self.aliases[astring]
         return result
 
@@ -356,7 +357,7 @@ class Subject(object):
             else:
                 kstr = '{key}: '.format(key=attr)
             vals = remaining_attrs[attr]
-            if isinstance(vals, basestring):
+            if isinstance(vals, six.string_types):
                 if is_http_uri(self.unpack_uri(vals)):
                     vstr = self.link_template
                     vstr = vstr.format(url=self.unpack_uri(vals), key=vals)
@@ -376,6 +377,7 @@ class Subject(object):
                         vstrlist.append(vstr)
                 if vstrlist == []:
                     vstrlist = ['|']
+                vstrlist.sort()
                 vstr = ', '.join(vstrlist)
 
             attrs.append("'{}'".format(kstr + vstr))
@@ -386,6 +388,7 @@ class Subject(object):
         type_links = []
         for rdftype in self.rdf__type:
             type_links.append(atype.format(url=self.unpack_uri(rdftype), key=rdftype))
+        type_links.sort()
         avar = avar.format(var=self.identity, type=', '.join(type_links), attrs=attrs)
 
         return avar

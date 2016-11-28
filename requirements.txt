@@ -4,3 +4,4 @@ netCDF4
 requests
 rdflib
 jinja2
+six
