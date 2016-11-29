@@ -183,11 +183,11 @@ class ArrayValidation(SubjectValidation):
         if hasattr(self.array, 'bald__shape') and self.array.bald__shape:
             parray = np.zeros(self.array.bald__shape)
         for bald_array in self.array.array_references:
-            parraysubj = 'p'
-            carraysubj = 'c'
+            parraysubj = self.array.identity
             carray = None
             if hasattr(bald_array, 'bald__shape') and bald_array.bald__shape:
                 carray = np.zeros(bald_array.bald__shape)
+                carraysubj = bald_array.identity
                 if not valid_array_reference(parray, carray):
                     msg = ('{} declares a child of {} but the arrays '
                            'do not conform to the bald array reference '
