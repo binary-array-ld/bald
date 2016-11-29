@@ -43,10 +43,18 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
-            xs = '{} is not resolving as a resource (404).'
-            expected = [xs.format('http://qudt.org/vocab/unit#Meter'),
-                        xs.format('http://qudt.org/vocab/unit#MeterPerSecond'),
-                        xs.format('http://qudt.org/vocab/unit#MeterPerSecond'),
-                        xs.format('http://qudt.org/vocab/unit#DegreeCelsius')]
+            exns.sort()
+            expected = ['http://qudt.org/vocab/unit#Meter is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'http://qudt.org/vocab/unit#DegreeCelsius is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules']
+            expected.sort()
             self.assertTrue(not validation.is_valid() and exns == expected,
                             msg='{} \n!= \n{}'.format(exns, expected))
