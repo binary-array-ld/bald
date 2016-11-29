@@ -29,6 +29,14 @@ class Test(BaldTestCase):
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
 
+    def test_process_chain(self):
+        with self.temp_filename('.nc') as tfile:
+            cdl_file = os.path.join(self.cdl_path, 'ProcessChain0300.cdl')
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            validation = bald.validate_netcdf(tfile)
+            exns = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
+
     def test_ereef(self):
         with self.temp_filename('.nc') as tfile:
             cdl_file = os.path.join(self.cdl_path, 'ereefs-gbr4_ncld.cdl')
@@ -37,7 +45,4 @@ class Test(BaldTestCase):
             exns = validation.exceptions()
             #self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
             self.assertFalse(validation.is_valid(), msg='AssertionError: [\'http://qudt.org/vocab/unit#Meter is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#DegreeCelsius is not resolving as a resource (404).\']. Also {} != []'.format(exns))
-
-
-if __name__ == '__main__':
-    unittest.main()
+            
