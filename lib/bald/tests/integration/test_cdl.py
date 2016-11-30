@@ -35,7 +35,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
-            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
+            self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
 
     def test_ereef(self):
         with self.temp_filename('.nc') as tfile:
@@ -43,6 +43,18 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
-            #self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
-            self.assertFalse(validation.is_valid(), msg='AssertionError: [\'http://qudt.org/vocab/unit#Meter is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).\', \'http://qudt.org/vocab/unit#DegreeCelsius is not resolving as a resource (404).\']. Also {} != []'.format(exns))
-            
+            exns.sort()
+            expected = ['http://qudt.org/vocab/unit#Meter is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'http://qudt.org/vocab/unit#MeterPerSecond is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'http://qudt.org/vocab/unit#DegreeCelsius is not resolving as a resource (404).',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules',
+                        'p declares a child of c but the arrays do not conform to the bald array reference rules']
+            expected.sort()
+            self.assertTrue(not validation.is_valid() and exns == expected,
+                            msg='{} \n!= \n{}'.format(exns, expected))

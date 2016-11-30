@@ -1,0 +1,20 @@
+@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<root> a bald:Container ;
+    bald:contains <child_variable>,
+        <parent_variable> ;
+    bald:isPrefixedBy "prefix_list" .
+
+<parent_variable> a bald:Array ;
+    bald:references <child_variable> ;
+    bald:shape "(11, 17)" .
+
+<child_variable> a bald:Array,
+        bald:Reference ;
+    bald:array <child_variable> ;
+    bald:shape "(11, 17)" .
+

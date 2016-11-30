@@ -1,5 +1,6 @@
 import numpy as np
 import rdflib
+import six
 
 import bald
 
@@ -25,7 +26,7 @@ def valid_array_reference(parray, carray, broadcast_shape=None):
     # http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
     # http://scipy.github.io/old-wiki/pages/EricsBroadcastingDoc
 
-    result = True
+    result = True    
     # try numpy broadcast
     try:
         _ = np.broadcast(parray, carray)
@@ -58,9 +59,8 @@ class StoredValidation(Validation):
 
 
 class SubjectValidation(Validation):
-    def __init__(self, subject, fhandle, httpcache=None):
+    def __init__(self, subject, httpcache=None):
         self.subject = subject
-        self.fhandle = fhandle
         if isinstance(httpcache, bald.HttpCache):
             self.cache = httpcache
         else:
@@ -87,25 +87,25 @@ class SubjectValidation(Validation):
                 exceptions.append(msg)
             return exceptions
 
-        for pref, uri in self.subject.prefixes().iteritems():
+        for pref, uri in self.subject.prefixes().items():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
-        for alias, uri in self.subject.aliases.iteritems():
+        for alias, uri in self.subject.aliases.items():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
-        for attr, value in self.subject.attrs.iteritems():
-            if isinstance(attr, basestring):
+        for attr, value in self.subject.attrs.items():
+            if isinstance(attr, six.string_types):
                 att = self.subject.unpack_uri(attr)
                 if self.cache.is_http_uri(att):
                     exceptions = _check_uri(att, exceptions)
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 val = self.subject.unpack_uri(value)
                 if self.cache.is_http_uri(val):
                     exceptions = _check_uri(val, exceptions)
         return exceptions
 
     def check_attr_domain_range(self, exceptions):
-        for attr, value in self.subject.attrs.iteritems():
+        for attr, value in self.subject.attrs.items():
             uri = self.subject.unpack_uri(attr)
             if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
                 # thus we have a payload
@@ -155,43 +155,55 @@ class ContainerValidation(SubjectValidation):
 
 class ArrayValidation(SubjectValidation):
 
-    def __init__(self, name, array, **kwargs):
+    def __init__(self, array, httpcache=None):
         self.array = array
-        self.name = name
-        super(ArrayValidation, self).__init__(**kwargs)
+        super(ArrayValidation, self).__init__(array, httpcache)
 
     def _extra_exceptions(self, exceptions):
         exceptions = self.check_array_references(exceptions)
         return exceptions
 
     def check_array_references(self, exceptions):
-        def _check_ref(parraysubj, parray, carraysubj, carray):
-            if not valid_array_reference(parray, carray):
-                msg = ('{} declares a child of {} but the arrays '
-                       'do not conform to the bald array reference '
-                       'rules')
-                msg = msg.format(parraysubj, carraysubj)
-                exceptions.append(msg)
-            return exceptions
 
         # if this Array has a bald__references
-        # not implemented yet: and it's a singleton
-        if self.subject.attrs.get('bald__references', ''):
-            # then it must have a bald_array
-            ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
-            child_dset = None
-            if (hasattr(ref_dset, 'attrs')):
-                child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
-            elif 'bald__array' in ref_dset.ncattrs():
-                child_dset = self.fhandle[ref_dset.bald__array]
-            else:
-                exceptions.append('A bald__Reference must link to '
-                                  'one and only one bald__Array')
-            # and we impose bald broadcasting rules on it
-            parray = np.zeros(self.array.shape)
-            carray = np.zeros(child_dset.shape)
-
-            exceptions = _check_ref('p', parray, 'c', carray)
+        # # not implemented yet: and it's a singleton
+        # if refs:
+        #     # then it must have a bald_array
+        #     ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
+        #     child_dset = None
+        #     if (hasattr(ref_dset, 'attrs')):
+        #         child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
+        #     elif 'bald__array' in ref_dset.ncattrs():
+        #         child_dset = self.fhandle[ref_dset.bald__array]
+        #     else:
+        #         exceptions.append('A bald__Reference must link to '
+        #                           'one and only one bald__Array')
+        #     # and we impose bald broadcasting rules on it
+        parray = None
+        if hasattr(self.array, 'bald__shape') and self.array.bald__shape:
+            parray = np.zeros(self.array.bald__shape)
+        for bald_array in self.array.array_references:
+            parraysubj = 'p'
+            carraysubj = 'c'
+            carray = None
+            if hasattr(bald_array, 'bald__shape') and bald_array.bald__shape:
+                carray = np.zeros(bald_array.bald__shape)
+                if not valid_array_reference(parray, carray):
+                    msg = ('{} declares a child of {} but the arrays '
+                           'do not conform to the bald array reference '
+                           'rules')
+                    msg = msg.format(parraysubj, carraysubj)
+                    exceptions.append(msg)
+                if parray is None and carray is not None:
+                    msg = ('{} declares a child of {} but the parent array '
+                           'is not an extensive array')
+                    msg = msg.format(parraysubj, carraysubj)
+                    exceptions.append(msg)
+                if carray is None and parray is not None:
+                    msg = ('{} declares a child of {} but the child array '
+                           'is not an extensive array')
+                    msg = msg.format(parraysubj, carraysubj)
+                    exceptions.append(msg)
 
         return exceptions
 
