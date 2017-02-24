@@ -285,10 +285,28 @@ def resolveValue(name, value, aliasDict):
     #
     result = None
     
-    # If the value is a string, attempt to resolve it.
+    # Breakout context
     #
-    if True == isinstance(value, str) or True == isinstance(value, unicode):
-        # Attempt to split the value on '__'.
+    done = False
+    
+    while False == done:
+        done = True
+        
+        # If the value is not a string, get a string representation.
+        #
+        if False == isinstance(value, str) and False == isinstance(value, unicode):
+            value = str(value)
+        
+        # If the value starts with 'http', interpret the entire string as a
+        # resolved URL.
+        #
+        if value[0:4] == 'http':
+            result = value
+            
+            break
+        
+        # Attempt to split the value on '__' to see if there is a context
+        # part to the value.
         #
         valueParts = value.split('__')
         
@@ -296,13 +314,15 @@ def resolveValue(name, value, aliasDict):
         #
         if 2 == len(valueParts):
             result = resolveName(value, aliasDict)
+            
+            break
         
         # If the name exists in the alias dictionary, and if the value exists
         # in the sub-dictionary for the name, create a URL using the pattern
         # for the value. A wildcard (*) for a value key in the dictionary
         # matches any value.
         #
-        elif name in aliasDict['values']:
+        if name in aliasDict['values']:
             subDict = aliasDict['values'][name]
             
             pattern = None
@@ -314,6 +334,8 @@ def resolveValue(name, value, aliasDict):
             
             if pattern is not None:
                 result = makeURL(value, pattern)
+            
+            break
     
     # Return the resolved name if one was found.
     #
@@ -342,39 +364,33 @@ def parseAttributes(ncObj, aliasDict):
         attrValue = ncObj.getncattr(attrName)
         attrType  = parseType(attrValue)
         
-        # If the value is not an array, make it a list.
+        # If the value is an array, make it a list.
         #
-        if False == isinstance(attrValue, numpy.ndarray):
-            attrValue = [attrValue]
+        if True == isinstance(attrValue, numpy.ndarray):
+            attrValue = list(attrValue)
             
         # Get the URL (if any) for the attribute.
         #
         nameURL = resolveName(attrName, aliasDict)
         
-        # Construct a list of attribute value and URL pairs.
+        # Get the URL (if any) for the value.
         #
-        valueList = []
+        valueURL = resolveValue(attrName, attrValue, aliasDict)
         
-        for value in attrValue:
-            # Get the URL (if any) for the value.
-            #
-            valueURL = resolveValue(attrName, value, aliasDict)
-            
-            # If the value is a string, wrap it in '"' characters.
-            #
-            if True == isinstance(value, str) or True == isinstance(value, unicode):
-                value = '"' + str(value) + '"'
-            
-            valueEntry = { 'element' : value }
+        # If the value is a string, wrap it in '"' characters.
+        #
+        if True == isinstance(attrValue, str) or True == isinstance(attrValue, unicode):
+            attrValue = '"' + str(attrValue) + '"'
+        
+        valueEntry = { 'element' : attrValue }
 
-            if valueURL is not None:
-                valueEntry['url'] = valueURL
-            
-            valueList.append(valueEntry)
+        if valueURL is not None:
+            valueEntry['url'] = valueURL
+        
         
         # Build the attribute entry. If there is a name URL add it.
         #
-        attrEntry = {'name' : attrName, 'value' : valueList, 'type' : attrType}
+        attrEntry = {'name' : attrName, 'value' : valueEntry, 'type' : attrType}
         
         if nameURL is not None:
             attrEntry['url'] = nameURL
@@ -388,11 +404,11 @@ def parseAttributes(ncObj, aliasDict):
     return attrList
 
 
-def parseNcObj(ncObj, aliasDict):
+def parseGroup(ncObj, aliasDict):
     '''
-    Build dimension, variable, and attribute lists for the object.
+    Build dimension, variable, and attribute lists for the group object.
     
-    ncObj     [in] The netCDF4 object to parse.
+    ncObj     [in] The netCDF4 group object to parse.
     aliasDict [in] A dictionary of URI patterns keyed by the elements they
                    replace.
     returns        A nested set of dictionaries and lists describing the object
@@ -482,6 +498,46 @@ def parseNcObj(ncObj, aliasDict):
     return dataDict
 
 
+def parseDataset(ncObj, aliasDict):
+    '''
+    Build a set of group dictionaries for the netCDF4 Dataset object.
+    
+    ncObj     [in] The netCDF4 Dataset object to parse.
+    aliasDict [in] A dictionary of URI patterns keyed by the elements they
+                   replace.
+    returns        A nested set of dictionaries and lists describing the object
+                   contents.
+    '''
+    
+    # Parse the contents of the root group of the netCDF file. Add a groupName
+    # element and store it in a groups list.
+    #
+    groupList = []
+    
+    groupEntry = parseGroup(ncObj, aliasDict)
+    
+    groupEntry['groupName'] = 'global'
+    
+    groupList.append(groupEntry)
+    
+    # If there are any other groups, add them as well.
+    #
+    for groupName, groupObj in ncObj.groups.iteritems():
+        groupEntry = parseGroup(groupObj, aliasDict)
+        
+        groupEntry['groupName'] = groupName 
+        
+        groupList.append(groupEntry)
+    
+    # Add the group list to a top-level dictionary.
+    #
+    dataDict = { 'groups' : groupList }
+    
+    # Return the dictionary.
+    #
+    return dataDict
+
+
 def ncldDump(inputFile, aliasFile, outputFile):
     '''
     Generate an HTML page from a netCDF-LD file. The page will contain CDL
@@ -504,9 +560,9 @@ def ncldDump(inputFile, aliasFile, outputFile):
     #
     ncObj = netCDF4.Dataset(inputFile, 'r')
     
-    # Parse the contents of the netCDF file into a dictionary.
+    # Parse the contents into a dictionary.
     #
-    ncDict = parseNcObj(ncObj, aliasDict)
+    ncDict = parseDataset(ncObj, aliasDict)
     
     # Add a filePath entry.
     #
