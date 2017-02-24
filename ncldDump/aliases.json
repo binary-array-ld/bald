@@ -97,12 +97,15 @@
         "time_coverage_resolution"       : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#time_coverage_resolution",
         "time_coverage_start"            : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#time_coverage_start",
         "title"                          : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#title",
-        "title"                          : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
         "units"                          : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#units",
         "valid_max"                      : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
         "valid_min"                      : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
         "valid_range"                    : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
-  		"SDN_ParameterDiscoveryCode"     : "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#{}"
+  		"SDN_ParameterDiscoveryCode"     : "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#{}",
+        "unit_id"                        : "http://qudt.org/1.1/schema/qudt#unit",
+        "medium_id"                      : "http://environment.data.gov.au/def/op#matrix",
+        "scaledQuantityKind_id"          : "http://environment.data.gov.au/def/op#propertyKind",
+        "substanceOrTaxon_id"            : "http://environment.data.gov.au/def/op#objectOfInterest"
     },
     "values" :
     {

@@ -17,100 +17,114 @@
         </style>
     </head>
     <body>
-        <ul class="file">
-            <li>netcdf {{ filePath|e }} {
-                <ul>
-                {%- if dimensions is defined %}
-                    <li>dimensions: // <a href="#dimensions_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
-                        <ul class="collapse in" id="dimensions_list">
-                        {%- for dimension in dimensions %}
-                            <li>{{ dimension.name|e }}&nbsp;=&nbsp;{{ dimension.value|e }} ;
-                                {%- if dimension.comment is defined %} // ({{ dimension.comment }}){%- endif -%}
-                            </li>
-                        {%- endfor %}
-                        </ul>
-                    </li>
-                {%- endif %}
-                {%- if variables is defined %}
-                    <li>variables: // <a href="#variables_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
-                        <ul class="collapse in" id="variables_list">
-                        {%- for variable in variables %}
-                            <li id="variable_{{ variable.name }}">{{ variable.type|e }}&nbsp;
-                            {%- if variable.url is defined -%}
-                                <a href="{{ variable.url }}" target="_blank">{{ variable.name }}</a>
-                            {%- else -%}
-                                {{ variable.name }}
-                            {%- endif -%}
-                            {%- if variable.dimensions is defined -%}
-                                ({{ variable.dimensions|join(', ')|e }})
-                            {%- endif -%}
-                            &nbsp;; // <a href="#variable_{{ variable.name }}_attrs" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
-                            {%- if variable.attributes is defined %}
-                                <ul class="collapse in" id="variable_{{ variable.name }}_attrs">
-                                {%- for attribute in variable.attributes %}
-                                    <li>{{ variable.name }}:
-                                    {%- if attribute.url is defined -%}
-                                        <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
-                                    {%- else -%}
-                                        {{ attribute.name }}
-                                    {%- endif -%}
-                                    &nbsp;=
-                                    {%- for value in attribute.value -%}
-                                        &nbsp;
-                                        {%- if value.url is defined -%}
-                                            <a href="{{ value.url }}" target="_blank">{{ value.element }}</a>
-                                        {%- else -%}
-                                            {{ value.element }}
-                                        {%- endif -%}
-                                        {{ attribute.type }}
-                                        {%- if not loop.last -%}
-                                            ,
-                                        {%- endif -%}
-                                    {%- endfor -%}
-                                    &nbsp;;
-                                    </li>
-                                {%- endfor %}
-                                </ul>
-                            {% endif -%}
-                            </li>
-                        {%- endfor %}
-                        </ul>
-                    </li>
-                {%- endif %}
-                {%- if attributes is defined %}
-                    <br>
-                    <li>// global attributes: <a href="#attribute_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
-                        <ul class="collapse in" id="attribute_list">
-                        {%- for attribute in attributes %}
-                            <li>:
-                            {%- if attribute.url is defined -%}
-                                <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
-                            {%- else -%}
-                                {{ attribute.name }}
-                            {%- endif -%}
-                            &nbsp;=
-                            {%- for value in attribute.value -%}
-                                &nbsp;
-                                {%- if value.url is defined -%}
-                                    <a href="{{ value.url }}" target="_blank">{{ value.element }}</a>
+        <p>netcdf {{ filePath|e }} {</p>
+        <ul>
+        {%- for group in groups %}
+            {%- if group.groupName != 'global' %}
+            <li>group: {{ group.groupName }} { // <a href="#group_{{ group.groupName }}" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
+            {%- else %}
+            <li>
+            {%- endif %}
+            <ul class="collapse in" id="group_{{ group.groupName }}">
+            {%- if group.dimensions is defined %}
+                <li>dimensions: // <a href="#{{ group.groupName }}_dimensions_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
+                    <ul class="collapse in" id="{{ group.groupName }}_dimensions_list">
+                    {%- for dimension in group.dimensions %}
+                        <li>{{ dimension.name|e }}&nbsp;=&nbsp;{{ dimension.value|e }} ;
+                            {%- if dimension.comment is defined %} // ({{ dimension.comment }}){%- endif -%}
+                        </li>
+                    {%- endfor %}
+                    </ul>
+                </li>
+            {%- endif %}
+            {%- if group.variables is defined %}
+                <li>variables: // <a href="#{{ group.groupName }}_variables_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
+                    <ul class="collapse in" id="{{ group.groupName }}_variables_list">
+                    {%- for variable in group.variables %}
+                        <li>{{ variable.type|e }}&nbsp;
+                        {%- if variable.url is defined -%}
+                            <a href="{{ variable.url }}" target="_blank">{{ variable.name }}</a>
+                        {%- else -%}
+                            {{ variable.name }}
+                        {%- endif -%}
+                        {%- if variable.dimensions is defined -%}
+                            ({{ variable.dimensions|join(', ')|e }})
+                        {%- endif -%}
+                        &nbsp;; // <a href="#{{ group.groupName }}_variable_{{ variable.name }}_attrs" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
+                        {%- if variable.attributes is defined %}
+                            <ul class="collapse in" id="{{ group.groupName }}_variable_{{ variable.name }}_attrs">
+                            {%- for attribute in variable.attributes %}
+                                <li>:
+                                {%- if attribute.url is defined -%}
+                                    <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
                                 {%- else -%}
-                                    {{ value.element }}
+                                    {{ attribute.name }}
                                 {%- endif -%}
-                                {{ attribute.type }}
-                                {%- if not loop.last -%}
-                                    ,
+                                &nbsp;=
+                                {%- if attribute.value.url is defined -%}
+                                &nbsp;<a href="{{ attribute.value.url }}" target="_blank">{{ attribute.value.element }}</a>
+                                {%- elif attribute.value.element is string -%}
+                                &nbsp;{{ attribute.value.element }}{{ attribute.type }}
+                                {%- elif attribute.value.element is sequence -%}
+                                    {%- for val in attribute.value.element -%}
+                                        &nbsp;{{ val }}{{ attribute.type }}{%- if not loop.last -%},{%- endif -%}
+                                    {%- endfor -%}
+                                {%- else -%}
+                                    {{ attribute.value.element }}{{ attribute.type }}
                                 {%- endif -%}
+                                &nbsp;;
+                                </li>
+                            {%- endfor %}
+                            </ul>
+                        {% endif -%}
+                        </li>
+                    {%- endfor %}
+                    </ul>
+                </li>
+            {%- endif %}
+            {%- if group.attributes is defined %}
+                <li/>
+                {%- if group.groupName == 'global' %}
+                <li>// global attributes:
+                {%- else %}
+                <li>// group attributes:
+                {%- endif -%}
+                <a href="#{{ group.groupName }}_attribute_list" class="btn btn-default btn-xs" data-toggle="collapse" altText="&darr;">&uarr;</a>
+                    <ul class="collapse in" id="{{ group.groupName }}_attribute_list">
+                    {%- for attribute in group.attributes %}
+                        <li>:
+                        {%- if attribute.url is defined -%}
+                            <a href="{{ attribute.url }}" target="_blank">{{ attribute.name }}</a>
+                        {%- else -%}
+                            {{ attribute.name }}
+                        {%- endif -%}
+                        &nbsp;=
+                        {%- if attribute.value.url is defined -%}
+                        &nbsp;<a href="{{ attribute.value.url }}" target="_blank">{{ attribute.value.element }}</a>
+                        {%- elif attribute.value.element is string -%}
+                        &nbsp;{{ attribute.value.element }}{{ attribute.type }}
+                        {%- elif attribute.value.element is sequence -%}
+                            {%- for val in attribute.value.element -%}
+                                &nbsp;{{ val }}{{ attribute.type }}{%- if not loop.last -%},{%- endif -%}
                             {%- endfor -%}
-                            &nbsp;;
-                            </li>
-                        {%- endfor %}
-                        </ul>
-                    </li>
-                {% endif -%}
-                </ul>
+                        {%- else -%}
+                            {{ attribute.value.element }}{{ attribute.type }}
+                        {%- endif -%}
+                        &nbsp;;
+                        </li>
+                    {%- endfor %}
+                    </ul>
+                </li>
+            {% endif -%}
+            </ul>
+            {%- if group.groupName != 'global' %}
+            }</li>
+            {%- else %}
             </li>
-            <li>}</li>
+            {%- endif %}
+        {%- endfor %}
         </ul>
+        <p>}</p>
         <script type='text/javascript'>
             $(".btn").click(function () {
                 var curText = $(this).text();
