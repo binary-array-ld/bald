@@ -1,0 +1,150 @@
+{
+    "contexts" :
+    {
+  		"bald" : "http://binary-array-ld.net/latest/{}",
+  		"rdf"  : "http://www.w3.org/1999/02/22-rdf-syntax-ns#{}"
+    },
+    "names" :
+    {
+        "Conventions"                    : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#Conventions",
+        "_FillValue"                     : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
+        "acknowledgement"                : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#acknowledgement",
+        "add_offset"                     : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#packed-data",
+        "ancillary_variables"            : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#ancillary-data",
+        "axis"                           : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#coordinate-types",
+        "bounds"                         : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#cell-boundaries",
+        "calendar"                       : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#calendar",
+        "cdm_data_type"                  : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#cdm_data_type",
+        "cell_measures"                  : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#cell-measures",
+        "cell_methods"                   : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#cell-methods",
+        "cf_role"                        : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#coordinates-metadata",
+        "climatology"                    : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#climatological-statistics",
+        "comment"                        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#comment",
+        "compress"                       : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#reduced-horizontal-grid",
+        "contributor_name"               : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#contributor_name",
+        "contributor_role"               : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#contributor_role",
+        "coordinates"                    : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#coordinate-system",
+        "coverage_content_type"          : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#coverage_content_type",
+        "creator_email"                  : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#creator_email",
+        "creator_institution"            : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#creator_institution",
+        "creator_name"                   : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#creator_name",
+        "creator_type"                   : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#creator_type",
+        "creator_url"                    : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#creator_url",
+        "date_created"                   : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#date_created",
+        "date_issued"                    : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#date_issued",
+        "date_metadata_modified"         : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#date_metadata_modified",
+        "date_modified"                  : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#date_modified",
+        "featureType"                    : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#featureType",
+        "flag_masks"                     : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#flags",
+        "flag_meanings"                  : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#flags",
+        "flag_values"                    : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#flags",
+        "formula_terms"                  : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#dimensionless-vertical-coordinate",
+        "geospatial_bounds"              : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_bounds",
+        "geospatial_bounds_crs"          : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_bounds_crs",
+        "geospatial_bounds_vertical_crs" : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_bounds_vertical_crs",
+        "geospatial_lat_max"             : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lat_max",
+        "geospatial_lat_min"             : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lat_min",
+        "geospatial_lat_resolution"      : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lat_resolution",
+        "geospatial_lat_units"           : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lat_units",
+        "geospatial_lon_max"             : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lon_max",
+        "geospatial_lon_min"             : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lon_min",
+        "geospatial_lon_resolution"      : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lon_resolution",
+        "geospatial_lon_units"           : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_lon_units",
+        "geospatial_vertical_max"        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_vertical_max",
+        "geospatial_vertical_min"        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_vertical_min",
+        "geospatial_vertical_positive"   : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_vertical_positive",
+        "geospatial_vertical_resolution" : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_vertical_resolution",
+        "geospatial_vertical_units"      : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#geospatial_vertical_units",
+        "grid_mapping"                   : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#grid-mappings-and-projections",
+        "history"                        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#history",
+        "id"                             : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#id",
+        "instance_dimension"             : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#representations-features",
+        "institution"                    : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#institution",
+        "instrument"                     : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#instrument",
+        "instrument_vocabulary"          : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#instrument_vocabulary",
+        "keywords"                       : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#keywords",
+        "keywords_vocabulary"            : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#keywords_vocabulary",
+        "leap_month"                     : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#calendar",
+        "leap_year"                      : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#calendar",
+        "license"                        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#license",
+        "long_name"                      : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#long-name",
+        "metadata_link"                  : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#metadata_link",
+        "missing_value"                  : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#missing-data",
+        "month_lengths"                  : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#calendar",
+        "naming_authority"               : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#naming_authority",
+        "platform"                       : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#platform",
+        "platform_vocabulary"            : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#platform_vocabulary",
+        "positive"                       : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#COARDS",
+        "processing_level"               : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#processing_level",
+        "product_version"                : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#product_version",
+        "program"                        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#program",
+        "project"                        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#project",
+        "publisher_email"                : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#publisher_email",
+        "publisher_institution"          : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#publisher_institution",
+        "publisher_name"                 : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#publisher_name",
+        "publisher_type"                 : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#publisher_type",
+        "publisher_url"                  : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#publisher_url",
+        "references"                     : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#references",
+        "sample_dimension"               : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#representations-features",
+        "scale_factor"                   : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#packed-data",
+        "source"                         : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#source",
+        "standard_error_multiplier"      : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#standard-name-modifiers",
+        "standard_name"                  : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#standard-name",
+        "standard_name_vocabulary"       : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#standard_name_vocabulary",
+        "summary"                        : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#summary",
+        "time_coverage_duration"         : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#time_coverage_duration",
+        "time_coverage_end"              : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#time_coverage_end",
+        "time_coverage_resolution"       : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#time_coverage_resolution",
+        "time_coverage_start"            : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#time_coverage_start",
+        "title"                          : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3#title",
+        "units"                          : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#units",
+        "valid_max"                      : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
+        "valid_min"                      : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
+        "valid_range"                    : "http://www.unidata.ucar.edu/netcdf/docs/netcdf.html#Attribute-Conventions",
+  		"SDN_ParameterDiscoveryCode"     : "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#{}",
+        "unit_id"                        : "http://qudt.org/1.1/schema/qudt#unit",
+        "medium_id"                      : "http://environment.data.gov.au/def/op#matrix",
+        "scaledQuantityKind_id"          : "http://environment.data.gov.au/def/op#propertyKind",
+        "substanceOrTaxon_id"            : "http://environment.data.gov.au/def/op#objectOfInterest"
+    },
+    "values" :
+    {
+        "Conventions" :
+        {
+            "CF-1.6"   : "http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html",
+            "ACDD-1.3" : "http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_1-3"
+        },
+        "ancillary_variables" :
+        {
+            "*" : "#variable_{}"
+        },
+        "bounds" :
+        {
+            "*" : "#variable_{}"
+        },
+        "climatology" :
+        {
+            "*" : "#variable_{}"
+        },
+        "coordinates" :
+        {
+            "*" : "#variable_{}"
+        },
+        "grid_mapping" :
+        {
+            "*" : "#variable_{}"
+        },
+        "standard_name" :
+        {
+            "*" : "http://mmisw.org/ont/cf/parameter/{}"
+        },
+  		"SDN_ParameterDiscoveryCode" :
+        {
+		    "BactTaxaAbundSed" : "http://vocab.nerc.ac.uk/collection/P02/current/BAUC/"
+        },
+        "units" :
+        {
+            "*" : "https://ncics.org/portfolio/other-resources/udunits2/#{}"
+        }
+    }
+}

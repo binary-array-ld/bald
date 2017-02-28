@@ -1,0 +1,145 @@
+netcdf gbr4_1.85 {
+dimensions:
+	i = 600 ;
+	j = 180 ;
+	k = 47 ;
+	time = 5 ;
+variables:
+	double zc(k) ;
+		zc:axis = "Z" ;
+		zc:coordinate_type = "Z" ;
+		zc:units = "m" ;
+		zc:positive = "up" ;
+		zc:long_name = "Z coordinate" ;
+	double longitude(j, i) ;
+		longitude:standard_name = "longitude" ;
+		longitude:coordinate_type = "longitude" ;
+		longitude:projection = "geographic" ;
+		longitude:units = "degrees_east" ;
+		longitude:long_name = "Longitude" ;
+	double latitude(j, i) ;
+		latitude:standard_name = "latitude" ;
+		latitude:coordinate_type = "latitude" ;
+		latitude:projection = "geographic" ;
+		latitude:units = "degrees_north" ;
+		latitude:long_name = "Latitude" ;
+	double botz(j, i) ;
+		botz:standard_name = "depth" ;
+		botz:missing_value = -99. ;
+		botz:positive = "down" ;
+		botz:coordinates = "latitude longitude" ;
+		botz:outside = "9999" ;
+		botz:units = "metre" ;
+		botz:long_name = "Depth of sea-bed" ;
+	double time(time) ;
+		time:units = "days since 1990-01-01 00:00:00 +10" ;
+		time:long_name = "Time" ;
+		time:standard_name = "time" ;
+		time:coordinate_type = "time" ;
+		time:_ChunkSizes = 1 ;
+	float eta(time, j, i) ;
+		eta:coordinates = "time latitude longitude" ;
+		eta:units = "metre" ;
+		eta:long_name = "Surface elevation" ;
+		eta:standard_name = "sea_surface_height_above_sea_level" ;
+		eta:valid_range = -10.f, 10.f ;
+		eta:missing_value = 1.e+35f ;
+		eta:positive = "up" ;
+		eta:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
+		eta:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/sea_surface_elevation" ;
+		eta:substanceOrTaxon_id = "http://environment.data.gov.au/def/feature/ocean_near_surface" ;
+		eta:unit_id = "http://qudt.org/vocab/unit#Meter" ;
+		eta:_ChunkSizes = 1, 180, 600 ;
+	float u(time, k, j, i) ;
+		u:coordinates = "time zc latitude longitude" ;
+		u:units = "ms-1" ;
+		u:long_name = "Eastward current" ;
+		u:standard_name = "eastward_sea_water_velocity" ;
+		u:vector_name = "Currents" ;
+		u:vector_components = "u v" ;
+		u:valid_range = -100.f, 100.f ;
+		u:missing_value = 1.e+35f ;
+		u:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
+		u:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/sea_water_velocity_eastward" ;
+		u:substanceOrTaxon_id = "http://environment.data.gov.au/def/feature/ocean_current" ;
+		u:unit_id = "http://qudt.org/vocab/unit#MeterPerSecond" ;
+		u:_ChunkSizes = 1, 24, 90, 300 ;
+	float v(time, k, j, i) ;
+		v:coordinates = "time zc latitude longitude" ;
+		v:units = "ms-1" ;
+		v:long_name = "Northward current" ;
+		v:standard_name = "northward_sea_water_velocity" ;
+		v:vector_name = "Currents" ;
+		v:vector_components = "u v" ;
+		v:valid_range = -100.f, 100.f ;
+		v:missing_value = 1.e+35f ;
+		v:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
+		v:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/sea_water_velocity_northward" ;
+		v:substanceOrTaxon_id = "http://environment.data.gov.au/def/feature/ocean_current" ;
+		v:unit_id = "http://qudt.org/vocab/unit#MeterPerSecond" ;
+		v:_ChunkSizes = 1, 24, 90, 300 ;
+	float salt(time, k, j, i) ;
+		salt:coordinates = "time zc latitude longitude" ;
+		salt:units = "PSU" ;
+		salt:long_name = "Salinity" ;
+		salt:valid_range = 0.f, 40.f ;
+		salt:missing_value = 1.e+35f ;
+		salt:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
+		salt:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/practical_salinity" ;
+		salt:substanceOrTaxon_id = "http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater" ;
+		salt:unit_id = "http://environment.data.gov.au/water/quality/def/unit/PSU" ;
+		salt:_ChunkSizes = 1, 24, 90, 300 ;
+	float temp(time, k, j, i) ;
+		temp:coordinates = "time zc latitude longitude" ;
+		temp:units = "degrees C" ;
+		temp:long_name = "Temperature" ;
+		temp:valid_range = 0.f, 40.f ;
+		temp:missing_value = 1.e+35f ;
+		temp:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
+		temp:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/sea_water_temperature" ;
+		temp:substanceOrTaxon_id = "http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater" ;
+		temp:unit_id = "http://qudt.org/vocab/unit#DegreeCelsius" ;
+		temp:_ChunkSizes = 1, 24, 90, 300 ;
+	float wspeed_u(time, j, i) ;
+		wspeed_u:coordinates = "time latitude longitude" ;
+		wspeed_u:units = "ms-1" ;
+		wspeed_u:long_name = "eastward_wind" ;
+		wspeed_u:valid_range = -1000.f, 1000.f ;
+		wspeed_u:missing_value = 1.e+35f ;
+		wspeed_u:_ChunkSizes = 1, 180, 600 ;
+	float wspeed_v(time, j, i) ;
+		wspeed_v:coordinates = "time latitude longitude" ;
+		wspeed_v:units = "ms-1" ;
+		wspeed_v:long_name = "northward_wind" ;
+		wspeed_v:valid_range = -1000.f, 1000.f ;
+		wspeed_v:missing_value = 1.e+35f ;
+		wspeed_v:_ChunkSizes = 1, 180, 600 ;
+
+// global attributes:
+		:title = "GBR4 Hydro" ;
+		:paramhead = "GBR 4km resolution grid" ;
+		:paramfile = "in.prm" ;
+		:shoc_version = "v1.1 rev(5249)" ;
+		:Conventions = "CF-1.0" ;
+		:Run_ID = 1.85 ;
+		:hasVocab = 1 ;
+		:metadata_link = "http://marlin.csiro.au/geonetwork/srv/eng/search?&uuid=72020224-f086-434a-bbe9-a222c8e5cf0d" ;
+		:rdf__type = "bald__Container" ;
+ 		:bald__isPrefixedBy = "prefix_list" ;
+ 		:bald__isAliasedBy = "alias_list" ;
+
+	group: prefix_list { 
+		// group attributes:
+   		:bald__ = "http://binary-array-ld.net/latest/" ;
+   		:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+    } // group bald__prefix_list
+ 
+	group: alias_list { 
+		// group attributes:
+		:unit_id = "http://qudt.org/1.1/schema/qudt#unit";
+		:medium_id = "http://environment.data.gov.au/def/op#matrix" ;
+		:scaledQuantityKind_id = "http://environment.data.gov.au/def/op#propertyKind" ;
+		:substanceOrTaxon_id = "http://environment.data.gov.au/def/op#objectOfInterest" ;		
+	} // group bald__alias_list		
+	
+}

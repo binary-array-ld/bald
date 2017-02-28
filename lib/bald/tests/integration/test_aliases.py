@@ -55,12 +55,6 @@ class Test(BaldTestCase):
             validation = bald.validate_hdf5(tfile)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))

@@ -1,0 +1,51 @@
+@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<root> a bald:Container ;
+    bald:contains <location_reference_system>,
+        <location_variable>,
+        <pdim0>,
+        <pdim1>,
+        <variable1>,
+        <variable2> ;
+    bald:isPrefixedBy "prefix_list" .
+
+<variable1> a bald:Array ;
+    bald:references <location_variable>,
+        <pdim0>,
+        <pdim1> ;
+    bald:shape "(11, 17)" ;
+    <long_name> "Gerald" ;
+    <obtype> <http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation> .
+
+<variable2> a bald:Array ;
+    bald:references <location_variable>,
+        <pdim0>,
+        <pdim1> ;
+    bald:shape "(11, 17)" ;
+    <long_name> "Imelda" ;
+    <obtype> <http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation> .
+
+<location_reference_system> a bald:Subject ;
+    bald:array <location_reference_system> ;
+    <pcode> "4897" .
+
+<location_variable> a bald:Array,
+        bald:Reference ;
+    bald:array <location_variable> ;
+    bald:references <location_reference_system> ;
+    bald:shape "(11, 17)" .
+
+<pdim0> a bald:Array,
+        bald:Reference ;
+    bald:array <pdim0> ;
+    bald:shape "(11,)" .
+
+<pdim1> a bald:Array,
+        bald:Reference ;
+    bald:array <pdim1> ;
+    bald:shape "(17,)" .
+

@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>agraph</title>
+<meta charset="utf-8"/>
+<link rel="stylesheet" type="text/css"
+href="https://rawgit.com/clientIO/joint/master/dist/joint.min.css" />
+
+</head>
+<body>
+
+<div id="paper"></div>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script
+src="https://rawgit.com/clientIO/joint/master/dist/joint.min.js"></script>
+<script src="http://rawgit.com/clientIO/joint/master/dist/joint.layout.DirectedGraph.js"></script>
+<script src="https://rawgit.com/cpettitt/graphlib/v2.1.1/dist/graphlib.min.js"></script>
+<script src="https://rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js"></script>
+
+<script type="text/javascript">
+
+
+var graph = new joint.dia.Graph;
+
+var paper = new joint.dia.Paper({
+     el: $('#paper'),
+     width: 2400,
+     height: 1350,
+     gridSize: 1,
+     model: graph
+});
+
+var instance_list = [];
+
+LinkedClass = joint.shapes.uml.Class.extend({
+
+
+    markup: [
+        '<g class="rotatable">',
+        '<g class="scalable">',
+        '<rect class="uml-class-name-rect"/><rect class="uml-class-attrs-rect"/>',
+        '</g>',
+        '<text class="uml-class-name-text"/><text class="uml-class-attrs-text"/>',
+        '</g>'
+        ].join(''),
+
+    defaults: _.defaultsDeep({
+
+        type: 'uml.Class',
+
+        attrs: {
+            rect: { 'width': 200 },
+
+            '.uml-class-name-rect': { 'stroke': 'black', 'stroke-width': 2, 'fill': '#3498db' },
+            '.uml-class-attrs-rect': { 'stroke': 'black', 'stroke-width': 2, 'fill': '#2980b9' },
+
+            '.uml-class-name-text': {
+                'ref': '.uml-class-name-rect', 'ref-y': .5, 'ref-x': .5, 'text-anchor': 'middle', 'y-alignment': 'middle', 'font-weight': 'bold',
+                'fill': 'black', 'font-size': 12, 'font-family': 'Times New Roman'
+            },
+            '.uml-class-attrs-text': {
+                'ref': '.uml-class-attrs-rect', 'ref-y': 5, 'ref-x': 0.99, 'text-anchor': 'end',
+                'fill': 'black', 'font-size': 12, 'font-family': 'Times New Roman'
+            }
+        },
+
+        name: [],
+        attributes: [],
+
+    }, joint.shapes.basic.Generic.prototype.defaults),
+
+    updateRectangles: function() {
+
+        var attrs = this.get('attrs');
+
+        var rects = [
+            { type: 'name', text: this.getClassName() },
+            { type: 'attrs', text: this.get('attributes') },
+        ];
+
+        var offsetY = 0;
+
+        _.each(rects, function(rect) {
+
+            var lines = _.isArray(rect.text) ? rect.text : [rect.text];
+            var rectHeight = lines.length * 60 + 60;
+            var tspanLines = []
+            for (var i = 0; i < lines.length; i++) {
+              var line = '<tspan class="v-line" x="0" dy="1em">'
+              line += lines[i]
+              line += '</tspan> '
+              tspanLines.push(line) 
+            }
+            attrs['.uml-class-' + rect.type + '-text'].html = tspanLines.join('');
+
+            attrs['.uml-class-' + rect.type + '-rect'].height = rectHeight;
+            attrs['.uml-class-' + rect.type + '-rect'].transform = 'translate(0,' + offsetY + ')';
+
+            offsetY += rectHeight;
+           });
+        }
+
+});
+ 
+
+
+
+function instance(label, attrs, bfill) {
+
+     var cell = new LinkedClass({
+         name: label,
+         attributes: attrs,
+         size: { width: label.length * 2, height: 60 },
+         attrs: {
+            '.uml-class-name-rect': {
+                fill: bfill,
+                stroke: '#fff',
+                'stroke-width': 0.5
+            },
+            '.uml-class-attrs-rect, .uml-class-methods-rect': {
+                fill: bfill,
+                stroke: '#fff',
+                'stroke-width': 0.5
+            },
+            '.uml-class-attrs-text': {
+                'ref-y': 0.5,
+                'y-alignment': 'middle'
+            }
+         }
+     });
+     graph.addCell(cell);
+     instance_list.push(cell);
+     return cell;
+};
+
+Aggregation = joint.dia.Link.extend({
+    defaults: {
+        type: 'uml.Aggregation',
+        attrs: { '.marker-source': { d: 'M 40 10 L 20 20 L 0 10 L 20 0 z', fill: 'white' }}
+    }
+});
+
+Composition = joint.dia.Link.extend({
+    defaults: {
+        type: 'uml.Composition',
+        attrs: { '.marker-source': { d: 'M 40 10 L 20 20 L 0 10 L 20 0 z', fill: 'black' }}
+    }
+});
+
+    function link(source, target, label, ed, comp) {
+     if (comp) {
+       var aclass = Composition;
+     } else {
+       var aclass = Aggregation;
+     }
+     var cell = new aclass({ 
+         source: { id: source.id },
+         target: { id: target.id },
+
+         router: { 
+                name: 'manhattan', 
+                args: {
+                    startDirections: ['right'],
+                    endDirections: [ed || 'left']
+                }
+            },
+         connector: { name: 'rounded' }
+     });
+     graph.addCell(cell);
+     return cell;
+};
+
+var location_reference_system = instance('location_reference_system:<a xlink:href="http://binary-array-ld.net/latest/Subject" xlink:show=new text-decoration="underline">bald__Subject</a>', ['<a xlink:href="http://binary-array-ld.net/latest/array" xlink:show=new text-decoration="underline">bald__array</a>: |', 'pcode: 4897'], '#878800');
+var location_variable = instance('location_variable:<a xlink:href="http://binary-array-ld.net/latest/Array" xlink:show=new text-decoration="underline">bald__Array</a>, <a xlink:href="http://binary-array-ld.net/latest/Reference" xlink:show=new text-decoration="underline">bald__Reference</a>', ['<a xlink:href="http://binary-array-ld.net/latest/array" xlink:show=new text-decoration="underline">bald__array</a>: |', '<a xlink:href="http://binary-array-ld.net/latest/references" xlink:show=new text-decoration="underline">bald__references</a>: |', '<a xlink:href="http://binary-array-ld.net/latest/shape" xlink:show=new text-decoration="underline">bald__shape</a>: 11, 17'], '#878800');
+var pdim0 = instance('pdim0:<a xlink:href="http://binary-array-ld.net/latest/Array" xlink:show=new text-decoration="underline">bald__Array</a>, <a xlink:href="http://binary-array-ld.net/latest/Reference" xlink:show=new text-decoration="underline">bald__Reference</a>', ['<a xlink:href="http://binary-array-ld.net/latest/array" xlink:show=new text-decoration="underline">bald__array</a>: |', '<a xlink:href="http://binary-array-ld.net/latest/shape" xlink:show=new text-decoration="underline">bald__shape</a>: 11'], '#878800');
+var pdim1 = instance('pdim1:<a xlink:href="http://binary-array-ld.net/latest/Array" xlink:show=new text-decoration="underline">bald__Array</a>, <a xlink:href="http://binary-array-ld.net/latest/Reference" xlink:show=new text-decoration="underline">bald__Reference</a>', ['<a xlink:href="http://binary-array-ld.net/latest/array" xlink:show=new text-decoration="underline">bald__array</a>: |', '<a xlink:href="http://binary-array-ld.net/latest/shape" xlink:show=new text-decoration="underline">bald__shape</a>: 17'], '#878800');
+var root = instance('root:<a xlink:href="http://binary-array-ld.net/latest/Container" xlink:show=new text-decoration="underline">bald__Container</a>', ['<a xlink:href="http://binary-array-ld.net/latest/contains" xlink:show=new text-decoration="underline">bald__contains</a>: |'], '#878800');
+var variable1 = instance('variable1:<a xlink:href="http://binary-array-ld.net/latest/Array" xlink:show=new text-decoration="underline">bald__Array</a>', ['<a xlink:href="http://binary-array-ld.net/latest/references" xlink:show=new text-decoration="underline">bald__references</a>: |', 'long_name: Gerald', 'obtype: <a xlink:href="http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation" xlink:show=new text-decoration="underline">metce__SamplingObservation</a>', '<a xlink:href="http://binary-array-ld.net/latest/shape" xlink:show=new text-decoration="underline">bald__shape</a>: 11, 17'], '#878800');
+var variable2 = instance('variable2:<a xlink:href="http://binary-array-ld.net/latest/Array" xlink:show=new text-decoration="underline">bald__Array</a>', ['<a xlink:href="http://binary-array-ld.net/latest/references" xlink:show=new text-decoration="underline">bald__references</a>: |', 'long_name: Imelda', 'obtype: <a xlink:href="http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation" xlink:show=new text-decoration="underline">metce__SamplingObservation</a>', '<a xlink:href="http://binary-array-ld.net/latest/shape" xlink:show=new text-decoration="underline">bald__shape</a>: 11, 17'], '#878800');
+link(location_variable, location_reference_system, 'bald__references');
+link(location_variable, location_variable, 'bald__array', 'bottom');
+link(pdim0, pdim0, 'bald__array', 'bottom');
+link(pdim1, pdim1, 'bald__array', 'bottom');
+link(root, location_reference_system, 'bald__contains', 'top', true);
+link(root, location_variable, 'bald__contains', 'top', true);
+link(root, pdim0, 'bald__contains', 'top', true);
+link(root, pdim1, 'bald__contains', 'top', true);
+link(root, variable1, 'bald__contains', 'top', true);
+link(root, variable2, 'bald__contains', 'top', true);
+link(variable1, location_variable, 'bald__references');
+link(variable1, pdim0, 'bald__references');
+link(variable1, pdim1, 'bald__references');
+link(variable2, location_variable, 'bald__references');
+link(variable2, pdim0, 'bald__references');
+link(variable2, pdim1, 'bald__references');
+    joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false,
+                                               nodeSep: 150, rankSep: 100,
+                                               marginX: 100, marginY: 100,
+				               rankDir: 'LR' });
+
+
+for (var i = 0; i < instance_list.length; i++) {
+    instance_list[i].toFront();
+}
+
+
+</script>
+</body>
+</html>
