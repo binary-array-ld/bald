@@ -1,8 +1,16 @@
+from __future__ import unicode_literals
 import json
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, DC, RDFS,SKOS
 
-with open('aliases.json') as data_file:
+def cleanup_link(link):
+    newlink = link
+    if(link.find('{}')):
+        newlink = link.replace("{}", "")
+
+    return newlink
+
+with open('../../ncldDump/aliases.json') as data_file:
     data = json.load(data_file)
 
 g = Graph()
@@ -51,6 +59,6 @@ for key in data['names']:
     type = URIRef(NCLD_CLASS.Attribute)
     g.add( (subj, DC.identifier, Literal(key)) )
     g.add((subj, RDF.type, type))
-    g.add((subj, RDFS.seeAlso, URIRef(link)))
+    g.add((subj, RDFS.seeAlso, URIRef(cleanup_link(link))))
 
 print g.serialize(format='turtle')
