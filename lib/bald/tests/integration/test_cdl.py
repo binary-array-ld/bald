@@ -29,13 +29,13 @@ class Test(BaldTestCase):
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
 
-    def test_process_chain(self):
-        with self.temp_filename('.nc') as tfile:
-            cdl_file = os.path.join(self.cdl_path, 'ProcessChain0300.cdl')
-            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-            validation = bald.validate_netcdf(tfile)
-            exns = validation.exceptions()
-            self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
+    # def test_process_chain(self):
+    #     with self.temp_filename('.nc') as tfile:
+    #         cdl_file = os.path.join(self.cdl_path, 'ProcessChain0300.cdl')
+    #         subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+    #         validation = bald.validate_netcdf(tfile)
+    #         exns = validation.exceptions()
+    #         self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
 
     def test_ereef(self):
         with self.temp_filename('.nc') as tfile:
