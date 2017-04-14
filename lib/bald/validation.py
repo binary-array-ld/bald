@@ -110,31 +110,31 @@ class SubjectValidation(Validation):
     def check_attr_domain_range(self, exceptions):
         for attr, value in self.subject.attrs.items():
             uri = self.subject.unpack_uri(attr)
-            if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
-                # thus we have a payload
-                # go rdf
-                g = rdflib.Graph()
-                data=self.cache[uri].text
-                try:
-                    g.parse(data=self.cache[uri].text, format="n3")
-                except Exception:
-                    g.parse(data=self.cache[uri].text, format="xml")
-                query = ('SELECT ?s \n'
-                         '(GROUP_CONCAT(?domain; SEPARATOR=" | ") AS ?domains)'
-                         ' \n'
-                         '(GROUP_CONCAT(?type; SEPARATOR=" | ") AS ?types) \n'
-                         'WHERE {{ \n'
-                         '?s a ?type . \n'
-                         'OPTIONAL{{ ?s rdfs:domain ?domain . }} \n'
-                         'FILTER(?s = <{uria}> || ?s = <{urib}>) \n'
-                         '}} \n'
-                         'GROUP BY ?s \n'.format(uria=uri,
-                                                 urib=uri.rstrip('/')))
-                qres = list(g.query(query))
-                if len(qres) != 1:
-                    raise ValueError('{} does not define one and only one \n'
-                                     'rdfs:domain'.format(uri))
-                qres, = qres
+            # if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
+            #     # thus we have a payload
+            #     # go rdf
+            #     g = rdflib.Graph()
+            #     data=self.cache[uri].text
+            #     try:
+            #         g.parse(data=self.cache[uri].text, format="n3")
+            #     except Exception:
+            #         g.parse(data=self.cache[uri].text, format="xml")
+            #     query = ('SELECT ?s \n'
+            #              '(GROUP_CONCAT(?domain; SEPARATOR=" | ") AS ?domains)'
+            #              ' \n'
+            #              '(GROUP_CONCAT(?type; SEPARATOR=" | ") AS ?types) \n'
+            #              'WHERE {{ \n'
+            #              '?s a ?type . \n'
+            #              'OPTIONAL{{ ?s rdfs:domain ?domain . }} \n'
+            #              'FILTER(?s = <{uria}> || ?s = <{urib}>) \n'
+            #              '}} \n'
+            #              'GROUP BY ?s \n'.format(uria=uri,
+            #                                      urib=uri.rstrip('/')))
+            #     qres = list(g.query(query))
+                # if len(qres) != 1:
+                #     exceptions.append(ValueError('{} does not define one and only one \n'
+                #                      'rdfs:domain'.format(uri)))
+                # qres, = qres
                 # implement recursive inheritance check
                 # we need to check if the value that the attr points to
                 # has an rdf:type which is the same as the one required by

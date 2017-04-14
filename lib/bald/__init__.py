@@ -623,6 +623,8 @@ def load_netcdf(afilepath, uri=None):
                             rattrs['bald__childBroadcast'] = tuple(reshape)
                             rattrs['bald__array'] = set((file_variables.get(dim),))
                             ref_node = Subject(identity, rattrs, prefixes=prefixes, aliases=aliases)
+                            root_container.attrs['bald__contains'].append(ref_node)
+                            file_variables[name] = ref_node
                             refset.add(ref_node)
                         var.attrs['bald__references'] = refset
 
