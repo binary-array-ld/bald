@@ -1,0 +1,712 @@
+netcdf swath_AMSU_Brightness_Temp {
+dimensions:
+	pixelDim = 30 ;
+	nscanDim = 843 ;
+	wtDim = 3 ;
+	timeISO8601Dim = 20 ;
+variables:
+	char scan_time(nscanDim, timeISO8601Dim) ;
+		scan_time:long_name = "Scan start time (UTC) in ISO8601 date/time ([YYYY]-[MM]-[DD]T[HH]-[MM]-[SS]Z) format" ;
+		scan_time:standard_name = "scan_time" ;
+		scan_time:_FillValue = "-9999" ;
+	double scan_time_since78(nscanDim) ;
+		scan_time_since78:long_name = "Scan start time (UTC) in a referenced or elapsed time format" ;
+		scan_time_since78:standard_name = "time" ;
+		scan_time_since78:units = "seconds since 1978-01-01 00:00:00" ;
+		scan_time_since78:_FillValue = -9999. ;
+	float latitude(nscanDim, pixelDim) ;
+		latitude:long_name = "Latitude from AMSU-A level 1b product" ;
+		latitude:standard_name = "latitude" ;
+		latitude:units = "degrees_north" ;
+		latitude:_FillValue = -9999.f ;
+		latitude:valid_range = -90.f, 90.f ;
+	float longitude(nscanDim, pixelDim) ;
+		longitude:long_name = "Longitude from AMSU-A level 1b product" ;
+		longitude:standard_name = "longitude" ;
+		longitude:units = "degrees_east" ;
+		longitude:_FillValue = -9999.f ;
+		longitude:valid_range = -180.f, 180.f ;
+	byte quality_flags_scan_IMICA(nscanDim) ;
+		quality_flags_scan_IMICA:long_name = "scan-line quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_scan_IMICA:_FillValue = -1b ;
+		quality_flags_scan_IMICA:flag_values = 0b, 1b ;
+		quality_flags_scan_IMICA:flag_meanings = "at_least_1_channel/pixel_is_good bad_scan_line" ;
+	byte quality_flags_pixel_IMICA_ch4(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch4:long_name = "AMSU-A channel 4 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch4:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch4:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch4:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch4:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch5(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch5:long_name = "AMSU-A channel 5 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch5:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch5:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch5:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch5:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch6(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch6:long_name = "AMSU-A channel 6 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch6:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch6:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch6:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch6:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch7(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch7:long_name = "AMSU-A channel 7 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch7:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch7:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch7:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch7:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch8(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch8:long_name = "AMSU-A channel 8 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch8:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch8:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch8:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch8:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch9(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch9:long_name = "AMSU-A channel 9 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch9:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch9:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch9:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch9:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch10(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch10:long_name = "AMSU-A channel 10 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch10:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch10:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch10:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch10:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch11(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch11:long_name = "AMSU-A channel 11 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch11:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch11:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch11:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch11:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch12(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch12:long_name = "AMSU-A channel 12 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch12:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch12:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch12:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch12:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch13(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch13:long_name = "AMSU-A channel 13 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch13:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch13:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch13:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch13:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_IMICA_ch14(nscanDim, pixelDim) ;
+		quality_flags_pixel_IMICA_ch14:long_name = "AMSU-A channel 14 pixel quality flags for the IMICA recalibrated brightness temperatures" ;
+		quality_flags_pixel_IMICA_ch14:coordinates = "longitude latitude" ;
+		quality_flags_pixel_IMICA_ch14:_FillValue = -1b ;
+		quality_flags_pixel_IMICA_ch14:valid_range = 0b, 15b ;
+		quality_flags_pixel_IMICA_ch14:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_scan_OPR(nscanDim) ;
+		quality_flags_scan_OPR:long_name = "scan-line quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_scan_OPR:_FillValue = -1b ;
+		quality_flags_scan_OPR:flag_values = 0b, 1b ;
+		quality_flags_scan_OPR:flag_meanings = "at_least_1_channel/pixel_is_good bad_scan_line" ;
+	byte quality_flags_pixel_OPR_ch4(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch4:long_name = "AMSU-A channel 4 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch4:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch4:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch4:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch4:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch5(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch5:long_name = "AMSU-A channel 5 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch5:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch5:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch5:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch5:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch6(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch6:long_name = "AMSU-A channel 6 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch6:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch6:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch6:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch6:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch7(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch7:long_name = "AMSU-A channel 7 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch7:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch7:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch7:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch7:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch8(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch8:long_name = "AMSU-A channel 8 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch8:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch8:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch8:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch8:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch9(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch9:long_name = "AMSU-A channel 9 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch9:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch9:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch9:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch9:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch10(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch10:long_name = "AMSU-A channel 10 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch10:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch10:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch10:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch10:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch11(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch11:long_name = "AMSU-A channel 11 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch11:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch11:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch11:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch11:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch12(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch12:long_name = "AMSU-A channel 12 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch12:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch12:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch12:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch12:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch13(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch13:long_name = "AMSU-A channel 13 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch13:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch13:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch13:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch13:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	byte quality_flags_pixel_OPR_ch14(nscanDim, pixelDim) ;
+		quality_flags_pixel_OPR_ch14:long_name = "AMSU-A channel 14 pixel quality flags for the NOAA operational calibrated brightness temperatures" ;
+		quality_flags_pixel_OPR_ch14:coordinates = "longitude latitude" ;
+		quality_flags_pixel_OPR_ch14:_FillValue = -1b ;
+		quality_flags_pixel_OPR_ch14:valid_range = 0b, 15b ;
+		quality_flags_pixel_OPR_ch14:Note = "Definition of pixel quality flags:\n",
+			"bit 0 - bad pixel due to bad scan line;\n",
+			"bit 1 - bad pixel due to bad geolcation;\n",
+			"bit 2 - bad pixel due to precipitation;\n",
+			"bit 3 - bad pixel due to calibration counts;\n",
+			"bits 4-7: not used." ;
+	short fcdr_brightness_temperature_IMICA_ch4(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch4:long_name = "NOAA Climate Data Record of AMSU-A channel 4 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch4:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch4:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch4:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch4:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch4:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch4:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch5(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch5:long_name = "NOAA Climate Data Record of AMSU-A channel 5 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch5:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch5:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch5:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch5:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch5:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch5:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch6(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch6:long_name = "NOAA Climate Data Record of AMSU-A channel 6 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch6:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch6:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch6:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch6:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch6:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch6:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch7(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch7:long_name = "NOAA Climate Data Record of AMSU-A channel 7 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch7:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch7:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch7:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch7:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch7:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch7:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch8(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch8:long_name = "NOAA Climate Data Record of AMSU-A channel 8 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch8:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch8:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch8:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch8:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch8:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch8:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch9(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch9:long_name = "NOAA Climate Data Record of AMSU-A channel 9 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch9:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch9:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch9:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch9:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch9:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch9:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch10(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch10:long_name = "NOAA Climate Data Record of AMSU-A channel 10 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch10:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch10:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch10:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch10:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch10:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch10:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch11(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch11:long_name = "NOAA Climate Data Record of AMSU-A channel 11 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch11:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch11:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch11:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch11:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch11:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch11:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch12(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch12:long_name = "NOAA Climate Data Record of AMSU-A channel 12 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch12:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch12:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch12:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch12:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch12:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch12:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch13(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch13:long_name = "NOAA Climate Data Record of AMSU-A channel 13 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch13:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch13:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch13:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch13:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch13:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch13:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_ch14(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_ch14:long_name = "NOAA Climate Data Record of AMSU-A channel 14 IMICA recalibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_IMICA_ch14:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_ch14:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_ch14:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_ch14:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_ch14:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_ch14:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch4(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:long_name = "NOAA Climate Data Record of AMSU-A channel 4 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch4:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch5(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:long_name = "NOAA Climate Data Record of AMSU-A channel 5 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch5:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch6(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:long_name = "NOAA Climate Data Record of AMSU-A channel 6 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch6:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch7(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:long_name = "NOAA Climate Data Record of AMSU-A channel 7 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch7:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch8(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:long_name = "NOAA Climate Data Record of AMSU-A channel 8 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch8:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch9(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:long_name = "NOAA Climate Data Record of AMSU-A channel 9 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch9:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch10(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:long_name = "NOAA Climate Data Record of AMSU-A channel 10 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch10:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch11(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:long_name = "NOAA Climate Data Record of AMSU-A channel 11 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch11:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch12(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:long_name = "NOAA Climate Data Record of AMSU-A channel 12 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch12:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch13(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:long_name = "NOAA Climate Data Record of AMSU-A channel 13 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch13:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_IMICA_limbcorr_ch14(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:long_name = "NOAA Climate Data Record of AMSU-A channel 14 IMICA recalibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:units = "kelvin" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:_FillValue = -9999s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_IMICA_limbcorr_ch14:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch4(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch4:long_name = "NOAA Climate Data Record of AMSU-A channel 4 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch4:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch4:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch4:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch4:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch4:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch4:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch5(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch5:long_name = "NOAA Climate Data Record of AMSU-A channel 5 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch5:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch5:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch5:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch5:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch5:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch5:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch6(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch6:long_name = "NOAA Climate Data Record of AMSU-A channel 6 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch6:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch6:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch6:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch6:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch6:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch6:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch7(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch7:long_name = "NOAA Climate Data Record of AMSU-A channel 7 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch7:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch7:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch7:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch7:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch7:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch7:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch8(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch8:long_name = "NOAA Climate Data Record of AMSU-A channel 8 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch8:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch8:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch8:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch8:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch8:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch8:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch9(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch9:long_name = "NOAA Climate Data Record of AMSU-A channel 9 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch9:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch9:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch9:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch9:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch9:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch9:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch10(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch10:long_name = "NOAA Climate Data Record of AMSU-A channel 10 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch10:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch10:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch10:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch10:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch10:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch10:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch11(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch11:long_name = "NOAA Climate Data Record of AMSU-A channel 11 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch11:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch11:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch11:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch11:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch11:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch11:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch12(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch12:long_name = "NOAA Climate Data Record of AMSU-A channel 12 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch12:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch12:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch12:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch12:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch12:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch12:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch13(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch13:long_name = "NOAA Climate Data Record of AMSU-A channel 13 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch13:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch13:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch13:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch13:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch13:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch13:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_ch14(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_ch14:long_name = "NOAA Climate Data Record of AMSU-A channel 14 NOAA operational calibrated brightness temperatures at scan positions" ;
+		fcdr_brightness_temperature_OPR_ch14:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_ch14:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_ch14:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_ch14:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_ch14:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_ch14:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch4(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:long_name = "NOAA Climate Data Record of AMSU-A channel 4 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch4:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch5(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:long_name = "NOAA Climate Data Record of AMSU-A channel 5 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch5:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch6(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:long_name = "NOAA Climate Data Record of AMSU-A channel 6 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch6:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch7(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:long_name = "NOAA Climate Data Record of AMSU-A channel 7 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch7:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch8(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:long_name = "NOAA Climate Data Record of AMSU-A channel 8 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch8:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch9(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:long_name = "NOAA Climate Data Record of AMSU-A channel 9 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch9:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch10(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:long_name = "NOAA Climate Data Record of AMSU-A channel 10 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch10:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch11(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:long_name = "NOAA Climate Data Record of AMSU-A channel 11 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch11:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch12(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:long_name = "NOAA Climate Data Record of AMSU-A channel 12 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch12:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch13(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:long_name = "NOAA Climate Data Record of AMSU-A channel 13 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch13:scale_factor = 0.01f ;
+	short fcdr_brightness_temperature_OPR_limbcorr_ch14(nscanDim, pixelDim) ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:long_name = "NOAA Climate Data Record of AMSU-A channel 14 NOAA operational calibrated brightness temperatures at scan positions, with limb correction using Goldberg (2001) method" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:standard_name = "brightness_temperature" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:units = "kelvin" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:coordinates = "longitude latitude" ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:_FillValue = -9999s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:valid_range = 15000s, 32767s ;
+		fcdr_brightness_temperature_OPR_limbcorr_ch14:scale_factor = 0.01f ;
+	float sensor_zenith_angle(nscanDim, pixelDim) ;
+		sensor_zenith_angle:long_name = "Sensor zenith angle from AMSU-A level 1b product" ;
+		sensor_zenith_angle:units = "degrees" ;
+		sensor_zenith_angle:_FillValue = -9999.f ;
+		sensor_zenith_angle:valid_range = 0.f, 90.f ;
+	float solar_zenith_angle(nscanDim, pixelDim) ;
+		solar_zenith_angle:long_name = "Solar zenith angle from AMSU-A level 1b product" ;
+		solar_zenith_angle:units = "degrees" ;
+		solar_zenith_angle:_FillValue = -9999.f ;
+		solar_zenith_angle:valid_range = 0.f, 180.f ;
+	float local_azimuth_angle(nscanDim, pixelDim) ;
+		local_azimuth_angle:long_name = "Local azimuth angle from AMSU-A level 1b product" ;
+		local_azimuth_angle:units = "degrees" ;
+		local_azimuth_angle:_FillValue = -9999.f ;
+		local_azimuth_angle:valid_range = -180.f, 180.f ;
+	short warm_target_temperatures(nscanDim, wtDim) ;
+		warm_target_temperatures:long_name = "AMSU-A multi-PRT averaged warm target temperature for antenna systems A1-1, A1-2, and A2" ;
+		warm_target_temperatures:units = "K" ;
+		warm_target_temperatures:_FillValue = -9999s ;
+		warm_target_temperatures:valid_range = 25000s, 32767s ;
+		warm_target_temperatures:scale_factor = 0.01f ;
+	short spacecraft_altitude(nscanDim) ;
+		spacecraft_altitude:long_name = "Spacecraft altitude above reference ellipsoid from AMSU-A level 1b product" ;
+		spacecraft_altitude:units = "m" ;
+		spacecraft_altitude:_FillValue = -9999s ;
+		spacecraft_altitude:valid_range = 6000s, 10000s ;
+		spacecraft_altitude:scale_factor = 100.f ;
+
+// global attributes:
+		:Convensions = "CF-1.6" ;
+		:title = "STAR Version 1.0 AMSU-A Radiance FCDR" ;
+		:source = "NSS.AMAX.NK.D08190.S0713.E0906.B5278182.WI" ;
+		:references = "Zou, Cheng-Zhi and Wenhui Wang (2011), Inter-satellite calibration of AMSU-A observations for weather and climate applications, J. Geophys. Res., Vol. 116, D23113, doi:10.1029/2011JD016205.Zou, C.-Z., M. Goldberg, Z. Cheng, N. Grody, J. Sullivan, C. Cao, and D. Tarpley (2006) Recalibration of microwave sounding unit for climate studies using simultaneous nadir overpasses, J. Geophys. Res., 111, D19114, doi:10.1029/2005JD006798. " ;
+		:Metadata_Conventions = "CF-1.6,Unidata Dataset Discovery v1.0, NOAA CDR v1.0, GDS v2.0" ;
+		:standard_name_vocabulary = "CF Standard Name Table (v23, 23 March 2013)" ;
+		:id = "NESDIS-STAR_FCDR_AMSU-A_V01R00_N15_D20080708_S0713_E0905.nc" ;
+		:naming_authority = "gov.noaa.ncdc" ;
+		:date_created = "2013-07-04 03-20-25Z" ;
+		:license = "No constraints on data access or use." ;
+		:summary = "NOAA/NESDIS/STAR Version 1.0 Advanced Microwave Sounding Unit A (AMSU-A) level 1c radiance Fundamental Climate Data Record (FCDR); inter-calibrated channels 4-14 brightness temperatures using the Integrated Microwave Inter-Calibration Approach (IMICA, formerly known as simultaneous nadir overpass method, Zou and Wang 2011) and with quality flags, from 1998 - present; NOAA operational calibrated brightness temperatures (channels 4-14), as well as limb effect corrected IMICA and operational calibrated brightness temperatures using Goldberg (2001) method, are also provided." ;
+		:keywords = "SPECTRAL/ENGINEERING>MICROWAVE>BRIGHTNESS TEMPERATURE" ;
+		:keywords_vocabulary = "NASA Global Change Master Directory (GCMD) Earth Science Keywords, Version 8.0" ;
+		:cdm_data_type = "Swath" ;
+		:creator_name = "Cheng-Zhi Zou" ;
+		:creator_email = "Cheng-Zhi.Zou@noaa.gov" ;
+		:institution = "NOAA/NESDIS/STAR>Center for Satellite Application and Research, NESDIS, NOAA, U.S. Department of Commerce" ;
+		:geospatial_lat_min = -89.5695f ;
+		:geospatial_lat_max = 89.4459f ;
+		:geospatial_lon_min = -179.9806f ;
+		:geospatial_lon_max = 179.966f ;
+		:time_coverage_start = "2008-07-08 07-13-39Z" ;
+		:time_coverage_end = "2008-07-08 09-05-55Z" ;
+		:contributor_name = "Cheng-Zhi.Zou, Wenhui Wang" ;
+		:contributor_role = "Principle Investigator and the architect of the IMICA approach, the author of the Java-based AMSU-A Radiance FCDR processing code and the support scientist who derived new calibration coefficients for AMSU-A channels 4-14 and helped improve the IMICA approach." ;
+		:cdr_program = "NOAA Climate Data Record Program for satellites, FY 2011." ;
+		:cdr_variable = "fcdr_brightness_temperature_IMICA_ch4,fcdr_brightness_temperature_IMICA_ch5,fcdr_brightness_temperature_IMICA_ch6,fcdr_brightness_temperature_IMICA_ch7,fcdr_brightness_temperature_IMICA_ch8,fcdr_brightness_temperature_IMICA_ch9,fcdr_brightness_temperature_IMICA_ch10,fcdr_brightness_temperature_IMICA_ch11,fcdr_brightness_temperature_IMICA_ch12,fcdr_brightness_temperature_IMICA_ch13,fcdr_brightness_temperature_IMICA_ch14,fcdr_brightness_temperature_IMICA_limbcorr_ch4,fcdr_brightness_temperature_IMICA_limbcorr_ch5,fcdr_brightness_temperature_IMICA_limbcorr_ch6,fcdr_brightness_temperature_IMICA_limbcorr_ch7,fcdr_brightness_temperature_IMICA_limbcorr_ch8,fcdr_brightness_temperature_IMICA_limbcorr_ch9,fcdr_brightness_temperature_IMICA_limbcorr_ch10,fcdr_brightness_temperature_IMICA_limbcorr_ch11,fcdr_brightness_temperature_IMICA_limbcorr_ch12,fcdr_brightness_temperature_IMICA_limbcorr_ch13,fcdr_brightness_temperature_IMICA_limbcorr_ch14,fcdr_brightness_temperature_OPR_ch4,fcdr_brightness_temperature_OPR_ch5,fcdr_brightness_temperature_OPR_ch6,fcdr_brightness_temperature_OPR_ch7,fcdr_brightness_temperature_OPR_ch8,fcdr_brightness_temperature_OPR_ch9,fcdr_brightness_temperature_OPR_ch10,fcdr_brightness_temperature_OPR_ch11,fcdr_brightness_temperature_OPR_ch12,fcdr_brightness_temperature_OPR_ch13,fcdr_brightness_temperature_OPR_ch14,fcdr_brightness_temperature_OPR_limbcorr_ch4,fcdr_brightness_temperature_OPR_limbcorr_ch5,fcdr_brightness_temperature_OPR_limbcorr_ch6,fcdr_brightness_temperature_OPR_limbcorr_ch7,fcdr_brightness_temperature_OPR_limbcorr_ch8,fcdr_brightness_temperature_OPR_limbcorr_ch9,fcdr_brightness_temperature_OPR_limbcorr_ch10,fcdr_brightness_temperature_OPR_limbcorr_ch11,fcdr_brightness_temperature_OPR_limbcorr_ch12,fcdr_brightness_temperature_OPR_limbcorr_ch13,fcdr_brightness_temperature_OPR_limbcorr_ch14" ;
+		:metadata_link = "gov.noaa.ncdc:C00787" ;
+		:product_version = "v01r00" ;
+		:platform = "NOAA-15" ;
+		:sensor = "AMSU-A>Advanced Microwave Sounding Unit A" ;
+		:spatial_resolution = "50km at nadir" ;
+		:STAR_SatelliteName = "n15" ;
+		:STAR_SatelliteID = 4 ;
+		:STAR_SatelliteIDInternal = 9 ;
+		:uncertainty_estimate_IMICA = "ch4: 0.750K ch5: 0.750K ch6: 0.750K ch7: 0.750K ch8: 0.750K ch9: 0.850K ch10: 0.900K ch11: 0.900K ch12: 1.100K ch13: 1.300K ch14: 1.700K" ;
+		:STAR_nScanLines = 843 ;
+		:STAR_LimbCorrectionScheme = "Goldberg 2001" ;
+		:STAR_IMICA_coefficients = "\n",
+			"ch4: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=-0.2690 Lamda=0.0000\n",
+			"ch5: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=0.3000 Lamda=0.0000\n",
+			"ch6: Delta0=1.4060e-5 Kappa=-0.6140e-5 Mu0=0.0000 Lamda=0.4420\n",
+			"ch7: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=0.3000 Lamda=0.0000\n",
+			"ch8: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=0.6670 Lamda=0.0000\n",
+			"ch9: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=0.0770 Lamda=0.0000\n",
+			"ch10: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=0.3460 Lamda=0.0000\n",
+			"ch11: Delta0=0.5318e-5 Kappa=-0.0000e-5 Mu0=0.2510 Lamda=0.0000\n",
+			"ch12: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=1.1150 Lamda=0.0000\n",
+			"ch13: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=1.5000 Lamda=0.0000\n",
+			"ch14: Delta0=-0.0000e-5 Kappa=-0.0000e-5 Mu0=0.0000 Lamda=0.0000" ;
+}
