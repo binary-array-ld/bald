@@ -29,6 +29,9 @@ def valid_array_reference(parray, carray, broadcast_shape=None):
     result = True    
     # try numpy broadcast
     try:
+        if broadcast_shape is not None and carray is not None:
+            if carray.shape != broadcast_shape:
+                carray = carray.reshape(broadcast_shape)
         _ = np.broadcast(parray, carray)
     except ValueError:
         result = False
@@ -165,46 +168,32 @@ class ArrayValidation(SubjectValidation):
 
     def check_array_references(self, exceptions):
 
-        # if this Array has a bald__references
-        # # not implemented yet: and it's a singleton
-        # if refs:
-        #     # then it must have a bald_array
-        #     ref_dset = self.fhandle[self.subject.attrs.get('bald__references')]
-        #     child_dset = None
-        #     if (hasattr(ref_dset, 'attrs')):
-        #         child_dset = self.fhandle[ref_dset.attrs.get('bald__array', None)]
-        #     elif 'bald__array' in ref_dset.ncattrs():
-        #         child_dset = self.fhandle[ref_dset.bald__array]
-        #     else:
-        #         exceptions.append('A bald__Reference must link to '
-        #                           'one and only one bald__Array')
-        #     # and we impose bald broadcasting rules on it
+        # If this Array has a bald__references
+        # we impose bald broadcasting rules on it
         parray = None
         if hasattr(self.array, 'bald__shape') and self.array.bald__shape:
             parray = np.zeros(self.array.bald__shape)
         for bald_array in self.array.array_references:
-            parraysubj = 'p'
-            carraysubj = 'c'
+            broadcast_shape = None
+            parraysubj = self.array.identity
             carray = None
             if hasattr(bald_array, 'bald__shape') and bald_array.bald__shape:
                 carray = np.zeros(bald_array.bald__shape)
-                if not valid_array_reference(parray, carray):
-                    msg = ('{} declares a child of {} but the arrays '
-                           'do not conform to the bald array reference '
-                           'rules')
-                    msg = msg.format(parraysubj, carraysubj)
-                    exceptions.append(msg)
-                if parray is None and carray is not None:
-                    msg = ('{} declares a child of {} but the parent array '
-                           'is not an extensive array')
-                    msg = msg.format(parraysubj, carraysubj)
-                    exceptions.append(msg)
-                if carray is None and parray is not None:
-                    msg = ('{} declares a child of {} but the child array '
-                           'is not an extensive array')
-                    msg = msg.format(parraysubj, carraysubj)
-                    exceptions.append(msg)
+            elif hasattr(bald_array, 'bald__array'):
+                if len(bald_array.bald__array) == 1:
+                    array_ref = bald_array.bald__array.copy().pop()
+                    if hasattr(array_ref, 'bald__shape'):
+                        carray = np.zeros(bald_array.bald__array.copy().pop().bald__shape)
 
+                        if hasattr(bald_array, 'bald__childBroadcast'):
+                            broadcast_shape = bald_array.bald__childBroadcast
+            carraysubj = bald_array.identity
+            if not valid_array_reference(parray, carray, broadcast_shape):
+                msg = ('{} declares a child of {} but the arrays '
+                       'do not conform to the bald array reference '
+                       'rules')
+                msg = msg.format(parraysubj, carraysubj)
+                exceptions.append(msg)
         return exceptions
 
 
