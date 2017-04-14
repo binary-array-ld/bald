@@ -76,7 +76,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             validation = bald.validate_netcdf(tfile)
             exns = validation.exceptions()
-            expected = ['p declares a child of c but the arrays do not conform to the bald array reference rules']
+            expected = ['parent_variable declares a child of child_variable but the arrays do not conform to the bald array reference rules']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 

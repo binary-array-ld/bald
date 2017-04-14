@@ -576,7 +576,7 @@ def load_netcdf(afilepath, uri=None):
                 fhandle.variables[name].dimensions[0] == name):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
-
+                
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
                 var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
@@ -604,8 +604,28 @@ def load_netcdf(afilepath, uri=None):
             if 'bald__Reference' not in var.rdf__type:
                 for dim in fhandle.variables[name].dimensions:
                     if file_variables.get(dim):
+                        cv_shape = fhandle.variables[dim].shape
+                        var_shape = fhandle.variables[name].shape
                         refset = var.attrs.get('bald__references', set())
-                        refset.add(file_variables.get(dim))
+                        # Only the dimension defining the last dimension will
+                        # broadcase correctly
+                        if var_shape[-1] == cv_shape[0]:
+                            refset.add(file_variables.get(dim))
+                        # Else, define a bald:childBroadcast
+                        else:
+                            identity = '{}_{}_ref'.format(name, dim)
+                            rattrs = {}
+                            rattrs['rdf__type'] = 'bald__Reference'
+                            reshape = [1 for adim in var_shape]
+
+                            cvi = fhandle.variables[name].dimensions.index(dim)
+                            reshape[cvi] = fhandle.variables[dim].size
+                            rattrs['bald__childBroadcast'] = tuple(reshape)
+                            rattrs['bald__array'] = set((file_variables.get(dim),))
+                            ref_node = Subject(identity, rattrs, prefixes=prefixes, aliases=aliases)
+                            root_container.attrs['bald__contains'].append(ref_node)
+                            file_variables[name] = ref_node
+                            refset.add(ref_node)
                         var.attrs['bald__references'] = refset
 
 

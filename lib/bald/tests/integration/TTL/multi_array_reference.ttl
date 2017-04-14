@@ -10,24 +10,36 @@
         <pdim0>,
         <pdim1>,
         <variable1>,
-        <variable2> ;
+        <variable1_pdim0_ref>,
+        <variable2>,
+        <variable2_pdim0_ref> ;
     bald:isPrefixedBy "prefix_list" .
 
 <variable1> a bald:Array ;
     bald:references <location_variable>,
-        <pdim0>,
-        <pdim1> ;
+        <pdim1>,
+        <variable1_pdim0_ref> ;
     bald:shape "(11, 17)" ;
     <long_name> "Gerald" ;
     <obtype> <http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation> .
 
 <variable2> a bald:Array ;
     bald:references <location_variable>,
-        <pdim0>,
-        <pdim1> ;
+        <pdim1>,
+        <variable2_pdim0_ref> ;
     bald:shape "(11, 17)" ;
     <long_name> "Imelda" ;
     <obtype> <http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation> .
+
+<variable1_pdim0_ref> a bald:Reference,
+        bald:Subject ;
+    bald:array <pdim0> ;
+    bald:childBroadcast "(11, 1)" .
+
+<variable2_pdim0_ref> a bald:Reference,
+        bald:Subject ;
+    bald:array <pdim0> ;
+    bald:childBroadcast "(11, 1)" .
 
 <location_reference_system> a bald:Subject ;
     bald:array <location_reference_system> ;
