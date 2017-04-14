@@ -381,6 +381,7 @@ class Subject(object):
                 vstr = ', '.join(vstrlist)
 
             attrs.append("'{}'".format(kstr + vstr))
+            attrs.sort()
 
         attrs = ''.join(['[' + ', '.join(attrs) + ']'])
         avar = "var {var} = instance('{var}:{type}', {attrs}, '#878800');"
