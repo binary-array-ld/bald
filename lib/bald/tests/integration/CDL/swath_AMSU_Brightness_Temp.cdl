@@ -8,7 +8,6 @@ variables:
 	char scan_time(nscanDim, timeISO8601Dim) ;
 		scan_time:long_name = "Scan start time (UTC) in ISO8601 date/time ([YYYY]-[MM]-[DD]T[HH]-[MM]-[SS]Z) format" ;
 		scan_time:standard_name = "scan_time" ;
-		scan_time:_FillValue = "-9999" ;
 	double scan_time_since78(nscanDim) ;
 		scan_time_since78:long_name = "Scan start time (UTC) in a referenced or elapsed time format" ;
 		scan_time_since78:standard_name = "time" ;
@@ -659,7 +658,7 @@ variables:
 		spacecraft_altitude:scale_factor = 100.f ;
 
 // global attributes:
-		:Convensions = "CF-1.6" ;
+		:Conventions = "CF-1.6" ;
 		:title = "STAR Version 1.0 AMSU-A Radiance FCDR" ;
 		:source = "NSS.AMAX.NK.D08190.S0713.E0906.B5278182.WI" ;
 		:references = "Zou, Cheng-Zhi and Wenhui Wang (2011), Inter-satellite calibration of AMSU-A observations for weather and climate applications, J. Geophys. Res., Vol. 116, D23113, doi:10.1029/2011JD016205.Zou, C.-Z., M. Goldberg, Z. Cheng, N. Grody, J. Sullivan, C. Cao, and D. Tarpley (2006) Recalibration of microwave sounding unit for climate studies using simultaneous nadir overpasses, J. Geophys. Res., 111, D19114, doi:10.1029/2005JD006798. " ;
