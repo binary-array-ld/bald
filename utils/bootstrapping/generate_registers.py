@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import json
 from rdflib import Graph, Namespace, URIRef, Literal
-from rdflib.namespace import RDF, DCTERMS, RDFS,SKOS
+from rdflib.namespace import RDF, DCTERMS, RDFS,SKOS, OWL
 
 def cleanup_link(link):
     newlink = link
@@ -10,7 +10,7 @@ def cleanup_link(link):
 
     return newlink
 
-with open('aliases.json') as data_file:
+with open('../../ncldDump/aliases.json') as data_file:
     data = json.load(data_file)
 
 g1 = Graph()
@@ -56,34 +56,34 @@ g3.bind("reg", REG_NAMES)
 op_conv = URIRef(CONVENTIONS_str + "op")
 
 # define collections
-acdd_conv = URIRef(DEFSCIT_str + "ACDD")
-g1.add((acdd_conv, RDF.type, SKOS.Collection))
-g1.add((acdd_conv, RDFS.label, Literal("ACDD")))
-g1.add((acdd_conv, DCTERMS.description, Literal("Vocabulary of terms used in the Attribute Conventions Dataset Discovery Vocabulary.")))
-g1.add((acdd_conv, URIRef(REG_str + "category"), URIRef("http://def.scitools.org.uk/structure/category/SciTools")))
+#acdd_conv = URIRef(DEFSCIT_str + "ACDD")
+#g1.add((acdd_conv, RDF.type, SKOS.Collection))
+#g1.add((acdd_conv, RDFS.label, Literal("ACDD")))
+#g1.add((acdd_conv, DCTERMS.description, Literal("Vocabulary of terms used in the Attribute Conventions Dataset Discovery Vocabulary.")))
+#g1.add((acdd_conv, URIRef(REG_str + "category"), URIRef("http://def.scitools.org.uk/structure/category/SciTools")))
 
 
-nc_conv = URIRef(DEFSCIT_str + "NetCDF")
-g2.add((nc_conv, RDF.type, SKOS.Collection))
-g2.add((nc_conv, RDFS.label, Literal("NetCDF")))
-g2.add((nc_conv, DCTERMS.description, Literal("Vocabulary of terms used in the netCDF User Guide.")))
-g2.add((nc_conv, URIRef(REG_str + "category"), URIRef("http://def.scitools.org.uk/structure/category/SciTools")))
+#nc_conv = URIRef(DEFSCIT_str + "NetCDF")
+#g2.add((nc_conv, RDF.type, SKOS.Collection))
+#g2.add((nc_conv, RDFS.label, Literal("NetCDF")))
+#g2.add((nc_conv, DCTERMS.description, Literal("Vocabulary of terms used in the netCDF User Guide.")))
+#g2.add((nc_conv, URIRef(REG_str + "category"), URIRef("http://def.scitools.org.uk/structure/category/SciTools")))
 
 
-cfcol = URIRef(DEFSCIT_str + "CFTerms")
-g3.add( (cfcol, RDF.type, SKOS.Collection))
-g3.add((cfcol, RDFS.label, Literal("CFTerms")))
-g3.add((cfcol, DCTERMS.description, Literal("Vocabulary of terms used in the CF conventions for netCDF files.")))
-g3.add((cfcol, URIRef(REG_str + "category"), URIRef("http://def.scitools.org.uk/structure/category/SciTools")))
-
+#cfcol = URIRef(DEFSCIT_str + "CFTerms")
+#g3.add( (cfcol, RDF.type, SKOS.Collection))
+#g3.add((cfcol, RDFS.label, Literal("CFTerms")))
+#g3.add((cfcol, DCTERMS.description, Literal("Vocabulary of terms used in the CF conventions for netCDF files.")))
+#g3.add((cfcol, URIRef(REG_str + "category"), URIRef("http://def.scitools.org.uk/structure/category/SciTools")))
 
 for key in data['names']:
     link = data['names'][key]
 
     if(link.startswith("http://wiki.esipfed.org")):
         subj = URIRef(DEFSCIT_str + "ACDD/" + key)
-        g1.add((acdd_conv, SKOS.member, subj))
-        g1.add((subj, RDF.type, SKOS.Concept))
+        #g1.add((acdd_conv, SKOS.member, subj))
+        #g1.add((subj, RDF.type, SKOS.Concept))
+        g1.add((subj, RDF.type, RDF.Property))
         g1.add((subj, DCTERMS.identifier, Literal(key)))
         g1.add((subj, RDFS.label, Literal(key)))
         g1.add((subj, RDFS.seeAlso, URIRef(cleanup_link(link))))
@@ -91,16 +91,18 @@ for key in data['names']:
     elif(link.startswith("http://www.unidata.ucar.edu")):
         # can't have '_' as a leading character in a resource identified: LDReg rules
         subj = URIRef(NC_NAMES_str + key.replace('_', ''))
-        g2.add((nc_conv, SKOS.member, subj))
-        g2.add((subj, RDF.type, SKOS.Concept))
+        #g2.add((nc_conv, SKOS.member, subj))
+        #g2.add((subj, RDF.type, SKOS.Concept))
+        g2.add((subj, RDF.type, RDF.Property))
         g2.add((subj, DCTERMS.identifier, Literal(key)))
         g2.add((subj, RDFS.label, Literal(key)))
         g2.add((subj, RDFS.seeAlso, URIRef(cleanup_link(link))))
 
     elif (link.startswith("http://cfconventions.org/cf-conventions/v1.6.0/")):
         subj = URIRef(DEFSCIT_str + "CFTerms/" + key)
-        g3.add((cfcol, SKOS.member, subj))
-        g3.add((subj, RDF.type, SKOS.Concept))
+        #g3.add((cfcol, SKOS.member, subj))
+        #g3.add((subj, RDF.type, SKOS.Concept))
+        g3.add((subj, RDF.type, RDF.Property))
         g3.add((subj, DCTERMS.identifier, Literal(key)))
         g3.add((subj, RDFS.label, Literal(key)))
         g3.add((subj, RDFS.seeAlso, URIRef(cleanup_link(link))))
