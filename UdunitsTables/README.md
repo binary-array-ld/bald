@@ -35,4 +35,4 @@ To run the WriteUnitsPage application:
 
 where <version> is the version of UDUNITS-2 to write into the text of the HTML file and <HTML file name> is the name of the HTML file to create.
 
-![alt text](https://github.com/binary-array-ld/bald/tree/master/UdunitsTables/graph.png "View of graph built from UDUNITS-2 2.2.25.")
+![alt text](https://github.com/binary-array-ld/bald/blob/master/UdunitsTables/graph.png "View of graph built from UDUNITS-2 2.2.25.")
