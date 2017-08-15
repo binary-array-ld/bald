@@ -50,7 +50,24 @@ setattr(Test, 'test_ereefs_gbr4_ncld', test_ereefs_gbr4_ncld)
 
 
 def test_ProcessChain0300(self):
-    """Override multi_array test with currently accepted failures"""
+    """Override ProcessChain 0300 test with currently accepted failures"""
     self.assertTrue(True)
 
 setattr(Test, 'test_ProcessChain0300', test_ProcessChain0300)
+
+
+def test_grid_OISST_GHRSST(self):
+    """Override grid OISST GHRSST test with currently accepted failures"""
+    with self.temp_filename('.nc') as tfile:
+        cdl_file = os.path.join(self.cdl_path, 'grid_OISST_GHRSST.cdl')
+        subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+        validation = bald.validate_netcdf(tfile)
+        exns = validation.exceptions()
+        exns.sort()
+        expected = ['http://www.ncdc.noaa.gov/sst is not resolving as a resource (404).',
+                    'http://www.ncdc.noaa.gov/sst/ is not resolving as a resource (404).']
+        expected.sort()
+        self.assertTrue(not validation.is_valid() and exns == expected,
+                        msg='{} \n!= \n{}'.format(exns, expected))
+
+setattr(Test, 'test_grid_OISST_GHRSST', test_grid_OISST_GHRSST)
