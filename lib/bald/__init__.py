@@ -540,7 +540,8 @@ def load_netcdf(afilepath, uri=None):
         prefix_group = (fhandle[fhandle.bald__isPrefixedBy] if
                         hasattr(fhandle, 'bald__isPrefixedBy') else {})
         prefixes = {}
-        if prefix_group:
+
+        if prefix_group != {}:
             prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
                               prefix in prefix_group.ncattrs()]))
         else:
@@ -550,7 +551,7 @@ def load_netcdf(afilepath, uri=None):
         alias_group = (fhandle[fhandle.bald__isAliasedBy]
                        if hasattr(fhandle, 'bald__isAliasedBy') else {})
         aliases = {}
-        if alias_group:
+        if alias_group != {}:
             aliases = (dict([(alias, getattr(alias_group, alias))
                              for alias in alias_group.ncattrs()]))
 
