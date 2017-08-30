@@ -240,6 +240,7 @@ class HttpCache(object):
 
     def check_uri(self, uri):
         result = False
+        #print("Checking uri: " + uri)
         if self[uri].status_code == 200:
             result = True
         return result
@@ -438,6 +439,11 @@ class Subject(object):
         """
         graph = rdflib.Graph()
         graph.bind('bald', 'http://binary-array-ld.net/latest/')
+        for prefix_name in self._prefixes:
+           #strip the double underscore suffix
+           new_name = prefix_name[:-2]
+
+           graph.bind(new_name, self._prefixes[prefix_name])
         graph = self.rdfnode(graph)
         
         return graph
@@ -537,22 +543,34 @@ def load_netcdf(afilepath, uri=None):
     """
 
     with load(afilepath) as fhandle:
-        prefix_group = (fhandle[fhandle.bald__isPrefixedBy] if
+        prefix_var_name  = None
+        if hasattr(fhandle, 'bald__isPrefixedBy'):
+           prefix_var_name  = fhandle.bald__isPrefixedBy
+
+        prefix_var = (fhandle[fhandle.bald__isPrefixedBy] if
                         hasattr(fhandle, 'bald__isPrefixedBy') else {})
         prefixes = {}
-        if prefix_group:
-            prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
-                              prefix in prefix_group.ncattrs()]))
+        if prefix_var is not {} :
+            prefixes = (dict([(prefix, getattr(prefix_var, prefix)) for
+                              prefix in prefix_var.ncattrs()]))
         else:
             for k in fhandle.ncattrs():
                 if k.endswith('__'):
                     prefixes[k] = getattr(fhandle, k)
-        alias_group = (fhandle[fhandle.bald__isAliasedBy]
+
+        #print(prefixes)
+
+        alias_var_name = None
+        if hasattr(fhandle, 'bald__isAliasedBy'):
+           alias_var_name  = fhandle.bald__isAliasedBy
+
+        alias_var = (fhandle[fhandle.bald__isAliasedBy]
                        if hasattr(fhandle, 'bald__isAliasedBy') else {})
         aliases = {}
-        if alias_group:
-            aliases = (dict([(alias, getattr(alias_group, alias))
-                             for alias in alias_group.ncattrs()]))
+        if alias_var != {}:
+            aliases = (dict([(alias, getattr(alias_var, alias))
+                             for alias in alias_var.ncattrs()]))
+        #print(aliases)
 
         attrs = {}
         for k in fhandle.ncattrs():
@@ -567,6 +585,10 @@ def load_netcdf(afilepath, uri=None):
         root_container.attrs['bald__contains'] = []
         file_variables = {}
         for name in fhandle.variables:
+            #print(name)
+            if name ==  prefix_var_name or name == alias_var_name:
+                #print("Skipping " + name)
+                continue
 
             sattrs = fhandle.variables[name].__dict__.copy()
             # inconsistent use of '/'; fix it
@@ -590,6 +612,10 @@ def load_netcdf(afilepath, uri=None):
 
         # cycle again and find references
         for name in fhandle.variables:
+            if name ==  prefix_var_name or name == alias_var_name:
+                #print("Skipping " + name)
+                continue
+
             var = file_variables[name]
             # reverse lookup based on type to be added
             lookups = ['bald__references', 'bald__array']
