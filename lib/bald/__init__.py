@@ -550,7 +550,7 @@ def load_netcdf(afilepath, uri=None):
         prefix_var = (fhandle[fhandle.bald__isPrefixedBy] if
                         hasattr(fhandle, 'bald__isPrefixedBy') else {})
         prefixes = {}
-        if prefix_var is not {} :
+        if prefix_var != {} :
             prefixes = (dict([(prefix, getattr(prefix_var, prefix)) for
                               prefix in prefix_var.ncattrs()]))
         else:
