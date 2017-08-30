@@ -15,6 +15,18 @@ class Test(BaldTestCase):
         self.cdl_path = os.path.join(os.path.dirname(__file__), 'CDL')
 
 
+def test_alias_v2(self):
+    """Test alias version 2 style """
+    with self.temp_filename('.nc') as tfile:
+        cdl_file = os.path.join(self.cdl_path, 'array_alias_v2.cdl')
+        print(cdl_file)
+        subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+        validation = bald.validate_netcdf(tfile)
+        exns = validation.exceptions()
+        self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
+
+setattr(Test, 'test_alias_v2', test_alias_v2)
+
 def test_prefix_v2(self):
     """Test prefix version 2 style """
     with self.temp_filename('.nc') as tfile:

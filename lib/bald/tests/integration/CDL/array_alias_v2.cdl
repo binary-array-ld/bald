@@ -10,7 +10,7 @@ variables:
 	int alias_list ;
         	alias_list:SDN_ParameterDiscoveryCode = "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#SDN_ParameterDiscoveryCode" ;
 	        alias_list:BactTaxaAbundSed = "http://vocab.nerc.ac.uk/collection/P02/current/BAUC/" ;
-		alias_list:standard_name = "https://def.scitools.org.uk/CFTerms/standard_name" ;
+		alias_list:standard_name = "http://def.scitools.org.uk/CFTerms/standard_name" ;
 		alias_list:air_temperature = "http://vocab.nerc.ac.uk/collection/P07/current/CFSN0023/" ;
 
 	int parent_variable(pdim0, pdim1) ;
