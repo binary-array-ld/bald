@@ -558,6 +558,13 @@ def load_netcdf(afilepath, uri=None):
                 if k.endswith('__'):
                     prefixes[k] = getattr(fhandle, k)
 
+        # check that default set is handled, i.e. bald__ and rdf__
+        if 'bald__' not in prefixes:
+            prefixes['bald__'] = "http://binary-array-ld.net/latest/" 
+
+        if 'rdf__' not in prefixes:
+            prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
         #print(prefixes)
 
         alias_var_name = None
