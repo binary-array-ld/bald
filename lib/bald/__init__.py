@@ -536,7 +536,7 @@ def load(afilepath):
     finally:
         f.close()
 
-def load_netcdf(afilepath, uri=None):
+def load_netcdf(afilepath, uri=None, baseuri=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
@@ -600,11 +600,14 @@ def load_netcdf(afilepath, uri=None):
             sattrs = fhandle.variables[name].__dict__.copy()
             # inconsistent use of '/'; fix it
             identity = name
+            if baseuri is not None:
+                identity = baseuri + "/" + name
 
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
                 fhandle.variables[name].dimensions[0] == name):
-                sattrs['bald__array'] = name
+                #sattrs['bald__array'] = name
+                sattrs['bald__array'] = identity
                 sattrs['rdf__type'] = 'bald__Reference'
                 
             if fhandle.variables[name].shape:
@@ -648,6 +651,8 @@ def load_netcdf(afilepath, uri=None):
                         # Else, define a bald:childBroadcast
                         else:
                             identity = '{}_{}_ref'.format(name, dim)
+                            if baseuri is not None:
+                                identity = baseuri + '/' +  '{}_{}_ref'.format(name, dim)
                             rattrs = {}
                             rattrs['rdf__type'] = 'bald__Reference'
                             reshape = [1 for adim in var_shape]
