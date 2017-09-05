@@ -540,9 +540,13 @@ def load_netcdf(afilepath, uri=None):
         prefix_group = (fhandle[fhandle.bald__isPrefixedBy] if
                         hasattr(fhandle, 'bald__isPrefixedBy') else {})
         prefixes = {}
-        if prefix_group:
+
+        skipped_variables = []
+        if prefix_group != {}:
             prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
                               prefix in prefix_group.ncattrs()]))
+            if isinstance(prefix_group, netCDF4._netCDF4.Variable):
+                skipped_variables.append(prefix_group.name)
         else:
             for k in fhandle.ncattrs():
                 if k.endswith('__'):
@@ -550,9 +554,11 @@ def load_netcdf(afilepath, uri=None):
         alias_group = (fhandle[fhandle.bald__isAliasedBy]
                        if hasattr(fhandle, 'bald__isAliasedBy') else {})
         aliases = {}
-        if alias_group:
+        if alias_group != {}:
             aliases = (dict([(alias, getattr(alias_group, alias))
                              for alias in alias_group.ncattrs()]))
+            if isinstance(alias_group, netCDF4._netCDF4.Variable):
+                skipped_variables.append(alias_group.name)
 
         attrs = {}
         for k in fhandle.ncattrs():
@@ -577,13 +583,16 @@ def load_netcdf(afilepath, uri=None):
                 fhandle.variables[name].dimensions[0] == name):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
-                
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
                 var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
             else:
                 var = Subject(identity, sattrs, prefixes=prefixes, aliases=aliases)
-            root_container.attrs['bald__contains'].append(var)
+            if name not in skipped_variables:
+                # Don't include skipped variables, such as prefix or alias
+                # variables, within the containment relation.
+                root_container.attrs['bald__contains'].append(var)
+
             file_variables[name] = var
                 
 
