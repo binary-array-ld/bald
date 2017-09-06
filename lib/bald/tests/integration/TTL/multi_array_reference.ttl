@@ -1,4 +1,5 @@
 @prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix metce: <http://codes.wmo.int/common/observation-type/METCE/2013/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
@@ -21,7 +22,7 @@
         <variable1_pdim0_ref> ;
     bald:shape "(11, 17)" ;
     <long_name> "Gerald" ;
-    <obtype> <http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation> .
+    <obtype> metce:SamplingObservation .
 
 <variable2> a bald:Array ;
     bald:references <location_variable>,
@@ -29,7 +30,7 @@
         <variable2_pdim0_ref> ;
     bald:shape "(11, 17)" ;
     <long_name> "Imelda" ;
-    <obtype> <http://codes.wmo.int/common/observation-type/METCE/2013/SamplingObservation> .
+    <obtype> metce:SamplingObservation .
 
 <variable1_pdim0_ref> a bald:Reference,
         bald:Subject ;

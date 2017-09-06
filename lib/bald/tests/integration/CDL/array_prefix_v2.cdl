@@ -1,0 +1,55 @@
+netcdf tmpMwXy8U {
+dimensions:
+	pdim0 = 11 ;
+	pdim1 = 17 ;
+variables:
+	int prefix_list ;
+  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+  		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+        	prefix_list:sdn__ = "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#" ;
+	        prefix_list:sdn-vocab__= "http://vocab.nerc.ac.uk/collection/P02/current/" ;
+		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;
+		prefix_list:cfsn__ = "http://vocab.nerc.ac.uk/collection/P07/current/CFSN0023/" ;
+
+	int parent_variable(pdim0, pdim1) ;
+		parent_variable:rdf__type = "bald__Array" ;
+		parent_variable:sdn__SDN_ParameterDiscoveryCode = "sdn-vocab__BAUC" ;
+		parent_variable:submursible_name = "Nautilus" ;
+
+	int temp(pdim0, pdim1) ;
+	        temp:standard_name = "air_temperature" ;
+
+// global attributes:
+		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
+		:rdf__type = "bald__Container" ;
+		:bald__isPrefixedBy = "prefix_list" ;
+data:
+
+ parent_variable =
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ;
+
+ temp =
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ;
+
+
+}

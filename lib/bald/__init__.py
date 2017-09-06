@@ -240,6 +240,7 @@ class HttpCache(object):
 
     def check_uri(self, uri):
         result = False
+        #print("Checking uri: " + uri)
         if self[uri].status_code == 200:
             result = True
         return result
@@ -438,6 +439,11 @@ class Subject(object):
         """
         graph = rdflib.Graph()
         graph.bind('bald', 'http://binary-array-ld.net/latest/')
+        for prefix_name in self._prefixes:
+           #strip the double underscore suffix
+           new_name = prefix_name[:-2]
+
+           graph.bind(new_name, self._prefixes[prefix_name])
         graph = self.rdfnode(graph)
         
         return graph
@@ -530,29 +536,53 @@ def load(afilepath):
     finally:
         f.close()
 
-def load_netcdf(afilepath, uri=None):
+def load_netcdf(afilepath, uri=None, baseuri=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
     """
 
     with load(afilepath) as fhandle:
-        prefix_group = (fhandle[fhandle.bald__isPrefixedBy] if
+        prefix_var_name  = None
+        if hasattr(fhandle, 'bald__isPrefixedBy'):
+           prefix_var_name  = fhandle.bald__isPrefixedBy
+
+        prefix_var = (fhandle[fhandle.bald__isPrefixedBy] if
                         hasattr(fhandle, 'bald__isPrefixedBy') else {})
         prefixes = {}
-        if prefix_group:
-            prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
-                              prefix in prefix_group.ncattrs()]))
+
+        skipped_variables = []
+        if prefix_var != {}:
+            prefixes = (dict([(prefix, getattr(prefix_var, prefix)) for
+                              prefix in prefix_var.ncattrs()]))
+            if isinstance(prefix_var, netCDF4._netCDF4.Variable):
+                skipped_variables.append(prefix_var.name)
         else:
             for k in fhandle.ncattrs():
                 if k.endswith('__'):
                     prefixes[k] = getattr(fhandle, k)
-        alias_group = (fhandle[fhandle.bald__isAliasedBy]
+
+        # check that default set is handled, i.e. bald__ and rdf__
+        if 'bald__' not in prefixes:
+            prefixes['bald__'] = "http://binary-array-ld.net/latest/" 
+
+        if 'rdf__' not in prefixes:
+            prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+        #print(prefixes)
+
+        alias_var_name = None
+        if hasattr(fhandle, 'bald__isAliasedBy'):
+           alias_var_name  = fhandle.bald__isAliasedBy
+
+        alias_var = (fhandle[fhandle.bald__isAliasedBy]
                        if hasattr(fhandle, 'bald__isAliasedBy') else {})
         aliases = {}
-        if alias_group:
-            aliases = (dict([(alias, getattr(alias_group, alias))
-                             for alias in alias_group.ncattrs()]))
+        if alias_var != {}:
+            aliases = (dict([(alias, getattr(alias_var, alias))
+                             for alias in alias_var.ncattrs()]))
+            if isinstance(alias_var, netCDF4._netCDF4.Variable):
+                skipped_variables.append(alias_var.name)
 
         attrs = {}
         for k in fhandle.ncattrs():
@@ -567,29 +597,43 @@ def load_netcdf(afilepath, uri=None):
         root_container.attrs['bald__contains'] = []
         file_variables = {}
         for name in fhandle.variables:
+            #print(name)
+            if name ==  prefix_var_name or name == alias_var_name:
+                #print("Skipping " + name)
+                continue
 
             sattrs = fhandle.variables[name].__dict__.copy()
             # inconsistent use of '/'; fix it
             identity = name
+            if baseuri is not None:
+                identity = baseuri + "/" + name
 
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
                 fhandle.variables[name].dimensions[0] == name):
-                sattrs['bald__array'] = name
+                #sattrs['bald__array'] = name
+                sattrs['bald__array'] = identity
                 sattrs['rdf__type'] = 'bald__Reference'
-                
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
                 var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
             else:
                 var = Subject(identity, sattrs, prefixes=prefixes, aliases=aliases)
-            root_container.attrs['bald__contains'].append(var)
+            if name not in skipped_variables:
+                # Don't include skipped variables, such as prefix or alias
+                # variables, within the containment relation.
+                root_container.attrs['bald__contains'].append(var)
+
             file_variables[name] = var
                 
 
 
         # cycle again and find references
         for name in fhandle.variables:
+            if name ==  prefix_var_name or name == alias_var_name:
+                #print("Skipping " + name)
+                continue
+
             var = file_variables[name]
             # reverse lookup based on type to be added
             lookups = ['bald__references', 'bald__array']
@@ -615,6 +659,8 @@ def load_netcdf(afilepath, uri=None):
                         # Else, define a bald:childBroadcast
                         else:
                             identity = '{}_{}_ref'.format(name, dim)
+                            if baseuri is not None:
+                                identity = baseuri + '/' +  '{}_{}_ref'.format(name, dim)
                             rattrs = {}
                             rattrs['rdf__type'] = 'bald__Reference'
                             reshape = [1 for adim in var_shape]
