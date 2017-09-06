@@ -43,7 +43,8 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile)
             try:
-               ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+               g  = root_container.rdfgraph()
+               ttl = g.serialize(format='n3').decode("utf-8")
             except TypeError:
                self.fail("Test case could not convert ereefs CDL to RDF")
 
