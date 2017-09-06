@@ -42,7 +42,6 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, 'ereefs_gbr4_ncld.cdl')
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile)
-            testPassed
             try:
                ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             except TypeError:
