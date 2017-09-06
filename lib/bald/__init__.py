@@ -550,9 +550,13 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
         prefix_var = (fhandle[fhandle.bald__isPrefixedBy] if
                         hasattr(fhandle, 'bald__isPrefixedBy') else {})
         prefixes = {}
-        if prefix_var != {} :
+
+        skipped_variables = []
+        if prefix_var != {}:
             prefixes = (dict([(prefix, getattr(prefix_var, prefix)) for
                               prefix in prefix_var.ncattrs()]))
+            if isinstance(prefix_var, netCDF4._netCDF4.Variable):
+                skipped_variables.append(prefix_var.name)
         else:
             for k in fhandle.ncattrs():
                 if k.endswith('__'):
@@ -577,7 +581,8 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
         if alias_var != {}:
             aliases = (dict([(alias, getattr(alias_var, alias))
                              for alias in alias_var.ncattrs()]))
-        #print(aliases)
+            if isinstance(alias_var, netCDF4._netCDF4.Variable):
+                skipped_variables.append(alias_var.name)
 
         attrs = {}
         for k in fhandle.ncattrs():
@@ -609,13 +614,16 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
                 #sattrs['bald__array'] = name
                 sattrs['bald__array'] = identity
                 sattrs['rdf__type'] = 'bald__Reference'
-                
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
                 var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
             else:
                 var = Subject(identity, sattrs, prefixes=prefixes, aliases=aliases)
-            root_container.attrs['bald__contains'].append(var)
+            if name not in skipped_variables:
+                # Don't include skipped variables, such as prefix or alias
+                # variables, within the containment relation.
+                root_container.attrs['bald__contains'].append(var)
+
             file_variables[name] = var
                 
 
