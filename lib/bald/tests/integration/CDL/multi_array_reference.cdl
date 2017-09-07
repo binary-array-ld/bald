@@ -3,6 +3,11 @@ dimensions:
 	pdim0 = 11 ;
 	pdim1 = 17 ;
 variables:
+        int prefix_list(pdim0, pdim1) ;
+  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+		prefix_list:metce__ = "http://codes.wmo.int/common/observation-type/METCE/2013/" ;
+  		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+		
 	int variable1(pdim0, pdim1) ;
 		variable1:bald__references = "location_variable" ;
 		variable1:long_name = "Gerald";
@@ -31,11 +36,4 @@ variables:
 		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
 		:bald__isPrefixedBy = "prefix_list" ;
 
-group: prefix_list {
-
-  // group attributes:
-  		:bald__ = "http://binary-array-ld.net/latest/" ;
-		:metce__ = "http://codes.wmo.int/common/observation-type/METCE/2013/" ;
-  		:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
-  } // group bald__prefix_list
 }
