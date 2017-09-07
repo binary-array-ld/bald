@@ -17,14 +17,21 @@ conda config --add channels conda-forge
 conda config --add channels bioconda
 conda config --set show_channel_urls True
 source activate ncld-bald
+$ conda install --quiet --file requirements.txt
+
+```
+
+Alternative steps using virtualenv and pip
+```
+virtualenv bald
+source bald/bin/activate
+pip install -r requirements.txt
+
 ```
 
 ## Quickstart
 
 ```
-#install required modules
-$ conda install --quiet --file requirements.txt
-
 #install the bald module
 $ python setup.py --quiet install
 
