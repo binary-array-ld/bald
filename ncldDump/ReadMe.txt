@@ -17,3 +17,13 @@ then the attribute value will treated as the key value.)
 
 The initial version of the application has a placeholder in the aliases.json
 file for context definitions, but the code does not yet recognize or use them.
+
+
+Install
+$ pip install -r ../requirements.txt
+
+Quick-start
+$ python ncldDump.py -a aliases.json -o test.html test.nc
+
+
+Note: this currently works in Python 2.7
