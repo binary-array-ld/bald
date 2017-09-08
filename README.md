@@ -12,6 +12,14 @@ A Python library for validating and managing binary array linked data files.
 
 Suggested configuration steps
 ```
+conda env create
+source activate bald
+python setup.py install
+```
+
+or
+
+```
 conda create -n ncld-bald
 conda config --add channels conda-forge
 conda config --add channels bioconda
