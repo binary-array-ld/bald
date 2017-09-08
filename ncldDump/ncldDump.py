@@ -105,8 +105,6 @@ def parseType(obj):
     
     if   True == isinstance(obj, string_types):
         result = ''
-    elif True == isinstance(obj, str):
-        result = ''
     elif True == isinstance(obj, numpy.int8):
         result = 'b'
     elif True == isinstance(obj, numpy.uint8):
