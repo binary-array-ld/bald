@@ -1,4 +1,5 @@
 from __future__ import print_function
+from six import string_types
 
 import argparse
 import jinja2
@@ -9,6 +10,8 @@ import os
 import re
 import sys
 
+import pprint
+import traceback
 
 def parseArgs(args):
     '''
@@ -100,7 +103,7 @@ def parseType(obj):
     #
     result = '?'
     
-    if   True == isinstance(obj, unicode):
+    if   True == isinstance(obj, string_types):
         result = ''
     elif True == isinstance(obj, str):
         result = ''
@@ -135,24 +138,27 @@ def parseType(obj):
 def convertToStringHook(item, ignoreDicts = False):
     '''
     This function is passed to the json load function as an object hook. It
-    converts any unicode strings into ASCII strings.
+    converts any string_types strings into ASCII strings.
     
     item        [in] An item passed in for processing.
     ignoreDicts [in] If this is set to True ignore any dict objects passed in.
-    returns          Items with any unicode strings converted to ASCII.
+    returns          Items with any string_types strings converted to ASCII.
     '''
     
-    # If this is a unicode string, convert it. If this is a list, convert any
-    # contained unicode strings. If this is a dict and it hasn't been converted
-    # already, convert any contained unicode strings. Otherwise, leave the item
+    # If this is a string_types string, convert it. If this is a list, convert any
+    # contained string_types strings. If this is a dict and it hasn't been converted
+    # already, convert any contained string_types strings. Otherwise, leave the item
     # alone.
     #
-    if isinstance(item, unicode):
-        result = item.encode('utf-8')
+    if isinstance(item, string_types):
+        if sys.version_info[0] < 3:
+           result = item.encode('utf-8')
+        else:
+           result = item
     elif isinstance(item, list):
         result = [ convertToStringHook(element, True) for element in item ]
     elif isinstance(item, dict) and not ignoreDicts:
-        result = { convertToStringHook(key, True) : convertToStringHook(value, True) for key, value in item.iteritems() }
+        result = { convertToStringHook(key, True) : convertToStringHook(value, True) for key, value in item.items() }
     else:
         result = item
     
@@ -294,7 +300,7 @@ def resolveValue(name, value, aliasDict):
         
         # If the value is not a string, get a string representation.
         #
-        if False == isinstance(value, str) and False == isinstance(value, unicode):
+        if False == isinstance(value, str) and False == isinstance(value, string_types):
             value = str(value)
         
         # If the value starts with 'http', interpret the entire string as a
@@ -379,7 +385,7 @@ def parseAttributes(ncObj, aliasDict):
         
         # If the value is a string, wrap it in '"' characters.
         #
-        if True == isinstance(attrValue, str) or True == isinstance(attrValue, unicode):
+        if True == isinstance(attrValue, str) or True == isinstance(attrValue, string_types):
             attrValue = '"' + str(attrValue) + '"'
         
         valueEntry = { 'element' : attrValue }
@@ -424,7 +430,7 @@ def parseGroup(ncObj, aliasDict):
     dimList = []
     
     try:
-        for dimName, dimObj in ncObj.dimensions.iteritems():
+        for dimName, dimObj in ncObj.dimensions.items():
             dimEntry = {'name' : dimName }
             
             if True == dimObj.isunlimited():
@@ -445,7 +451,7 @@ def parseGroup(ncObj, aliasDict):
     varList = []
     
     try:
-        for varName, varObj in ncObj.variables.iteritems():
+        for varName, varObj in ncObj.variables.items():
             varType = parseDtype(varObj.dtype)
             
             varEntry = {'name' : varName, 'type' : varType}
@@ -480,6 +486,8 @@ def parseGroup(ncObj, aliasDict):
 
             varList.append(varEntry)
     except:
+        #type_, value_, traceback_ = sys.exc_info()
+        #tb = traceback.format_tb(traceback_)
         pass
     
     if 0 < len(varList):
@@ -522,7 +530,7 @@ def parseDataset(ncObj, aliasDict):
     
     # If there are any other groups, add them as well.
     #
-    for groupName, groupObj in ncObj.groups.iteritems():
+    for groupName, groupObj in ncObj.groups.items():
         groupEntry = parseGroup(groupObj, aliasDict)
         
         groupEntry['groupName'] = groupName 
