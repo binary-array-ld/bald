@@ -1,5 +1,5 @@
 from __future__ import print_function
-from six import string_types
+from six import string_types, PY2
 
 import argparse
 import jinja2
@@ -151,7 +151,7 @@ def convertToStringHook(item, ignoreDicts = False):
     # alone.
     #
     if isinstance(item, string_types):
-        if sys.version_info[0] < 3:
+        if PY2:
            result = item.encode('utf-8')
         else:
            result = item
