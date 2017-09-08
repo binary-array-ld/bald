@@ -90,9 +90,11 @@ class SubjectValidation(Validation):
                 exceptions.append(msg)
             return exceptions
 
+        ''' Skip checking prefixes as whole graphs could be big!
         for pref, uri in self.subject.prefixes().items():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
+        '''
         for alias, uri in self.subject.aliases.items():
             exceptions = _check_uri(self.subject.unpack_uri(uri),
                                     exceptions)
