@@ -72,3 +72,16 @@ def test_grid_OISST_GHRSST(self):
                         msg='{} \n!= \n{}'.format(exns, expected))
 
 setattr(Test, 'test_grid_OISST_GHRSST', test_grid_OISST_GHRSST)
+
+
+def test_goes16_conus_0p47_1km(self):
+    """Override grid goes16_conus_0.47_1km test to generate netCDF4 file"""
+    with self.temp_filename('.nc') as tfile:
+        cdl_file = os.path.join(self.cdl_path, 'goes16_conus_0.47_1km.cdl')
+        subprocess.check_call(['ncgen', '-o', tfile, '-k', "nc4", cdl_file])
+        validation = bald.validate_netcdf(tfile)
+        exns = validation.exceptions()
+        self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
+
+setattr(Test, 'test_goes16_conus_0.47_1km', test_goes16_conus_0p47_1km)
+
