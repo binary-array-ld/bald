@@ -6,12 +6,17 @@ import netCDF4
 import numpy as np
 import bald
 
-def nc2rdf(ncfilename, outformat):  
+def nc2rdf(ncfilename, outformat, outputfile=None, uri=None):  
     #print("nc2rdf test")
     #print(ncfile)
-    root_container = bald.load_netcdf(ncfilename)
+    root_container = bald.load_netcdf(ncfilename, uri=uri)
     ttl = root_container.rdfgraph().serialize(format=outformat).decode("utf-8")
-    print(ttl)
+    if(outputfile is None):
+       ttl = root_container.rdfgraph().serialize(format=outformat).decode("utf-8")
+       print(ttl)
+    else:
+       ttl = root_container.rdfgraph().serialize(destination=outputfile, format=outformat).decode("utf-8")
+
 
 def cdl2rdf(cdl_file, outformat): 
     #print("cdl2rdf test")
