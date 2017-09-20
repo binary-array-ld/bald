@@ -568,6 +568,20 @@ def load_netcdf(afilepath, uri=None):
             identity = uri
         else:
             identity = 'root'
+
+        # Ensure some well-known prefixes are loaded
+        default_prefixes = {
+                "bald__" : "http://binary-array-ld.net/latest/",
+                "rdf__" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                "rdfs__" : "http://www.w3.org/2000/01/rdf-schema#",
+                "xml__" : "http://www.w3.org/XML/1998/namespace#",
+                "xsd__" : "http://www.w3.org/2001/XMLSchema#"
+                }
+        for p in default_prefixes:
+           if p not in prefixes:
+              prefixes[p] = default_prefixes[p]
+
+
         root_container = Container(identity, attrs, prefixes=prefixes,
                                    aliases=aliases)
         root_container.attrs['bald__contains'] = []
