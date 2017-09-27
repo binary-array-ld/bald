@@ -19,7 +19,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'w') as sf:
+            # with open(os.path.join(self.ttl_path, 'array_reference2.ttl'), 'w') as sf:
             #     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
@@ -36,3 +36,15 @@ class Test(BaldTestCase):
             with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
+
+    def test_ereefs(self):
+        with self.temp_filename('.nc') as tfile:
+            cdl_file = os.path.join(self.cdl_path, 'ereefs_gbr4_ncld.cdl')
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            root_container = bald.load_netcdf(tfile)
+            try:
+               g  = root_container.rdfgraph()
+               ttl = g.serialize(format='n3').decode("utf-8")
+            except TypeError:
+               self.fail("Test case could not convert ereefs CDL to RDF")
+
