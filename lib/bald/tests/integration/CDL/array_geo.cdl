@@ -1,0 +1,45 @@
+netcdf tmpMwXy8U {
+dimensions:
+	pdim0 = 11 ;
+	pdim1 = 17 ;
+variables:
+	int prefix_list ;
+  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+  		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+		prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
+		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;
+		prefix_list:geo__ = "http://www.opengis.net/ont/geosparql#" ;
+
+	int temp(pdim0, pdim1) ;
+	        temp:cf__standard_name = "air_temperature" ;
+	        temp:cf__long_name = "Air temperature obs example at point" ;
+	        temp:rdfs__label = "Air temperature obs example at point" ;
+		temp:geo__asWKT = "POINT(-77.03524 38.889468)" ;
+
+	int pressure(pdim0, pdim1) ;
+	        pressure:cf__standard_name = "air_pressure" ;
+	        pressure:cf__long_name = "Air pressure at UCAR Centre Green" ;
+	        pressure:rdfs__label = "Air pressure at UCAR Centre Green" ;
+		pressure:geo__asWKT = "POINT(-105.24584700000003 40.0315278)" ;
+
+// global attributes:
+		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
+		:rdf__type = "bald__Container" ;
+		:bald__isPrefixedBy = "prefix_list" ;
+data:
+
+ temp =
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+  _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ;
+
+
+}

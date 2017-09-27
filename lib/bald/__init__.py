@@ -415,6 +415,12 @@ class Subject(object):
         selfnode = rdflib.URIRef(self.identity)
         for attr in self.attrs:
             objs = self.attrs[attr]
+            if(isinstance(objs, np.ndarray)):
+                #print("Found np.ndarray")
+                #print(objs)
+                #print(attr)
+                #try to convert np.ndarray to a list
+                objs = objs.tolist()
             if not (isinstance(objs, set) or isinstance(objs, list)):
                 objs = set([objs])
             for obj in objs:
@@ -614,16 +620,13 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
                 #sattrs['bald__array'] = name
                 sattrs['bald__array'] = identity
                 sattrs['rdf__type'] = 'bald__Reference'
+                
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
                 var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
             else:
                 var = Subject(identity, sattrs, prefixes=prefixes, aliases=aliases)
-            if name not in skipped_variables:
-                # Don't include skipped variables, such as prefix or alias
-                # variables, within the containment relation.
-                root_container.attrs['bald__contains'].append(var)
-
+            root_container.attrs['bald__contains'].append(var)
             file_variables[name] = var
                 
 
