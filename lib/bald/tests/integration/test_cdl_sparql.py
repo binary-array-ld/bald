@@ -74,3 +74,25 @@ class Test(BaldTestCase):
         expected_result_rows = 150
         self.assertTrue(len(qres) == expected_result_rows)
 
+    def test_sparql_demo_map_viz_labels(self):
+        #query standard_name values used and frequency
+        qres = self.graph.query(
+                 """
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    PREFIX bald:  <http://binary-array-ld.net/latest/>
+                    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+                    SELECT ?contained ?geoWKT 
+                    WHERE 
+                    { 
+                       ?container a bald:Container .  
+                       ?container bald:contains ?contained .  
+                       ?contained geo:asWKT ?geoWKT  
+                    }
+                 """)
+        for row in qres:
+            print("%s, %s" % row)
+       # print( len(qres))
+        expected_result_rows = 2
+        self.assertTrue(len(qres) == expected_result_rows)
+
