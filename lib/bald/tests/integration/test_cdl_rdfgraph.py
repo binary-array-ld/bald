@@ -19,7 +19,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'w') as sf:
+            # with open(os.path.join(self.ttl_path, 'array_reference2.ttl'), 'w') as sf:
             #     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
