@@ -44,8 +44,8 @@ class Test(BaldTestCase):
                     """)
         for row in qres:
             print("%s :: %s" % row)
-        #print( len(qres))
-        expected_result_rows = 17
+        print( len(qres))
+        expected_result_rows = 13
         self.assertTrue(len(qres) == expected_result_rows)
 
     def test_sparql_demo_graph_viz_labels(self):
@@ -70,8 +70,8 @@ class Test(BaldTestCase):
                  """)
         for row in qres:
             print("%s, %s, %s, %s" % row)
-       # print( len(qres))
-        expected_result_rows = 150
+        print( len(qres))
+        expected_result_rows = 146
         self.assertTrue(len(qres) == expected_result_rows)
 
     def test_sparql_demo_map_viz_labels(self):
@@ -92,7 +92,7 @@ class Test(BaldTestCase):
                  """)
         for row in qres:
             print("%s, %s" % row)
-       # print( len(qres))
-        expected_result_rows = 2
+        print( len(qres))
+        expected_result_rows = 0
         self.assertTrue(len(qres) == expected_result_rows)
 
