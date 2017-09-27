@@ -63,7 +63,12 @@ class ThreddsHarvester:
        #print "b: " + base_url
        #print "c: " + catalog_url
 
-       open_dap_prefix = xml.xpath('/c:catalog/c:service/c:service[@serviceType="OPENDAP"]', namespaces=namespaces)[0].get('base')
+       open_dap_result = xml.xpath('/c:catalog/c:service/c:service[@serviceType="opendap"]', namespaces=namespaces)
+       if len(open_dap_result) > 0:
+          open_dap_prefix = open_dap_result[0].get('base')
+       else:
+          open_dap_prefix = xml.xpath('/c:catalog/c:service[@serviceType="OPeNDAP"]', namespaces=namespaces)[0].get('base')
+
        iso_prefix_result = xml.xpath('/c:catalog/c:service/c:service[@serviceType="ISO"]', namespaces=namespaces)
        wms_prefix_result = xml.xpath('/c:catalog/c:service/c:service[@serviceType="WMS"]', namespaces=namespaces)
 
@@ -77,10 +82,25 @@ class ThreddsHarvester:
        else:
           iso_prefix = None
 
-       res = xml.xpath('/c:catalog/c:dataset/c:dataset|/c:catalog/c:dataset[@urlPath]|//c:catalogRef', namespaces=namespaces)
+       res = xml.xpath('/c:catalog/c:dataset/c:dataset|/c:catalog/c:dataset[@urlPath]|/c:catalog/c:dataset/c:dataset/c:access[@urlPath and @serviceName="dap"]|//c:catalogRef', namespaces=namespaces)
 
        for item in res:
-          if 'urlPath' in item.keys():
+          if 'urlPath' in item.keys() and 'serviceName' in item.keys():
+             # get the name from parent elem 
+             parent = item.getparent()
+             name = parent.attrib['name']
+
+             url_path = item.attrib['urlPath']
+             iso_path = base_url + iso_prefix + url_path if iso_prefix != None else None
+             wms_path = base_url + wms_prefix + url_path if wms_prefix != None else None
+             dataset_access_infos = []
+             print "urlPath: " + url_path
+             for access_info in access_infos:
+                  dataset_access_info = { "type" : access_info["type"], "access" :  base_url + access_info["access"] + url_path }
+                  dataset_access_infos.append(dataset_access_info)
+             datasetEntry = { 'name' : name, 'open_dap_path': base_url + open_dap_prefix + url_path, 'iso_path': iso_path, 'wms_path': wms_path, 'access_infos' : dataset_access_infos }
+             list_of_netcdf_files.append(datasetEntry)
+          elif 'urlPath' in item.keys():
               url_path = item.attrib['urlPath']
               iso_path = base_url + iso_prefix + url_path if iso_prefix != None else None
               wms_path = base_url + wms_prefix + url_path if wms_prefix != None else None
@@ -155,7 +175,8 @@ def process_dataset(assign_url_map, dataset_address, thredds_url, thredds_catalo
     #Use multiple endpoints to get information about this dataset with redundancy
     opendap_url = dataset_address['open_dap_path']
     iso_url = dataset_address['iso_path']
-    wms_url = dataset_address['wms_path']  + "?service=WMS"
+    if 'wms_path' in dataset_address and dataset_address['wms_path'] != None:
+       wms_url = dataset_address['wms_path']  + "?service=WMS"
 
     #Common information across all variables in this dataset
     common_info = {}
@@ -164,7 +185,7 @@ def process_dataset(assign_url_map, dataset_address, thredds_url, thredds_catalo
     try:
         opendap_information = get_opendap_record(opendap_url)
     except Exception as e:
-        print "Exception caught in perform_harvest - get_opendap_ereefs(" + opendap_url + "): ", e.message
+        print "Exception caught in perform_harvest - get_opendap_record(" + opendap_url + "): ", e.message
 
     common_info["access"] = dataset_address["access_infos"]
     common_info["dataset_id"] = opendap_url
