@@ -240,7 +240,6 @@ class HttpCache(object):
 
     def check_uri(self, uri):
         result = False
-        #print("Checking uri: " + uri)
         if self[uri].status_code == 200:
             result = True
         return result
@@ -416,9 +415,6 @@ class Subject(object):
         for attr in self.attrs:
             objs = self.attrs[attr]
             if(isinstance(objs, np.ndarray)):
-                #print("Found np.ndarray")
-                #print(objs)
-                #print(attr)
                 #try to convert np.ndarray to a list
                 objs = objs.tolist()
             if not (isinstance(objs, set) or isinstance(objs, list)):
@@ -575,8 +571,6 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
         if 'rdf__' not in prefixes:
             prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
-        #print(prefixes)
-
         alias_var_name = None
         if hasattr(fhandle, 'bald__isAliasedBy'):
            alias_var_name  = fhandle.bald__isAliasedBy
@@ -603,9 +597,7 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
         root_container.attrs['bald__contains'] = []
         file_variables = {}
         for name in fhandle.variables:
-            #print(name)
             if name ==  prefix_var_name or name == alias_var_name:
-                #print("Skipping " + name)
                 continue
 
             sattrs = fhandle.variables[name].__dict__.copy()
@@ -634,7 +626,6 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
         # cycle again and find references
         for name in fhandle.variables:
             if name ==  prefix_var_name or name == alias_var_name:
-                #print("Skipping " + name)
                 continue
 
             var = file_variables[name]
