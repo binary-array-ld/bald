@@ -538,7 +538,7 @@ def load(afilepath):
     finally:
         f.close()
 
-def load_netcdf(afilepath, uri=None, baseuri=None):
+def load_netcdf(afilepath, baseuri=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
@@ -588,8 +588,8 @@ def load_netcdf(afilepath, uri=None, baseuri=None):
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
         # It would be nice to use the URI of the file if it is known.
-        if uri is not None:
-            identity = uri
+        if baseuri is not None:
+            identity = baseuri
         else:
             identity = 'root'
         root_container = Container(identity, attrs, prefixes=prefixes,
