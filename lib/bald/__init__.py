@@ -528,7 +528,7 @@ def load(afilepath):
 def load(afilepath):
     if afilepath.endswith('.hdf'):
         loader = h5py.File
-    elif afilepath.endswith('.nc'):
+    elif afilepath.endswith('.nc') or afilepath.endswith('nc4'):
         loader = netCDF4.Dataset
     else:
         raise ValueError('filepath suffix not supported')
