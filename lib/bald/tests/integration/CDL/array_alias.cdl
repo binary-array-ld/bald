@@ -9,8 +9,8 @@ variables:
 		parent_variable:submursible_name = "Nautilus" ;
 
 	int prefix_list ;
-		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
-		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+		prefix_list:bald = "http://binary-array-ld.net/latest/" ;
+		prefix_list:rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
 
 	int alias_list ;
 		alias_list:SDN_ParameterDiscoveryCode = "http://vocab.nerc.ac.uk/isoCodelists/sdnCodelists/cdicsrCodeList.xml#SDN_ParameterDiscoveryCode" ;

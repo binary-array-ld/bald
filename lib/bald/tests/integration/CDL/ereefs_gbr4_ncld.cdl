@@ -130,8 +130,8 @@ variables:
 
 	group: prefix_list { 
 		// group attributes:
-   		:bald__ = "http://binary-array-ld.net/latest/" ;
-   		:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+   		:bald = "http://binary-array-ld.net/latest/" ;
+   		:rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
     } // group bald__prefix_list
  
 	group: alias_list { 

@@ -4,11 +4,11 @@ dimensions:
 	pdim1 = 17 ;
 variables:
 	int prefix_list ;
-  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
-  		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
-		prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
-		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;
-		prefix_list:geo__ = "http://www.opengis.net/ont/geosparql#" ;
+  		prefix_list:bald = "http://binary-array-ld.net/latest/" ;
+  		prefix_list:rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+		prefix_list:rdfs = "http://www.w3.org/2000/01/rdf-schema#" ;
+		prefix_list:cf = "http://def.scitools.org.uk/CFTerms/" ;
+		prefix_list:geo = "http://www.opengis.net/ont/geosparql#" ;
 
 	int temp(pdim0, pdim1) ;
 	        temp:cf__standard_name = "air_temperature" ;

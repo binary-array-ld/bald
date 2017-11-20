@@ -18,10 +18,10 @@ int step2 ;
 group: prefix_list {
 
 // group attributes:
-        :DA__ = "https://codes.nws.noaa.gov/DataAssimilation" ;
-        :NWP__ = "https://codes.nws.noaa.gov/NumericalWeatherPrediction" ;
-        :StatPP__ = "https://codes.nws.noaa.gov/StatisticalPostProcessing" ;
-        :bald__ = "http://binary-array-ld.net/latest/" ;
+        :DA = "https://codes.nws.noaa.gov/DataAssimilation" ;
+        :NWP = "https://codes.nws.noaa.gov/NumericalWeatherPrediction" ;
+        :StatPP = "https://codes.nws.noaa.gov/StatisticalPostProcessing" ;
+        :bald = "http://binary-array-ld.net/latest/" ;
       
   } // group bald__prefix_list
 }

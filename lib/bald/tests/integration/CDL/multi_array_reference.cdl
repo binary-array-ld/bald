@@ -4,9 +4,9 @@ dimensions:
 	pdim1 = 17 ;
 variables:
         int prefix_list(pdim0, pdim1) ;
-  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
-		prefix_list:metce__ = "http://codes.wmo.int/common/observation-type/METCE/2013/" ;
-  		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+  		prefix_list:bald = "http://binary-array-ld.net/latest/" ;
+		prefix_list:metce = "http://codes.wmo.int/common/observation-type/METCE/2013/" ;
+  		prefix_list:rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
 		
 	int variable1(pdim0, pdim1) ;
 		variable1:bald__references = "location_variable" ;
