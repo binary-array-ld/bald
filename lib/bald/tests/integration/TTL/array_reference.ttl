@@ -4,17 +4,17 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<root> a bald:Container ;
-    bald:contains <child_variable>,
-        <parent_variable> ;
+<file://CDL/array_reference.cdl> a bald:Container ;
+    bald:contains <file://CDL/array_reference.cdl/child_variable>,
+        <file://CDL/array_reference.cdl/parent_variable> ;
     bald:isPrefixedBy "prefix_list" .
 
-<parent_variable> a bald:Array ;
-    bald:references <child_variable> ;
+<file://CDL/array_reference.cdl/parent_variable> a bald:Array ;
+    bald:references <file://CDL/array_reference.cdl/child_variable> ;
     bald:shape "(11, 17)" .
 
-<child_variable> a bald:Array,
+<file://CDL/array_reference.cdl/child_variable> a bald:Array,
         bald:Reference ;
-    bald:array <child_variable> ;
+    bald:array <file://CDL/array_reference.cdl/child_variable> ;
     bald:shape "(11, 17)" .
 

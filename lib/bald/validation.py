@@ -191,6 +191,7 @@ class ArrayValidation(SubjectValidation):
                             broadcast_shape = bald_array.bald__childBroadcast
             carraysubj = bald_array.identity
             if not valid_array_reference(parray, carray, broadcast_shape):
+                #import pdb; pdb.set_trace()
                 msg = ('{} declares a child of {} but the arrays '
                        'do not conform to the bald array reference '
                        'rules')

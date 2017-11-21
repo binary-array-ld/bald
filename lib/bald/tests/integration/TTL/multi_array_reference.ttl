@@ -2,63 +2,74 @@
 @prefix metce: <http://codes.wmo.int/common/observation-type/METCE/2013/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix some_vocab: <http://binary-array-ld.net/latest/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<root> a bald:Container ;
-    bald:contains <location_reference_system>,
-        <location_variable>,
-        <pdim0>,
-        <pdim1>,
-        <variable1>,
-        <variable1_pdim0_ref>,
-        <variable2>,
-        <variable2_pdim0_ref> ;
-    bald:isPrefixedBy "prefix_list" .
+<file://CDL/multi_array_reference.cdl> a some_vocab:Container ;
+    some_vocab:contains <file://CDL/multi_array_reference.cdl/data_variable1>,
+        <file://CDL/multi_array_reference.cdl/data_variable1_pdim0_ref>,
+        <file://CDL/multi_array_reference.cdl/data_variable2>,
+        <file://CDL/multi_array_reference.cdl/data_variable2_pdim0_ref>,
+        <file://CDL/multi_array_reference.cdl/list_collection>,
+        <file://CDL/multi_array_reference.cdl/location_reference_system>,
+        <file://CDL/multi_array_reference.cdl/location_variable>,
+        <file://CDL/multi_array_reference.cdl/pdim0>,
+        <file://CDL/multi_array_reference.cdl/pdim1>,
+        <file://CDL/multi_array_reference.cdl/set_collection> ;
+    some_vocab:isPrefixedBy "prefix_list" .
 
-<variable1> a bald:Array ;
-    bald:references <location_variable>,
-        <pdim1>,
-        <variable1_pdim0_ref> ;
-    bald:shape "(11, 17)" ;
+<file://CDL/multi_array_reference.cdl/data_variable1> a some_vocab:Array ;
+    some_vocab:references <file://CDL/multi_array_reference.cdl/data_variable1_pdim0_ref>,
+        <file://CDL/multi_array_reference.cdl/location_variable>,
+        <file://CDL/multi_array_reference.cdl/pdim1> ;
+    some_vocab:shape "(11, 17)" ;
     <long_name> "Gerald" ;
     <obtype> metce:SamplingObservation .
 
-<variable2> a bald:Array ;
-    bald:references <location_variable>,
-        <pdim1>,
-        <variable2_pdim0_ref> ;
-    bald:shape "(11, 17)" ;
+<file://CDL/multi_array_reference.cdl/data_variable2> a some_vocab:Array ;
+    some_vocab:references <file://CDL/multi_array_reference.cdl/data_variable2_pdim0_ref>,
+        <file://CDL/multi_array_reference.cdl/location_variable>,
+        <file://CDL/multi_array_reference.cdl/pdim1> ;
+    some_vocab:shape "(11, 17)" ;
     <long_name> "Imelda" ;
     <obtype> metce:SamplingObservation .
 
-<variable1_pdim0_ref> a bald:Reference,
-        bald:Subject ;
-    bald:array <pdim0> ;
-    bald:childBroadcast "(11, 1)" .
+<file://CDL/multi_array_reference.cdl/list_collection> a some_vocab:Subject ;
+    some_vocab:references <file://CDL/multi_array_reference.cdl/data_variable1_pdim0_ref>,
+        <file://CDL/multi_array_reference.cdl/data_variable2_pdim0_ref> .
 
-<variable2_pdim0_ref> a bald:Reference,
-        bald:Subject ;
-    bald:array <pdim0> ;
-    bald:childBroadcast "(11, 1)" .
+<file://CDL/multi_array_reference.cdl/set_collection> a some_vocab:Subject ;
+    some_vocab:references <file://CDL/multi_array_reference.cdl/data_variable1_pdim0_ref>,
+        <file://CDL/multi_array_reference.cdl/data_variable2_pdim0_ref> .
 
-<location_reference_system> a bald:Subject ;
-    bald:array <location_reference_system> ;
+<file://CDL/multi_array_reference.cdl/location_reference_system> a some_vocab:Subject ;
+    some_vocab:array <file://CDL/multi_array_reference.cdl/location_reference_system> ;
     <pcode> "4897" .
 
-<location_variable> a bald:Array,
-        bald:Reference ;
-    bald:array <location_variable> ;
-    bald:references <location_reference_system> ;
-    bald:shape "(11, 17)" .
+<file://CDL/multi_array_reference.cdl/data_variable1_pdim0_ref> a some_vocab:Reference,
+        some_vocab:Subject ;
+    some_vocab:array <file://CDL/multi_array_reference.cdl/pdim0> ;
+    some_vocab:childBroadcast "(11, 1)" .
 
-<pdim0> a bald:Array,
-        bald:Reference ;
-    bald:array <pdim0> ;
-    bald:shape "(11,)" .
+<file://CDL/multi_array_reference.cdl/data_variable2_pdim0_ref> a some_vocab:Reference,
+        some_vocab:Subject ;
+    some_vocab:array <file://CDL/multi_array_reference.cdl/pdim0> ;
+    some_vocab:childBroadcast "(11, 1)" .
 
-<pdim1> a bald:Array,
-        bald:Reference ;
-    bald:array <pdim1> ;
-    bald:shape "(17,)" .
+<file://CDL/multi_array_reference.cdl/location_variable> a some_vocab:Array,
+        some_vocab:Reference ;
+    some_vocab:array <file://CDL/multi_array_reference.cdl/location_variable> ;
+    some_vocab:references <file://CDL/multi_array_reference.cdl/location_reference_system> ;
+    some_vocab:shape "(11, 17)" .
+
+<file://CDL/multi_array_reference.cdl/pdim0> a some_vocab:Array,
+        some_vocab:Reference ;
+    some_vocab:array <file://CDL/multi_array_reference.cdl/pdim0> ;
+    some_vocab:shape "(11,)" .
+
+<file://CDL/multi_array_reference.cdl/pdim1> a some_vocab:Array,
+        some_vocab:Reference ;
+    some_vocab:array <file://CDL/multi_array_reference.cdl/pdim1> ;
+    some_vocab:shape "(17,)" .
 

@@ -46,6 +46,7 @@ class Test(BaldTestCase):
             print("%s :: %s" % row)
         print( len(qres))
         expected_result_rows = 15
+        import pdb; pdb.set_trace()
         self.assertTrue(len(qres) == expected_result_rows)
 
     def test_sparql_demo_graph_viz_labels(self):

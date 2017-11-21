@@ -64,9 +64,8 @@ def test_grid_OISST_GHRSST(self):
         validation = bald.validate_netcdf(tfile)
         exns = validation.exceptions()
         exns.sort()
-        expected = [ 'http://doi.org/10.7289/V5SQ8XB5 is not resolving as a resource (404).',
-                     'http://www.ncdc.noaa.gov/sst is not resolving as a resource (404).',
-                     'http://www.ncdc.noaa.gov/sst/ is not resolving as a resource (404).']
+        expected = ['http://www.ncdc.noaa.gov/sst is not resolving as a resource (404).',
+                    'http://www.ncdc.noaa.gov/sst/ is not resolving as a resource (404).']
         expected.sort()
         self.assertTrue(not validation.is_valid() and exns == expected,
                         msg='{} \n!= \n{}'.format(exns, expected))

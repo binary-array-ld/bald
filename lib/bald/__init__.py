@@ -476,6 +476,8 @@ class Array(Subject):
 
         if hasattr(self, 'bald__array'):
             for aref in self.bald__array:
+                if isinstance(aref, str):
+                    raise TypeError('unexpected string: {}'.format(aref))
                 alink = "link({var}, {target}, 'bald__array', 'bottom');"
                 alink = alink.format(var=self.identity, target=aref.identity)
                 links.append(alink)
@@ -515,19 +517,6 @@ class Container(Subject):
 def load(afilepath):
     if afilepath.endswith('.hdf'):
         loader = h5py.File
-    else:
-        raise ValueError('filepath suffix not supported')
-    try:
-        f = loader(afilepath, "r")
-        yield f
-    finally:
-        f.close()
-
-
-@contextlib.contextmanager
-def load(afilepath):
-    if afilepath.endswith('.hdf'):
-        loader = h5py.File
     elif afilepath.endswith('.nc'):
         loader = netCDF4.Dataset
     else:
@@ -540,11 +529,13 @@ def load(afilepath):
 
 def load_netcdf(afilepath, baseuri=None):
     """
-    Validate a file with respect to binary-array-linked-data.
-    Returns a :class:`bald.validation.Validation`
+    Load a file with respect to binary-array-linked-data.
+    Returns a :class:`bald.Collection`
     """
 
     with load(afilepath) as fhandle:
+        if baseuri is None:
+            baseuri = 'file://{}'.format(afilepath)
         prefix_var_name  = None
         if hasattr(fhandle, 'bald__isPrefixedBy'):
            prefix_var_name  = fhandle.bald__isPrefixedBy
@@ -609,8 +600,7 @@ def load_netcdf(afilepath, baseuri=None):
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
                 fhandle.variables[name].dimensions[0] == name):
-                #sattrs['bald__array'] = name
-                sattrs['bald__array'] = identity
+                sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
                 
             if fhandle.variables[name].shape:
@@ -629,18 +619,42 @@ def load_netcdf(afilepath, baseuri=None):
                 continue
 
             var = file_variables[name]
-            # reverse lookup based on type to be added
-            lookups = ['bald__references', 'bald__array']
-            for lookup in lookups:
-                if lookup in var.attrs:
-                    child_dset_set = var.attrs[lookup].split(' ')
-                    var.attrs[lookup] = set()
-                    for child_dset_name in child_dset_set:
-                        carray = file_variables.get(child_dset_name)
-                    var.attrs[lookup].add(carray)
+            sattrs = fhandle.variables[name].__dict__.copy()
+            # netCDF coordinate variable special case
+            if (len(fhandle.variables[name].dimensions) == 1 and
+                fhandle.variables[name].dimensions[0] == name):
+                sattrs['bald__array'] = name
+
+            for sattr in sattrs:
+                if (isinstance(sattrs[sattr], str) and
+                    file_variables.get(sattrs[sattr])):
+                    # next: remove all use of set, everything is dict or orderedDict
+                    var.attrs[sattr] = set((file_variables.get(sattrs[sattr]),))
+                elif isinstance(sattrs[sattr], str):
+                    potrefs_list = sattrs[sattr].split(',')
+                    potrefs_set = sattrs[sattr].split(' ')
+                    if len(potrefs_list) > 1:
+                        refs = np.array([file_variables.get(pref) is not None
+                                         for pref in potrefs_list])
+                        if np.all(refs):
+                            var.attrs[sattr] = [file_variables.get(pref)
+                                                for pref in potrefs_list]
+
+                    elif len(potrefs_set) > 1:
+                        refs = np.array([file_variables.get(pref) is not None
+                                         for pref in potrefs_set])
+                        if np.all(refs):
+                            var.attrs[sattr] = set([file_variables.get(pref)
+                                                    for pref in potrefs_set])
+
+            # if name == 'pdim0':
+            #     import pdb; pdb.set_trace()
+
             # coordinate variables are bald__references except for
             # variables that already declare themselves as bald__Reference 
             if 'bald__Reference' not in var.rdf__type:
+                # if name == 'pdim0':
+                #     import pdb; pdb.set_trace()
                 for dim in fhandle.variables[name].dimensions:
                     if file_variables.get(dim):
                         cv_shape = fhandle.variables[dim].shape
