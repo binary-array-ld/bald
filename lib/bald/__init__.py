@@ -261,7 +261,7 @@ class Subject(object):
         if aliases is None:
             aliases = {}
         self.attrs = attrs
-        
+
         self.rdf__type = self._rdftype
 
         self.aliases = aliases
@@ -305,12 +305,11 @@ class Subject(object):
     def prefixes(self):
         prefixes = {}
         for key, value in self._prefixes.items():
-            if key.endswith('__') and self._http_uri_prefix.match(value):
-                pref = key.rstrip('__')
-                if pref in prefixes:
+            if self._http_uri_prefix.match(value):
+                if key in prefixes:
                     raise ValueError('This container has conflicting prefix'
                                      ' definitions.')
-                prefixes[pref] = value
+                prefixes[key] = value
         return prefixes
 
     def unpack_uri(self, astring):
@@ -443,7 +442,7 @@ class Subject(object):
         graph.bind('bald', 'http://binary-array-ld.net/latest/')
         for prefix_name in self._prefixes:
            #strip the double underscore suffix
-           new_name = prefix_name[:-2]
+           new_name = prefix_name
 
            graph.bind(new_name, self._prefixes[prefix_name])
         graph = self.rdfnode(graph)
@@ -559,17 +558,13 @@ def load_netcdf(afilepath, baseuri=None):
                               prefix in prefix_var.ncattrs()]))
             if isinstance(prefix_var, netCDF4._netCDF4.Variable):
                 skipped_variables.append(prefix_var.name)
-        else:
-            for k in fhandle.ncattrs():
-                if k.endswith('__'):
-                    prefixes[k] = getattr(fhandle, k)
 
         # check that default set is handled, i.e. bald__ and rdf__
-        if 'bald__' not in prefixes:
-            prefixes['bald__'] = "http://binary-array-ld.net/latest/" 
+        if 'bald' not in prefixes:
+            prefixes['bald'] = "http://binary-array-ld.net/latest/" 
 
-        if 'rdf__' not in prefixes:
-            prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        if 'rdf' not in prefixes:
+            prefixes['rdf'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
         alias_var_name = None
         if hasattr(fhandle, 'bald__isAliasedBy'):
