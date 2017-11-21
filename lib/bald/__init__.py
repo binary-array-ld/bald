@@ -234,7 +234,12 @@ class HttpCache(object):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
             headers = {'Accept': 'text/turtle'}
+            # import datetime
+            # now = datetime.datetime.utcnow()
+            # print('\ndownloading: {}'.format(item))
             self.cache[item] = requests.get(item, headers=headers)
+            # then = datetime.datetime.utcnow()
+            # print('{}s'.format((then-now).total_seconds()))
 
         return self.cache[item]
 
@@ -536,6 +541,7 @@ def load_netcdf(afilepath, baseuri=None):
     with load(afilepath) as fhandle:
         if baseuri is None:
             baseuri = 'file://{}'.format(afilepath)
+        identity = baseuri
         prefix_var_name  = None
         if hasattr(fhandle, 'bald__isPrefixedBy'):
            prefix_var_name  = fhandle.bald__isPrefixedBy
@@ -578,13 +584,29 @@ def load_netcdf(afilepath, baseuri=None):
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
-        # It would be nice to use the URI of the file if it is known.
-        if baseuri is not None:
-            identity = baseuri
-        else:
-            identity = 'root'
+        # process Conventions
+        # Conventions = "CF-1.6, ACDD-1.3"
+        aliasgraph = rdflib.Graph()
+        if hasattr(fhandle, 'Conventions'):
+            conventions = [c.strip() for c in fhandle.Conventions.split(',')]
+            for conv in conventions:
+                if conv.startswith('CF-'):
+                    uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
+                    result = aliasgraph.parse(uri)
+            qstr = ('select ?alias ?uri where '
+                    '{?uri dct:identifier ?alias .}')
+            qres = aliasgraph.query(qstr)
+
+            new_aliases = [(str(q[0]), str(q[1])) for q in list(qres)]
+            na_keys = [n[0] for n in new_aliases]
+            if len(set(na_keys)) != len(na_keys):
+                raise ValueError('duplicate aliases')
+            aliases = careful_update(aliases, dict(new_aliases))
+            
+                    
         root_container = Container(identity, attrs, prefixes=prefixes,
                                    aliases=aliases)
+
         root_container.attrs['bald__contains'] = []
         file_variables = {}
         for name in fhandle.variables:
@@ -612,7 +634,20 @@ def load_netcdf(afilepath, baseuri=None):
             file_variables[name] = var
                 
 
+        reference_prefixes = dict()
+        reference_graph = aliasgraph
+        reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
+        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+                'select ?s '
+                'where { '
+                '  ?s rdfs:range ?type . '
+                'filter(?type != rdfs:Literal)'
+                '}')
+        refs = reference_graph.query(qstr)
 
+        ref_prefs = [str(ref[0]) for ref in list(refs)]
+        
+        
         # cycle again and find references
         for name in fhandle.variables:
             if name ==  prefix_var_name or name == alias_var_name:
@@ -625,7 +660,12 @@ def load_netcdf(afilepath, baseuri=None):
                 fhandle.variables[name].dimensions[0] == name):
                 sattrs['bald__array'] = name
 
-            for sattr in sattrs:
+            # for sattr in sattrs:
+            for sattr in (sattr for sattr in sattrs if
+                          root_container.unpack_uri(sattr) in ref_prefs):
+                # if sattr == 'coordinates':
+                #     import pdb; pdb.set_trace()
+                
                 if (isinstance(sattrs[sattr], str) and
                     file_variables.get(sattrs[sattr])):
                     # next: remove all use of set, everything is dict or orderedDict
@@ -647,14 +687,9 @@ def load_netcdf(afilepath, baseuri=None):
                             var.attrs[sattr] = set([file_variables.get(pref)
                                                     for pref in potrefs_set])
 
-            # if name == 'pdim0':
-            #     import pdb; pdb.set_trace()
-
             # coordinate variables are bald__references except for
             # variables that already declare themselves as bald__Reference 
             if 'bald__Reference' not in var.rdf__type:
-                # if name == 'pdim0':
-                #     import pdb; pdb.set_trace()
                 for dim in fhandle.variables[name].dimensions:
                     if file_variables.get(dim):
                         cv_shape = fhandle.variables[dim].shape
@@ -687,14 +722,14 @@ def load_netcdf(afilepath, baseuri=None):
     return root_container
 
 
-def validate_netcdf(afilepath):
+def validate_netcdf(afilepath, cache=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
 
     """
     root_container = load_netcdf(afilepath)
-    return validate(root_container)
+    return validate(root_container, cache=cache)
 
 
 def validate_hdf5(afilepath):
@@ -706,7 +741,7 @@ def validate_hdf5(afilepath):
     root_container = load_hdf5(afilepath)
     return validate(root_container)
 
-def validate(root_container, sval=None):
+def validate(root_container, sval=None, cache=None):
     """
     Validate a Container with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
@@ -715,16 +750,16 @@ def validate(root_container, sval=None):
     if sval is None:
         sval = bv.StoredValidation()
 
-    root_val = bv.ContainerValidation(subject=root_container)
+    root_val = bv.ContainerValidation(subject=root_container, httpcache=cache)
     sval.stored_exceptions += root_val.exceptions()
     for subject in root_container.attrs.get('bald__contains', []):
         if isinstance(subject, Array):
-            array_val = bv.ArrayValidation(subject)
+            array_val = bv.ArrayValidation(subject, httpcache=cache)
             sval.stored_exceptions += array_val.exceptions()
         elif isinstance(subject, Container):
-            sval = validate(subject, sval=sval)
+            sval = validate(subject, sval=sval, cache=cache)
         elif isinstance(subject, Subject):
-            subject_val = bv.SubjectValidation(subject)
+            subject_val = bv.SubjectValidation(subject, httpcache=cache)
             sval.stored_exceptions += subject_val.exceptions()
 
     return sval

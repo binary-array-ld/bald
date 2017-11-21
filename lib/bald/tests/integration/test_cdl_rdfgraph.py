@@ -54,6 +54,21 @@ class Test(BaldTestCase):
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
 
+    def test_point_template(self):
+        with self.temp_filename('.nc') as tfile:
+            cdlname = 'point_template.cdl'
+            cdl_file = os.path.join(self.cdl_path, cdlname)
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            cdl_file_uri = 'file://CDL/{}'.format(cdlname)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri)
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            # with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'w') as sf:
+            #     sf.write(ttl)
+            with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertEqual(expected_ttl, ttl)
+
+
     def test_ereefs(self):
         with self.temp_filename('.nc') as tfile:
             cdl_file = os.path.join(self.cdl_path, 'ereefs_gbr4_ncld.cdl')

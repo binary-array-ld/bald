@@ -1,0 +1,203 @@
+@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix ns1: <http://def.scitools.org.uk/CFTerms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<file://CDL/point_template.cdl> a bald:Container ;
+    <Conventions> "CF-1.6, ACDD-1.3" ;
+    <acknowledgement> "thanks to the NCEI netCDF working group" ;
+    <cdm_data_type> "Point" ;
+    <comment> "This data file is just an example, the data are completely BOGUS!" ;
+    <contributor_name> "NCEI" ;
+    <contributor_role> "Data Center" ;
+    <creator_email> "Mathew.Biddle@noaa.gov" ;
+    <creator_institution> "NCEI" ;
+    <creator_name> "Mathew Biddle" ;
+    <creator_type> "person" ;
+    <creator_url> <http://www.nodc.noaa.gov/> ;
+    <date_created> "2016-09-22T18:16:06.590413Z" ;
+    <date_issued> "2016-09-22T18:16:06.590413Z" ;
+    <date_metadata_modified> "2016-09-22T18:16:06.590413Z" ;
+    <date_modified> "2016-09-22T18:16:06.590413Z" ;
+    <geospatial_bounds> "POINT (-123.458000 38.048000)" ;
+    <geospatial_bounds_crs> "EPSG:4326" ;
+    <geospatial_bounds_vertical_crs> "EPSG:5829" ;
+    <geospatial_lat_max> 3.8048e+01 ;
+    <geospatial_lat_min> 3.8048e+01 ;
+    <geospatial_lat_units> "degrees_north" ;
+    <geospatial_lon_max> -1.23458e+02 ;
+    <geospatial_lon_min> -1.23458e+02 ;
+    <geospatial_lon_units> "degrees_east" ;
+    <geospatial_vertical_max> 1.5e+00 ;
+    <geospatial_vertical_min> 1.5e+00 ;
+    <geospatial_vertical_positive> "down" ;
+    <geospatial_vertical_units> "m" ;
+    <history> "This file was created on 2016-09-22T18:16:06.590413Z" ;
+    bald:contains <file://CDL/point_template.cdl/crs>,
+        <file://CDL/point_template.cdl/instrument1>,
+        <file://CDL/point_template.cdl/lat>,
+        <file://CDL/point_template.cdl/lon>,
+        <file://CDL/point_template.cdl/platform1>,
+        <file://CDL/point_template.cdl/sal>,
+        <file://CDL/point_template.cdl/temp>,
+        <file://CDL/point_template.cdl/time>,
+        <file://CDL/point_template.cdl/z> ;
+    ns1:featureType "point" ;
+    <id> "NCEI_point_template_v2.0_2016-09-22_181606.590413.nc" ;
+    <institution> "NCEI" ;
+    <instrument> "In Situ/Laboratory Instruments > Profilers/Sounders > > > CTD" ;
+    <instrument_vocabulary> "GCMD Earth Science Keywords. Version 5.3.3" ;
+    <keywords> "Oceans > Ocean Temperature > Water Temperature, Oceans > Salinity/Density > Salinity" ;
+    <keywords_vocabulary> "GCMD Earth Science Keywords. Version 5.3.3" ;
+    <license> "Freely available" ;
+    <metadata_link> <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
+    <naming_authority> "gov.noaa.ncei" ;
+    <ncei_template_version> "NCEI_NetCDF_Point_Template_v2.0" ;
+    <platform> "In Situ Ocean-based Platforms > MOORINGS" ;
+    <platform_vocabulary> "GCMD Earth Science Keywords. Version 5.3.3" ;
+    <processing_level> "BOGUS DATA" ;
+    <product_version> "v1" ;
+    <program> "NCEI-IOOS Data Pipeline" ;
+    <project> "NCEI NetCDF templates" ;
+    <publisher_email> "ncei.ioos@noaa.gov" ;
+    <publisher_institution> "NCEI" ;
+    <publisher_name> "NCEI Data Manager" ;
+    <publisher_type> "position" ;
+    <publisher_url> <http://www.ncei.noaa.gov/> ;
+    <references> <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
+    <sea_name> "Cordell Bank National Marine Sanctuary, North Pacific Ocean" ;
+    <source> "Python script generate_NCEI_netCDF_template.py with options: {'template_version': '2.0', 'feature_type': 'point'}" ;
+    <standard_name_vocabulary> "CF Standard Name Table v30" ;
+    <summary> "This is an example of the Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25. The data contained within this file are completely bogus and are generated using the python module numpy.random.rand() function. This file can be used for testing with various applications. The uuid was generated using the uuid python module, invoking the command uuid.uuid4()." ;
+    <time_coverage_end> "2015-03-25T22:20:17Z" ;
+    <time_coverage_start> "2015-03-25T22:20:17Z" ;
+    <title> "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" ;
+    <uuid> "ade5a344-d574-4716-b1f6-fda75ff0cfc1" .
+
+<file://CDL/point_template.cdl/crs> a bald:Subject ;
+    <epsg_code> "EPSG:4326" ;
+    <grid_mapping_name> "latitude_longitude" ;
+    <inverse_flattening> 2.982572e+02 ;
+    <longitude_of_prime_meridian> 0e+00 ;
+    <semi_major_axis> 6.378137e+06 .
+
+<file://CDL/point_template.cdl/instrument1> a bald:Subject ;
+    <accuracy> "" ;
+    <calibration_date> "2016-03-25" ;
+    <comment> "serial number and calibration dates are bogus" ;
+    ns1:long_name "Seabird 37 Microcat" ;
+    <make_model> "SBE-37" ;
+    <ncei_name> "CTD" ;
+    <precision> "" ;
+    <serial_number> "1859723" .
+
+<file://CDL/point_template.cdl/platform1> a bald:Subject ;
+    <call_sign> "" ;
+    <comment> "Data is not actually collected from this platform, this is an example." ;
+    ns1:long_name "cordell bank monitoring station" ;
+    <ices_code> "" ;
+    <imo_code> "" ;
+    <ioos_code> "urn:ioos:station:NCEI:Mooring1" ;
+    <ncei_code> "FIXED PLATFORM, MOORINGS" ;
+    <wmo_code> "" .
+
+<file://CDL/point_template.cdl/sal> a bald:Array ;
+    <_FillValue> -9.999e+03 ;
+    <comment> "These data are bogus!!!!!" ;
+    <coverage_content_type> "physicalMeasurement" ;
+    <data_max> 3.3e+01 ;
+    <data_min> 3.3e+01 ;
+    bald:shape "(1,)" ;
+    ns1:add_offset 0e+00 ;
+    ns1:cell_methods "time: point longitude: point latitude: point" ;
+    ns1:coordinates <file://CDL/point_template.cdl/lat>,
+        <file://CDL/point_template.cdl/lon>,
+        <file://CDL/point_template.cdl/time>,
+        <file://CDL/point_template.cdl/z> ;
+    ns1:grid_mapping "crs" ;
+    ns1:long_name "Salinity" ;
+    ns1:missing_value -8.888e+03 ;
+    ns1:scale_factor 1e+00 ;
+    ns1:standard_name "sea_water_salinity" ;
+    ns1:units "0.001" ;
+    <instrument> "instrument1" ;
+    <ncei_name> "SALINITY" ;
+    <platform> "platform1" ;
+    <references> <http://www.numpy.org/> ;
+    <source> "numpy.random.rand function." ;
+    <valid_max> 1e+02 ;
+    <valid_min> 0e+00 .
+
+<file://CDL/point_template.cdl/temp> a bald:Array ;
+    <_FillValue> -9.999e+03 ;
+    <comment> "These data are bogus!!!!!" ;
+    <coverage_content_type> "physicalMeasurement" ;
+    <data_max> 1.3e+01 ;
+    <data_min> 1.3e+01 ;
+    bald:shape "(1,)" ;
+    ns1:add_offset 0e+00 ;
+    ns1:cell_methods "time: point longitude: point latitude: point" ;
+    ns1:coordinates <file://CDL/point_template.cdl/lat>,
+        <file://CDL/point_template.cdl/lon>,
+        <file://CDL/point_template.cdl/time>,
+        <file://CDL/point_template.cdl/z> ;
+    ns1:grid_mapping "crs" ;
+    ns1:long_name "Temperature" ;
+    ns1:missing_value -8.888e+03 ;
+    ns1:scale_factor 1e+00 ;
+    ns1:standard_name "sea_water_temperature" ;
+    ns1:units "degree_Celsius" ;
+    <instrument> "instrument1" ;
+    <ncei_name> "WATER TEMPERATURE" ;
+    <platform> "platform1" ;
+    <references> <http://www.numpy.org/> ;
+    <source> "numpy.random.rand function." ;
+    <valid_max> 1e+02 ;
+    <valid_min> 0e+00 .
+
+<file://CDL/point_template.cdl/lat> a bald:Array ;
+    <_FillValue> -9.999e+03 ;
+    <comment> "These data are bogus!!!!!" ;
+    bald:shape "(1,)" ;
+    ns1:axis "Y" ;
+    ns1:long_name "Latitude" ;
+    ns1:standard_name "latitude" ;
+    ns1:units "degrees_north" ;
+    <valid_max> 9e+01 ;
+    <valid_min> -9e+01 .
+
+<file://CDL/point_template.cdl/lon> a bald:Array ;
+    <_FillValue> -9.999e+03 ;
+    <comment> "These data are bogus!!!!!" ;
+    bald:shape "(1,)" ;
+    ns1:axis "X" ;
+    ns1:long_name "Longitude" ;
+    ns1:standard_name "longitude" ;
+    ns1:units "degrees_east" ;
+    <valid_max> 1.8e+02 ;
+    <valid_min> -1.8e+02 .
+
+<file://CDL/point_template.cdl/time> a bald:Array ;
+    <_FillValue> -9.999e+03 ;
+    <comment> "These data are bogus!!!!!" ;
+    bald:shape "(1,)" ;
+    ns1:axis "T" ;
+    ns1:calendar "julian" ;
+    ns1:long_name "Time" ;
+    ns1:standard_name "time" ;
+    ns1:units "seconds since 1970-01-01 00:00:00 UTC" .
+
+<file://CDL/point_template.cdl/z> a bald:Array ;
+    <_FillValue> -9.999e+03 ;
+    <comment> "These data are bogus!!!!!" ;
+    bald:shape "(1,)" ;
+    ns1:axis "Z" ;
+    ns1:long_name "depth of sensor" ;
+    ns1:positive "down" ;
+    ns1:standard_name "depth" ;
+    ns1:units "m" ;
+    <valid_max> 1.0971e+04 ;
+    <valid_min> 0e+00 .
+
