@@ -30,9 +30,9 @@ class Test(BaldTestCase):
         with self.temp_filename('.nc') as tfile:
             subprocess.check_call(['ncgen', '-o', tfile, cdlfile])
             inputs = bald.load_netcdf(tfile)
-            set_collection = inputs.bald__contains[6].some_vocab__references
+            set_collection = inputs.bald__contains[6].bald__references
             self.assertTrue(isinstance(set_collection, set))
-            list_collection = inputs.bald__contains[7].some_vocab__references
+            list_collection = inputs.bald__contains[7].bald__references
             self.assertTrue(isinstance(list_collection, list))
 
     def test_turtle(self):
