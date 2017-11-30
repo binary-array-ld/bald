@@ -1,4 +1,5 @@
 import contextlib
+import copy
 import re
 
 import h5py
@@ -252,19 +253,23 @@ class HttpCache(object):
 
 class Subject(object):
     _rdftype = 'bald__Subject'
-    def __init__(self, identity, attrs=None, prefixes=None, aliases=None):
+    def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
+                 aliases=None, alias_graph=None):
         """
         A subject of metadata statements.
 
         attrs: an dictionary of key value pair attributes
         """
-        self.identity = identity
+        self.baseuri = baseuri
+        self.relative_id = relative_id
+
         if attrs is None:
             attrs = {}
         if prefixes is None:
             prefixes = {}
         if aliases is None:
             aliases = {}
+
         self.attrs = attrs
         
         self.rdf__type = self._rdftype
@@ -275,6 +280,13 @@ class Subject(object):
         _http_p = 'http[s]?://.*'
         self._http_uri = re.compile('{}'.format(_http_p))
         self._http_uri_prefix = re.compile('{}/|#'.format(_http_p))
+        if alias_graph is None:
+            alias_graph = rdflib.Graph()
+        self.alias_graph = alias_graph
+
+    @property
+    def identity(self):
+        return '/'.join([self.baseuri, self.relative_id])
 
     def __str__(self):
         return '{}:{}: {}'.format(self.identity, type(self), self.attrs)
@@ -283,8 +295,9 @@ class Subject(object):
         return str(self)
 
     def __setattr__(self, attr, value):
-        reserved_attrs = ['identity', 'prefixes', '_prefixes', '_prefix_suffix',
-                          '_http_uri_prefix', '_http_uri', 'aliases', 'attrs', '_rdftype']
+        reserved_attrs = ['baseuri', 'relative_id', 'prefixes', '_prefixes',
+                          '_prefix_suffix', '_http_uri_prefix', '_http_uri',
+                          'aliases', 'alias_graph', 'attrs', '_rdftype']
         if attr in reserved_attrs:
             object.__setattr__(self, attr, value)
         else:
@@ -307,6 +320,7 @@ class Subject(object):
             raise AttributeError(msg)
         return self.attrs[attr]
 
+    #@property
     def prefixes(self):
         prefixes = {}
         for key, value in self._prefixes.items():
@@ -318,12 +332,7 @@ class Subject(object):
                 prefixes[pref] = value
         return prefixes
 
-    def unpack_uri(self, astring):
-        """
-        Return a URI for the given input string, or return the astring unchanged if
-        none is available.
-
-        """
+    def unpack_predicate(self, astring):
         result = astring
         if isinstance(astring, six.string_types) and self._prefix_suffix.match(astring):
             prefix, suffix = self._prefix_suffix.match(astring).groups()
@@ -331,9 +340,68 @@ class Subject(object):
                 if self._http_uri.match(self.prefixes()[prefix]):
                     result = astring.replace('{}__'.format(prefix),
                                              self.prefixes()[prefix])
-        elif isinstance(astring, six.string_types) and astring in self.aliases:
-            result = self.aliases[astring]
+        elif isinstance(astring, six.string_types):
+            predicate_alias_query = ('prefix dct: <http://purl.org/dc/terms/> '
+                                     'prefix owl: <http://www.w3.org/2002/07/owl#> '
+                                     'select ?uri where '
+                                  '{{?uri dct:identifier "{}" ; '
+                                  '      rdf:type ?type. '
+                                  'FILTER(?type in (rdf:Property, owl:ObjectProperty) ) '
+                                     '}}'.format(astring))
+
+            qres = self.alias_graph.query(predicate_alias_query)
+            results = list(qres)
+            if len(results) > 1:
+                raise ValueError('multiple alias options')
+            elif len(results) == 1:
+                result = str(results[0][0])
+        if result == astring:
+            result = self.baseuri + '/' + result
         return result
+
+    def unpack_rdfobject(self, astring, predicate):
+        result = astring
+        if isinstance(astring, six.string_types) and self._prefix_suffix.match(astring):
+            prefix, suffix = self._prefix_suffix.match(astring).groups()
+            if prefix in self.prefixes():
+                if self._http_uri.match(self.prefixes()[prefix]):
+                    result = astring.replace('{}__'.format(prefix),
+                                             self.prefixes()[prefix])
+        elif isinstance(astring, six.string_types):
+            # if not is_http_uri(predicate):
+            #     msg = 'predicate must be a http uri, not {}'.format(predicate)
+            #     raise ValueError(msg)
+            # can be a file uri too
+            rdfobj_alias_query = ('prefix dct: <http://purl.org/dc/terms/> '
+                                  'select ?uri where '
+                                  '{{ <{pred}> rdfs:range ?range . '
+                                  '?uri dct:identifier "{id}" ; '
+                                  '     rdf:type ?range .'
+                                  '}}'.format(pred=predicate, id=astring))
+            qres = self.alias_graph.query(rdfobj_alias_query)
+            results = list(qres)
+            if len(results) > 1:
+                raise ValueError('multiple alias options')
+            elif len(results) == 1:
+                result = str(results[0][0])
+        return result
+
+    # def unpack_uri(self, astring):
+    #     """
+    #     Return a URI for the given input string, or return the astring unchanged if
+    #     none is available.
+
+    #     """
+    #     result = astring
+    #     if isinstance(astring, six.string_types) and self._prefix_suffix.match(astring):
+    #         prefix, suffix = self._prefix_suffix.match(astring).groups()
+    #         if prefix in self.prefixes():
+    #             if self._http_uri.match(self.prefixes()[prefix]):
+    #                 result = astring.replace('{}__'.format(prefix),
+    #                                          self.prefixes()[prefix])
+    #     elif isinstance(astring, six.string_types) and astring in self.aliases:
+    #         result = self.aliases[astring]
+    #     return result
 
     @property
     def link_template(self):
@@ -425,13 +493,27 @@ class Subject(object):
             if not (isinstance(objs, set) or isinstance(objs, list)):
                 objs = set([objs])
             for obj in objs:
+                rdfpred = self.unpack_predicate(attr)
                 if isinstance(obj, Subject):
                     rdfobj = rdflib.URIRef(obj.identity)
-                elif is_http_uri(self.unpack_uri(obj)):
-                    rdfobj = rdflib.URIRef(self.unpack_uri(obj))
                 else:
-                    rdfobj = rdflib.Literal(obj)
-                graph.add((selfnode, rdflib.URIRef(self.unpack_uri(attr)), rdfobj))
+                    rdfobj = self.unpack_rdfobject(obj, rdfpred)
+                    if is_http_uri(rdfobj):
+                        rdfobj = rdflib.URIRef(rdfobj)
+                    else:
+                        rdfobj = rdflib.Literal(rdfobj)
+                rdfpred = rdflib.URIRef(rdfpred)
+                try:
+                    graph.add((selfnode, rdfpred, rdfobj))
+
+                except AssertionError:
+
+                    graph.add((selfnode, rdfpred, rdfobj))
+                # elif is_http_uri(self.unpack_uri(obj)):
+                #     rdfobj = rdflib.URIRef(self.unpack_uri(obj))
+                # else:
+                #     rdfobj = rdflib.Literal(obj)
+                # graph.add((selfnode, rdflib.URIRef(self.unpack_uri(attr)), rdfobj))
                 if isinstance(obj, Subject):
                     obj_ref = rdflib.URIRef(obj.identity)
                     if (obj_ref, None, None) not in graph:
@@ -446,11 +528,23 @@ class Subject(object):
         """
         graph = rdflib.Graph()
         graph.bind('bald', 'http://binary-array-ld.net/latest/')
-        for prefix_name in self._prefixes:
-           #strip the double underscore suffix
-           new_name = prefix_name[:-2]
+        for prefix_name in self.prefixes():
+            
+            #strip the double underscore suffix
 
-           graph.bind(new_name, self._prefixes[prefix_name])
+            # new_name = prefix_name[:-2]
+
+            graph.bind(prefix_name, self.prefixes()[prefix_name])
+
+        for alias_name in self.aliases:
+            # hack :S
+            uri = self.aliases[alias_name]
+            if '?_format' in uri:
+                uri = uri.split('?')[0]
+            if not (uri.endswith('#') or uri.endswith('/')):
+                uri = uri + '/'
+            graph.bind(alias_name, uri)
+        
         graph = self.rdfnode(graph)
         
         return graph
@@ -532,12 +626,13 @@ def load(afilepath):
     finally:
         f.close()
 
-def load_netcdf(afilepath, baseuri=None):
+def load_netcdf(afilepath, baseuri=None, alias_dict=None):
     """
     Load a file with respect to binary-array-linked-data.
     Returns a :class:`bald.Collection`
     """
-
+    if alias_dict == None:
+        alias_dict = {}
     with load(afilepath) as fhandle:
         if baseuri is None:
             baseuri = 'file://{}'.format(afilepath)
@@ -581,36 +676,39 @@ def load_netcdf(afilepath, baseuri=None):
             if isinstance(alias_var, netCDF4._netCDF4.Variable):
                 skipped_variables.append(alias_var.name)
 
+        aliases = careful_update(aliases, alias_dict)
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
-        # process Conventions
-        # Conventions = "CF-1.6, ACDD-1.3"
-        aliasgraph = rdflib.Graph()
-        if hasattr(fhandle, 'Conventions'):
-            conventions = [c.strip() for c in fhandle.Conventions.split(',')]
-            for conv in conventions:
-                if conv.startswith('CF-'):
-                    uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
-                    result = aliasgraph.parse(uri)
-            qstr = ('select ?alias ?uri where '
-                    '{?uri dct:identifier ?alias .}')
-            qres = aliasgraph.query(qstr)
 
-            new_aliases = [(str(q[0]), str(q[1])) for q in list(qres)]
-            na_keys = [n[0] for n in new_aliases]
-            if len(set(na_keys)) != len(na_keys):
-                raise ValueError('duplicate aliases')
-            aliases = careful_update(aliases, dict(new_aliases))
-            
+        aliasgraph = rdflib.Graph()
+        for alias in aliases:
+            aliasgraph.parse(aliases[alias], format='xml')
+        # if hasattr(fhandle, 'Conventions'):
+        #     conventions = [c.strip() for c in fhandle.Conventions.split(',')]
+        #     for conv in conventions:
+        #         if conv.startswith('CF-'):
+        #             uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
+        #             aliasgraph.parse(uri)
+        #             uri = 'http://vocab.nerc.ac.uk/standard_name/'
+        #             aliasgraph.parse(uri, format='xml')
+            # qstr = ('select ?alias ?uri where '
+            #         '{?uri dct:identifier ?alias .}')
+            # qres = aliasgraph.query(qstr)
+
+            # new_aliases = [(str(q[0]), str(q[1])) for q in list(qres)]
+            # na_keys = [n[0] for n in new_aliases]
+            # if len(set(na_keys)) != len(na_keys):
+            #     raise ValueError('duplicate aliases')
+            # aliases = careful_update(aliases, dict(new_aliases))
                     
-        root_container = Container(identity, attrs, prefixes=prefixes,
-                                   aliases=aliases)
+        root_container = Container(baseuri, '', attrs, prefixes=prefixes,
+                                   aliases=aliases, alias_graph=aliasgraph)
 
         root_container.attrs['bald__contains'] = []
         file_variables = {}
         for name in fhandle.variables:
-            if name ==  prefix_var_name or name == alias_var_name:
+            if name ==  prefix_var_name:
                 continue
 
             sattrs = fhandle.variables[name].__dict__.copy()
@@ -627,21 +725,25 @@ def load_netcdf(afilepath, baseuri=None):
                 
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
-                var = Array(identity, sattrs, prefixes=prefixes, aliases=aliases)
+                var = Array(baseuri, name, sattrs, prefixes=prefixes,
+                            aliases=aliases, alias_graph=aliasgraph)
             else:
-                var = Subject(identity, sattrs, prefixes=prefixes, aliases=aliases)
+                var = Subject(baseuri, name, sattrs, prefixes=prefixes,
+                              aliases=aliases, alias_graph=aliasgraph)
             root_container.attrs['bald__contains'].append(var)
             file_variables[name] = var
                 
 
         reference_prefixes = dict()
-        reference_graph = aliasgraph
+        reference_graph = copy.copy(aliasgraph)
         reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
         qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+                'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'select ?s '
                 'where { '
                 '  ?s rdfs:range ?type . '
-                'filter(?type != rdfs:Literal)'
+                'filter(?type != rdfs:Literal) '
+                'filter(?type != skos:Concept) '
                 '}')
         refs = reference_graph.query(qstr)
 
@@ -650,7 +752,7 @@ def load_netcdf(afilepath, baseuri=None):
         
         # cycle again and find references
         for name in fhandle.variables:
-            if name ==  prefix_var_name or name == alias_var_name:
+            if name ==  prefix_var_name:
                 continue
 
             var = file_variables[name]
@@ -662,7 +764,7 @@ def load_netcdf(afilepath, baseuri=None):
 
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
-                          root_container.unpack_uri(sattr) in ref_prefs):
+                          root_container.unpack_predicate(sattr) in ref_prefs):
                 # if sattr == 'coordinates':
                 #     import pdb; pdb.set_trace()
                 
@@ -712,7 +814,10 @@ def load_netcdf(afilepath, baseuri=None):
                             reshape[cvi] = fhandle.variables[dim].size
                             rattrs['bald__childBroadcast'] = tuple(reshape)
                             rattrs['bald__array'] = set((file_variables.get(dim),))
-                            ref_node = Subject(identity, rattrs, prefixes=prefixes, aliases=aliases)
+                            ref_node = Subject(baseuri, name, rattrs,
+                                               prefixes=prefixes,
+                                               aliases=aliases,
+                                               alias_graph=aliasgraph)
                             root_container.attrs['bald__contains'].append(ref_node)
                             file_variables[name] = ref_node
                             refset.add(ref_node)
