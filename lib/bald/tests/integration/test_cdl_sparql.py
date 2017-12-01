@@ -21,7 +21,7 @@ class Test(BaldTestCase):
         for cdl_file in glob.glob(os.path.join(os.path.dirname(__file__), 'CDL', '*.cdl')):
             with self.temp_filename('.nc') as tfile:
                subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-               root_container = bald.load_netcdf(tfile)
+               root_container = bald.load_netcdf(tfile, cache=self.acache)
                curr_g = root_container.rdfgraph()
  
             #merge into graph in test obj

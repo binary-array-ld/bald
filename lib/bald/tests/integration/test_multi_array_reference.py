@@ -21,7 +21,7 @@ class Test(BaldTestCase):
         cdlfile = os.path.join(self.cdl_path, 'multi_array_reference.cdl')
         with self.temp_filename('.nc') as tfile:
             subprocess.check_call(['ncgen', '-o', tfile, cdlfile])
-            validation = bald.validate_netcdf(tfile)
+            validation = bald.validate_netcdf(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{} != []'.format(exns))
 
@@ -29,7 +29,7 @@ class Test(BaldTestCase):
         cdlfile = os.path.join(self.cdl_path, 'multi_array_reference.cdl')
         with self.temp_filename('.nc') as tfile:
             subprocess.check_call(['ncgen', '-o', tfile, cdlfile])
-            inputs = bald.load_netcdf(tfile)
+            inputs = bald.load_netcdf(tfile, cache=self.acache)
             set_collection = inputs.bald__contains[6].bald__references
             self.assertTrue(isinstance(set_collection, set))
             list_collection = inputs.bald__contains[7].bald__references
@@ -41,7 +41,7 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             # with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
             #     sf.write(ttl)

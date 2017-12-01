@@ -235,13 +235,13 @@ class HttpCache(object):
         if not self.is_http_uri(item):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
-            headers = {'Accept': 'text/turtle'}
-            # import datetime
-            # now = datetime.datetime.utcnow()
-            # print('\ndownloading: {}'.format(item))
+            headers = {'Accept': 'application/rdf+xml'}
+            import datetime
+            now = datetime.datetime.utcnow()
+            print('\ndownloading: {}'.format(item))
             self.cache[item] = requests.get(item, headers=headers)
-            # then = datetime.datetime.utcnow()
-            # print('{}s'.format((then-now).total_seconds()))
+            then = datetime.datetime.utcnow()
+            print('{}s'.format((then-now).total_seconds()))
 
         return self.cache[item]
 
@@ -387,9 +387,6 @@ class Subject(object):
             # qres = self.alias_graph.query(rdfobj_alias_query)
             try:
                 qres = self.alias_graph.query(rdfobj_alias_query)
-            # except Exception:
-            #     import pdb; pdb.set_trace()
-            #     qres = self.alias_graph.query(rdfobj_alias_query)
                 results = list(qres)
                 if len(results) > 1:
                     raise ValueError('multiple alias options')
@@ -637,13 +634,16 @@ def load(afilepath):
     finally:
         f.close()
 
-def load_netcdf(afilepath, baseuri=None, alias_dict=None):
+def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
     """
     Load a file with respect to binary-array-linked-data.
     Returns a :class:`bald.Collection`
     """
     if alias_dict == None:
         alias_dict = {}
+    if cache is None:
+        cache = HttpCache()
+
     with load(afilepath) as fhandle:
         if baseuri is None:
             baseuri = 'file://{}'.format(afilepath)
@@ -693,9 +693,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None):
             attrs[k] = getattr(fhandle, k)
 
         aliasgraph = rdflib.Graph()
+
         for alias in aliases:
+            response = cache[aliases[alias]]
             try:
-                aliasgraph.parse(aliases[alias], format='xml')
+                aliasgraph.parse(data=response.text, format='xml')
             except TypeError:
                 pass
         # if hasattr(fhandle, 'Conventions'):
@@ -715,7 +717,6 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None):
             # if len(set(na_keys)) != len(na_keys):
             #     raise ValueError('duplicate aliases')
             # aliases = careful_update(aliases, dict(new_aliases))
-                    
         root_container = Container(baseuri, '', attrs, prefixes=prefixes,
                                    aliases=aliases, alias_graph=aliasgraph)
 
@@ -842,24 +843,24 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None):
     return root_container
 
 
-def validate_netcdf(afilepath, cache=None, baseuri=None):
+def validate_netcdf(afilepath, baseuri=None, cache=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
 
     """
-    root_container = load_netcdf(afilepath, baseuri=baseuri)
+    root_container = load_netcdf(afilepath, baseuri=baseuri, cache=cache)
     return validate(root_container, cache=cache)
 
 
-def validate_hdf5(afilepath, cache=None, baseuri=None):
+def validate_hdf5(afilepath, baseuri=None, cache=None):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
 
     """
-    root_container = load_hdf5(afilepath, baseuri=baseuri)
-    return validate(root_container)
+    root_container = load_hdf5(afilepath, baseuri=baseuri, cache=cache)
+    return validate(root_container, cache=cache)
 
 def validate(root_container, sval=None, cache=None):
     """
@@ -896,7 +897,9 @@ def careful_update(adict, bdict):
         adict.update(bdict)
         return adict
 
-def load_hdf5(afilepath, baseuri=None, alias_dict=None):
+def load_hdf5(afilepath, baseuri=None, alias_dict=None, cache=None):
+    if cache is None:
+        cache = HttpCache()
     with load(afilepath) as fhandle:
         # unused?
         cache = {}
@@ -904,12 +907,14 @@ def load_hdf5(afilepath, baseuri=None, alias_dict=None):
             baseuri = 'file://{}'.format(afilepath)
 
         root_container, file_variables = _hdf_group(fhandle, baseuri=baseuri,
-                                                    alias_dict=alias_dict)
+                                                    alias_dict=alias_dict, cache=cache)
         _hdf_references(fhandle, root_container, file_variables)
     return root_container
 
 def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
-               aliases=None, alias_dict=None):
+               aliases=None, alias_dict=None, cache=None):
+    if cache is None:
+        cache = HttpCache()
 
     prefix_group = fhandle.attrs.get('bald__isPrefixedBy')
     if prefixes is None:

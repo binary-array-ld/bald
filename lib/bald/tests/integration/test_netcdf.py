@@ -38,7 +38,7 @@ class Test(BaldTestCase):
 
             f = _fattrs(f)
             f.close()
-            validation = bald.validate_netcdf(tfile)
+            validation = bald.validate_netcdf(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -49,7 +49,7 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             setattr(f, 'bald__turtle', 'bald__walnut')
             f.close()
-            validation = bald.validate_netcdf(tfile)
+            validation = bald.validate_netcdf(tfile, cache=self.acache)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
@@ -64,7 +64,7 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            validation = bald.validate_netcdf(tfile)
+            validation = bald.validate_netcdf(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -74,7 +74,7 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 13))
             f.close()
-            validation = bald.validate_netcdf(tfile)
+            validation = bald.validate_netcdf(tfile, cache=self.acache)
             exns = validation.exceptions()
             expected = [('file://{t}/parent_variable declares a child of '
                          'file://{t}/child_variable but the arrays do not '

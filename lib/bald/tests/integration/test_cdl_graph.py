@@ -19,7 +19,7 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
 
             html = root_container.viewgraph()
             # with open(os.path.join(self.html_path, 'array_reference.html'), 'w') as sf:
@@ -34,7 +34,7 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
 
             html = root_container.viewgraph()
             # with open(os.path.join(self.html_path, 'multi_array_reference.html'), 'w') as sf:
