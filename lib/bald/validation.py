@@ -90,28 +90,27 @@ class SubjectValidation(Validation):
                 exceptions.append(msg)
             return exceptions
 
-        ''' Skip checking prefixes as whole graphs could be big!
+        #''' Skip checking prefixes as whole graphs could be big!
         for pref, uri in self.subject.prefixes().items():
-            exceptions = _check_uri(self.subject.unpack_uri(uri),
-                                    exceptions)
-        '''
+            exceptions = _check_uri(uri, exceptions)
+        #'''
         for alias, uri in self.subject.aliases.items():
-            exceptions = _check_uri(self.subject.unpack_uri(uri),
-                                    exceptions)
+            exceptions = _check_uri(uri, exceptions)
         for attr, value in self.subject.attrs.items():
+            att = ''
             if isinstance(attr, six.string_types):
-                att = self.subject.unpack_uri(attr)
+                att = self.subject.unpack_predicate(attr)
                 if self.cache.is_http_uri(att):
                     exceptions = _check_uri(att, exceptions)
             if isinstance(value, six.string_types):
-                val = self.subject.unpack_uri(value)
+                val = self.subject.unpack_rdfobject(value, att)
                 if self.cache.is_http_uri(val):
                     exceptions = _check_uri(val, exceptions)
         return exceptions
 
     def check_attr_domain_range(self, exceptions):
         for attr, value in self.subject.attrs.items():
-            uri = self.subject.unpack_uri(attr)
+            uri = self.subject.unpack_predicate(attr)
             # if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
             #     # thus we have a payload
             #     # go rdf

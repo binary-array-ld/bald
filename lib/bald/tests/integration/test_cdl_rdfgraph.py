@@ -68,10 +68,9 @@ class Test(BaldTestCase):
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             # with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'w') as sf:
             #     sf.write(ttl)
-            print(ttl)
             with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
-            # self.assertEqual(expected_ttl, ttl)
+            self.assertEqual(expected_ttl, ttl)
 
 
     def test_ereefs(self):
