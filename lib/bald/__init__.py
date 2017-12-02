@@ -235,13 +235,13 @@ class HttpCache(object):
         if not self.is_http_uri(item):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
-            headers = {'Accept': 'application/rdf+xml'}
-            import datetime
-            now = datetime.datetime.utcnow()
-            print('\ndownloading: {}'.format(item))
+            headers = {'Accept': 'application/rdf+xml, text/html'}
+            # import datetime
+            # now = datetime.datetime.utcnow()
+            # print('\ndownloading: {}'.format(item))
             self.cache[item] = requests.get(item, headers=headers)
-            then = datetime.datetime.utcnow()
-            print('{}s'.format((then-now).total_seconds()))
+            # then = datetime.datetime.utcnow()
+            # print('{}s'.format((then-now).total_seconds()))
 
         return self.cache[item]
 
