@@ -235,11 +235,15 @@ class HttpCache(object):
         if not self.is_http_uri(item):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
-            headers = {'Accept': 'application/rdf+xml, text/html'}
             # import datetime
             # now = datetime.datetime.utcnow()
             # print('\ndownloading: {}'.format(item))
-            self.cache[item] = requests.get(item, headers=headers)
+            try:
+                headers = {'Accept': 'application/rdf+xml'}
+                self.cache[item] = requests.get(item, headers=headers)
+            except Exception:
+                headers = {'Accept': 'text/html'}
+                self.cache[item] = requests.get(item, headers=headers)
             # then = datetime.datetime.utcnow()
             # print('{}s'.format((then-now).total_seconds()))
 
@@ -696,10 +700,15 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         for alias in aliases:
             response = cache[aliases[alias]]
-            try:
-                aliasgraph.parse(data=response.text, format='xml')
-            except TypeError:
-                pass
+            aliasgraph.parse(data=response.text, format='xml')
+            # try:
+            #     import xml.sax._exceptions
+            #     aliasgraph.parse(data=response.text, format='xml')
+            # except TypeError:
+            #     pass
+            # except xml.sax._exceptions.SAXParseException:
+            #     import pdb; pdb.set_trace()
+            #     pass
         # if hasattr(fhandle, 'Conventions'):
         #     conventions = [c.strip() for c in fhandle.Conventions.split(',')]
         #     for conv in conventions:
@@ -751,7 +760,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         reference_prefixes = dict()
         reference_graph = copy.copy(aliasgraph)
-        reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
+
+        response = cache['http://binary-array-ld.net/latest']
+        reference_graph.parse(data=response.text, format='xml')
+
+        # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
         qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'select ?s '
