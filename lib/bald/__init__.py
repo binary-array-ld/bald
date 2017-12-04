@@ -700,7 +700,10 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         for alias in aliases:
             response = cache[aliases[alias]]
-            aliasgraph.parse(data=response.text, format='xml')
+            try:
+                aliasgraph.parse(data=response.text, format='xml')
+            except Exception:
+                print('Failed to parse: {}'.format(aliases[alias]))
             # try:
             #     import xml.sax._exceptions
             #     aliasgraph.parse(data=response.text, format='xml')

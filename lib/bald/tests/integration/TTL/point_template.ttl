@@ -1,5 +1,6 @@
 @prefix CFTerms: <http://def.scitools.org.uk/CFTerms/> .
 @prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
 @prefix ns1: <file://CDL/point_template.cdl/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -128,7 +129,7 @@ ns1:sal a bald:Array ;
     CFTerms:long_name "Salinity" ;
     CFTerms:missing_value -8.888e+03 ;
     CFTerms:scale_factor 1e+00 ;
-    CFTerms:standard_name "sea_water_salinity" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_salinity/> ;
     CFTerms:units "0.001" .
 
 ns1:temp a bald:Array ;
@@ -155,7 +156,7 @@ ns1:temp a bald:Array ;
     CFTerms:long_name "Temperature" ;
     CFTerms:missing_value -8.888e+03 ;
     CFTerms:scale_factor 1e+00 ;
-    CFTerms:standard_name "sea_water_temperature" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_temperature/> ;
     CFTerms:units "degree_Celsius" .
 
 ns1:lat a bald:Array ;
@@ -166,7 +167,7 @@ ns1:lat a bald:Array ;
     bald:shape "(1,)" ;
     CFTerms:axis "Y" ;
     CFTerms:long_name "Latitude" ;
-    CFTerms:standard_name "latitude" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     CFTerms:units "degrees_north" .
 
 ns1:lon a bald:Array ;
@@ -177,7 +178,7 @@ ns1:lon a bald:Array ;
     bald:shape "(1,)" ;
     CFTerms:axis "X" ;
     CFTerms:long_name "Longitude" ;
-    CFTerms:standard_name "longitude" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     CFTerms:units "degrees_east" .
 
 ns1:time a bald:Array ;
@@ -187,7 +188,7 @@ ns1:time a bald:Array ;
     CFTerms:axis "T" ;
     CFTerms:calendar "julian" ;
     CFTerms:long_name "Time" ;
-    CFTerms:standard_name "time" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
     CFTerms:units "seconds since 1970-01-01 00:00:00 UTC" .
 
 ns1:z a bald:Array ;
@@ -199,6 +200,6 @@ ns1:z a bald:Array ;
     CFTerms:axis "Z" ;
     CFTerms:long_name "depth of sensor" ;
     CFTerms:positive "down" ;
-    CFTerms:standard_name "depth" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/depth/> ;
     CFTerms:units "m" .
 

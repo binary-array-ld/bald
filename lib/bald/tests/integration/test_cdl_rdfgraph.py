@@ -61,7 +61,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms',
-                          #'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
                          }
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
