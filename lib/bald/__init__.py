@@ -244,7 +244,7 @@ class HttpCache(object):
                 headers = {'Accept': 'application/rdf+xml'}
                 self.cache[item] = requests.get(item, headers=headers)
             except Exception:
-		pass
+                pass
             # then = datetime.datetime.utcnow()
             # print('{}s'.format((then-now).total_seconds()))
 
