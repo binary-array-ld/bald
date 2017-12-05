@@ -49,7 +49,7 @@ class TestHDFGraph(BaldTestCase):
             f['alocation'].attrs['bald__references'] = np.array([sref.ref, sref2.ref],
                                                                dtype=h5py.special_dtype(ref=h5py.Reference))
             f.close()
-            root_container = bald.load_hdf5(tfile)
+            root_container = bald.load_hdf5(tfile, cache=self.acache)
         html = root_container.viewgraph()
         with open(os.path.join(self.html_path, 'hdf_container_nest.html'), 'w') as sf:
             sf.write(html)

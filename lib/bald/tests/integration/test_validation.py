@@ -33,7 +33,7 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -44,7 +44,7 @@ class Test(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.attrs['bald__turtle'] = 'bald__walnut'
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
@@ -58,7 +58,7 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -70,7 +70,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             fname = ('file:///tests/integration/test_validation/Test/'
                      'test_mismatch_zeroth.hdf')
-            validation = bald.validate_hdf5(tfile, baseuri=fname)
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
             exns = validation.exceptions()
             expected = ['file:///tests/integration/test_validation/Test/'
                         'test_mismatch_zeroth.hdf/parent_dataset declares a '
@@ -89,7 +89,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             fname = ('file:///tests/integration/test_validation/Test/'
                      'test_mismatch_oneth.hdf')
-            validation = bald.validate_hdf5(tfile, baseuri=fname)
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
             exns = validation.exceptions()
             expected = ['file:///tests/integration/test_validation/Test/'
                         'test_mismatch_oneth.hdf/parent_dataset declares a '
@@ -107,7 +107,7 @@ class TestArrayReference(BaldTestCase):
             # parent has leading dimension wrt child
             f = _create_parent_child(f, (4, 13, 17), (13, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -118,7 +118,7 @@ class TestArrayReference(BaldTestCase):
             # child has leading dimension wrt parent
             f = _create_parent_child(f, (13, 17), (7, 13, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exs = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exs))
 
@@ -132,7 +132,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             fname = ('file:///tests/integration/test_validation/Test/'
                      'test_mismatch_pdisjc_lead_dim.hdf')
-            validation = bald.validate_hdf5(tfile, baseuri=fname)
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
 
             exns = validation.exceptions()
             expected = ['file:///tests/integration/test_validation/Test/'
@@ -153,7 +153,7 @@ class TestArrayReference(BaldTestCase):
             f.close()
             fname = ('file:///tests/integration/test_validation/Test/'
                      'test_mismatch_pdisjc_trail_dim.hdf')
-            validation = bald.validate_hdf5(tfile, baseuri=fname)
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
 
             exns = validation.exceptions()
             expected = ['file:///tests/integration/test_validation/Test/'

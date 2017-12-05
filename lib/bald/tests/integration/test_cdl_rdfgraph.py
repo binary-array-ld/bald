@@ -20,7 +20,7 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             # with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'w') as sf:
             #     sf.write(ttl)
@@ -32,7 +32,7 @@ class Test(BaldTestCase):
         with self.temp_filename('.nc') as tfile:
             cdl_file = os.path.join(self.cdl_path, 'array_reference.cdl')
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-            root_container = bald.load_netcdf(tfile, baseuri='http://example.org/base')
+            root_container = bald.load_netcdf(tfile, baseuri='http://example.org/base', cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             #with open(os.path.join(self.ttl_path, 'array_reference_withbase.ttl'), 'w') as sf:
             #     sf.write(ttl)
@@ -46,7 +46,7 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             # with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
             #     sf.write(ttl)
@@ -60,11 +60,11 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms?_format=rdf',
-                          #'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+            alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
                          }
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
-                                              alias_dict=alias_dict)
+                                              alias_dict=alias_dict, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             # with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'w') as sf:
             #     sf.write(ttl)
@@ -77,7 +77,7 @@ class Test(BaldTestCase):
         with self.temp_filename('.nc') as tfile:
             cdl_file = os.path.join(self.cdl_path, 'ereefs_gbr4_ncld.cdl')
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-            root_container = bald.load_netcdf(tfile)
+            root_container = bald.load_netcdf(tfile, cache=self.acache)
             try:
                g  = root_container.rdfgraph()
                ttl = g.serialize(format='n3').decode("utf-8")
