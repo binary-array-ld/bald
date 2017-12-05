@@ -238,12 +238,12 @@ class HttpCache(object):
             # import datetime
             # now = datetime.datetime.utcnow()
             # print('\ndownloading: {}'.format(item))
+	    self.cache[item] = requests.get(item)
             try:
                 headers = {'Accept': 'application/rdf+xml'}
                 self.cache[item] = requests.get(item, headers=headers)
             except Exception:
-                headers = {'Accept': 'text/html'}
-                self.cache[item] = requests.get(item, headers=headers)
+		pass
             # then = datetime.datetime.utcnow()
             # print('{}s'.format((then-now).total_seconds()))
 
