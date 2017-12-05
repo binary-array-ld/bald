@@ -1,0 +1,114 @@
+@prefix CFTerms: <http://def.scitools.org.uk/CFTerms/> .
+@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
+@prefix ns1: <file://CDL/GEMS_CO2_Apr2006.cdl/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<file://CDL/GEMS_CO2_Apr2006.cdl> a bald:Container ;
+    ns1:Conventions "CF-1.0" ;
+    bald:contains ns1:co2,
+        ns1:co2_latitude_ref,
+        ns1:co2_levelist_ref,
+        ns1:co2_time_ref,
+        ns1:latitude,
+        ns1:levelist,
+        ns1:lnsp,
+        ns1:lnsp_latitude_ref,
+        ns1:lnsp_levelist_ref,
+        ns1:lnsp_time_ref,
+        ns1:longitude,
+        ns1:time .
+
+ns1:co2 a bald:Array ;
+    ns1:_FillValue "-32767" ;
+    bald:references ns1:co2_latitude_ref,
+        ns1:co2_levelist_ref,
+        ns1:co2_time_ref,
+        ns1:longitude ;
+    bald:shape "(1, 60, 181, 360)" ;
+    CFTerms:add_offset 4.031922e+02 ;
+    CFTerms:long_name "Carbon Dioxide" ;
+    CFTerms:missing_value "-32767" ;
+    CFTerms:scale_factor 9.816851e-04 ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
+    CFTerms:units "kg kg**-1" .
+
+ns1:lnsp a bald:Array ;
+    ns1:_FillValue "-32767" ;
+    bald:references ns1:lnsp_latitude_ref,
+        ns1:lnsp_levelist_ref,
+        ns1:lnsp_time_ref,
+        ns1:longitude ;
+    bald:shape "(1, 60, 181, 360)" ;
+    CFTerms:add_offset 1.120872e+01 ;
+    CFTerms:long_name "Logarithm of surface pressure" ;
+    CFTerms:missing_value "-32767" ;
+    CFTerms:scale_factor 1.039525e-05 .
+
+ns1:co2_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:latitude ;
+    bald:childBroadcast "(1, 1, 181, 1)" .
+
+ns1:co2_levelist_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:levelist ;
+    bald:childBroadcast "(1, 60, 1, 1)" .
+
+ns1:co2_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(1, 1, 1, 1)" .
+
+ns1:lnsp_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:latitude ;
+    bald:childBroadcast "(1, 1, 181, 1)" .
+
+ns1:lnsp_levelist_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:levelist ;
+    bald:childBroadcast "(1, 60, 1, 1)" .
+
+ns1:lnsp_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(1, 1, 1, 1)" .
+
+ns1:latitude a bald:Array,
+        bald:Reference ;
+    bald:array ns1:latitude ;
+    bald:first_value "90.0" ;
+    bald:last_value "-90.0" ;
+    bald:shape "(181,)" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    CFTerms:units "degrees_north" .
+
+ns1:levelist a bald:Array,
+        bald:Reference ;
+    bald:array ns1:levelist ;
+    bald:first_value "1" ;
+    bald:last_value "60" ;
+    bald:shape "(60,)" ;
+    CFTerms:long_name "model_level_number" .
+
+ns1:longitude a bald:Array,
+        bald:Reference ;
+    bald:array ns1:longitude ;
+    bald:first_value "0.0" ;
+    bald:last_value "359.0" ;
+    bald:shape "(360,)" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    CFTerms:units "degrees_east" .
+
+ns1:time a bald:Array,
+        bald:Reference ;
+    bald:array ns1:time ;
+    bald:first_value "931344" ;
+    bald:shape "(1,)" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
+    CFTerms:units "hours since 1900-01-01 00:00:0.0" .
+

@@ -750,6 +750,9 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 fhandle.variables[name].dimensions[0] == name):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
+                sattrs['bald__first_value'] = fhandle.variables[name][0]
+                if len(fhandle.variables[name]) > 1:
+                    sattrs['bald__last_value'] = fhandle.variables[name][-1]
                 
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
