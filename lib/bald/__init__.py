@@ -238,8 +238,9 @@ class HttpCache(object):
             # import datetime
             # now = datetime.datetime.utcnow()
             # print('\ndownloading: {}'.format(item))
-	    self.cache[item] = requests.get(item)
+            self.cache[item] = requests.get(item)
             try:
+		# Attempt content negotiation, but pass if problems occur.
                 headers = {'Accept': 'application/rdf+xml'}
                 self.cache[item] = requests.get(item, headers=headers)
             except Exception:
