@@ -10,6 +10,7 @@ import pyparsing
 import rdflib
 import requests
 import six
+import terra.datetime
 
 import bald.validation as bv
 
@@ -750,9 +751,41 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 fhandle.variables[name].dimensions[0] == name):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
+
+                # if fhandle.variables
                 sattrs['bald__first_value'] = fhandle.variables[name][0]
                 if len(fhandle.variables[name]) > 1:
                     sattrs['bald__last_value'] = fhandle.variables[name][-1]
+
+                # datetime special case
+                if 'units' in fhandle.variables[name].ncattrs():# and False:
+                    ustr = fhandle.variables[name].getncattr('units')
+                    pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
+
+                    amatch = re.match(pattern, ustr)
+                    if amatch:
+                        quantity = amatch.group(1)
+                        origin = amatch.group(2)
+                        ig = terra.datetime.ISOGregorian()
+                        tog = terra.datetime.parse_datetime(origin,
+                                                            calendar=ig)
+                        first = np.array((fhandle.variables[name][0],))
+
+                        edate_first = terra.datetime.EpochDateTimes(first,
+                                                                    quantity,
+                                                                    epoch=tog)
+
+                        sattrs['bald__first_value'] = str(edate_first)
+                        if len(fhandle.variables[name]) > 1:
+                            last = np.array((fhandle.variables[name][-1],))
+                            edate_last = terra.datetime.EpochDateTimes(last,
+                                                                       quantity,
+                                                                       epoch=tog)
+                            sattrs['bald__last_value'] = str(edate_last)
+
+
+
+
                 
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape

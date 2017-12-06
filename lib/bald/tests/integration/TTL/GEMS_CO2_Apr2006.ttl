@@ -107,7 +107,7 @@ ns1:longitude a bald:Array,
 ns1:time a bald:Array,
         bald:Reference ;
     bald:array ns1:time ;
-    bald:first_value "931344" ;
+    bald:first_value "2006-04-01T00:00:00" ;
     bald:shape "(1,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
     CFTerms:units "hours since 1900-01-01 00:00:0.0" .
