@@ -11,7 +11,12 @@ import pyparsing
 import rdflib
 import requests
 import six
-import terra.datetime
+
+try:
+    import terra.datetime
+    terra_imp = True
+except ImportError:
+    terra_imp = False
 
 import bald.validation as bv
 
@@ -759,7 +764,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                     sattrs['bald__last_value'] = fhandle.variables[name][-1]
 
                 # datetime special case
-                if 'units' in fhandle.variables[name].ncattrs():
+                if 'units' in fhandle.variables[name].ncattrs() and terra_imp:
                     ustr = fhandle.variables[name].getncattr('units')
                     pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
 
