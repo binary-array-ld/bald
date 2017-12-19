@@ -816,15 +816,28 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         response = cache['http://binary-array-ld.net/latest']
         reference_graph.parse(data=response.text, format='xml')
 
-        # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
+        # # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
+        # qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        #         'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+        #         'select ?s '
+        #         'where { '
+        #         '  ?s rdfs:range ?type . '
+        #         'filter(?type != rdfs:Literal) '
+        #         'filter(?type != skos:Concept) '
+        #         '}')
+        
+        # refs_ = reference_graph.query(qstr)
+
         qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+                'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
                 'where { '
                 '  ?s rdfs:range ?type . '
-                'filter(?type != rdfs:Literal) '
-                'filter(?type != skos:Concept) '
+                '  ?type rdf:type ?rtype . '
+                'filter(?rtype = owl:Class) '
                 '}')
+        
         refs = reference_graph.query(qstr)
 
         ref_prefs = [str(ref[0]) for ref in list(refs)]
