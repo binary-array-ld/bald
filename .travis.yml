@@ -18,7 +18,7 @@ install:
   - conda list
   - conda info -a
   - wget https://github.com/marqh/terra/archive/master.zip
-  - unzip terra-master.zip
+  - unzip master.zip
   - cd terra-master
   - python setup.py --quiet install
   - cd ..
