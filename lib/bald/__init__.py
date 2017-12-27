@@ -1,6 +1,7 @@
 import contextlib
 import copy
 import re
+import time
 
 import h5py
 import jinja2
@@ -10,6 +11,12 @@ import pyparsing
 import rdflib
 import requests
 import six
+
+try:
+    import terra.datetime
+    terra_imp = True
+except ImportError:
+    terra_imp = False
 
 import bald.validation as bv
 
@@ -235,19 +242,18 @@ class HttpCache(object):
         if not self.is_http_uri(item):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
-            # import datetime
-            # now = datetime.datetime.utcnow()
-            # print('\ndownloading: {}'.format(item))
-            self.cache[item] = requests.get(item)
+            # now = time.time()
             try:
-		# Attempt content negotiation, but pass if problems occur.
-                headers = {'Accept': 'application/rdf+xml'}
-                self.cache[item] = requests.get(item, headers=headers)
-            except Exception:
-                pass
-            # then = datetime.datetime.utcnow()
-            # print('{}s'.format((then-now).total_seconds()))
+                # print('trying: {}'.format(item))
 
+                headers = {'Accept': 'application/rdf+xml'}
+                self.cache[item] = requests.get(item, headers=headers, timeout=7)
+            except Exception:
+                # print('retrying: {}'.format(item))
+                headers = {'Accept': 'text/html'}
+                self.cache[item] = requests.get(item, headers=headers, timeout=7)
+
+        # print('in {} seconds'.format(time.time() - then))
         return self.cache[item]
 
     def check_uri(self, uri):
@@ -446,7 +452,8 @@ class Subject(object):
             else:
                 kstr = '{key}: '.format(key=attr)
             vals = remaining_attrs[attr]
-            if isinstance(vals, six.string_types):
+            if (isinstance(vals, six.string_types) or
+               isinstance(vals, np.ma.core.MaskedConstant)):
                 vuri = self.unpack_rdfobject(vals, predicate=attr_uri)
                 if is_http_uri(vuri):
                     vstr = self.link_template
@@ -747,9 +754,55 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
-                fhandle.variables[name].dimensions[0] == name):
+                fhandle.variables[name].dimensions[0] == name and
+                len(fhandle.variables[name]) > 0):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
+
+                sattrs['bald__first_value'] = fhandle.variables[name][0]
+                if len(fhandle.variables[name]) > 1:
+                    sattrs['bald__last_value'] = fhandle.variables[name][-1]
+
+                # datetime special case
+                if 'units' in fhandle.variables[name].ncattrs() and terra_imp:
+                    ustr = fhandle.variables[name].getncattr('units')
+                    pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
+
+                    amatch = re.match(pattern, ustr)
+                    if amatch:
+                        quantity = amatch.group(1)
+                        origin = amatch.group(2)
+                        ig = terra.datetime.ISOGregorian()
+                        tog = terra.datetime.parse_datetime(origin,
+                                                            calendar=ig)
+                        dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
+                                              fhandle.variables[name].dtype.itemsize)
+                        fv = netCDF4.default_fillvals.get(dtype)
+                        if fhandle.variables[name][0] == fv:
+                            first = np.ma.MaskedArray(fhandle.variables[name][0],
+                                                      mask=True)
+                        else:
+                            first = fhandle.variables[name][0]
+
+                        edate_first = terra.datetime.EpochDateTimes(first,
+                                                                    quantity,
+                                                                    epoch=tog)
+
+                        sattrs['bald__first_value'] = str(edate_first)
+                        if len(fhandle.variables[name]) > 1:
+                            if fhandle.variables[name][0] == fv:
+                                last = np.ma.MaskedArray(fhandle.variables[name][-1],
+                                                         mask=True)
+                            else:
+                                last = fhandle.variables[name][-1]
+                            edate_last = terra.datetime.EpochDateTimes(last,
+                                                                       quantity,
+                                                                       epoch=tog)
+                            sattrs['bald__last_value'] = str(edate_last)
+
+
+
+
                 
             if fhandle.variables[name].shape:
                 sattrs['bald__shape'] = fhandle.variables[name].shape
@@ -768,15 +821,28 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         response = cache['http://binary-array-ld.net/latest']
         reference_graph.parse(data=response.text, format='xml')
 
-        # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
+        # # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
+        # qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        #         'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+        #         'select ?s '
+        #         'where { '
+        #         '  ?s rdfs:range ?type . '
+        #         'filter(?type != rdfs:Literal) '
+        #         'filter(?type != skos:Concept) '
+        #         '}')
+        
+        # refs_ = reference_graph.query(qstr)
+
         qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+                'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
                 'where { '
                 '  ?s rdfs:range ?type . '
-                'filter(?type != rdfs:Literal) '
-                'filter(?type != skos:Concept) '
+                '  ?type rdf:type ?rtype . '
+                'filter(?rtype = owl:Class) '
                 '}')
+        
         refs = reference_graph.query(qstr)
 
         ref_prefs = [str(ref[0]) for ref in list(refs)]

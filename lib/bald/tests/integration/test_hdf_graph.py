@@ -51,8 +51,8 @@ class TestHDFGraph(BaldTestCase):
             f.close()
             root_container = bald.load_hdf5(tfile, cache=self.acache)
         html = root_container.viewgraph()
-        with open(os.path.join(self.html_path, 'hdf_container_nest.html'), 'w') as sf:
-            sf.write(html)
+        # with open(os.path.join(self.html_path, 'hdf_container_nest.html'), 'w') as sf:
+        #     sf.write(html)
 
 
 if __name__ == '__main__':
