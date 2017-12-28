@@ -865,12 +865,12 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                           root_container.unpack_predicate(sattr) in ref_prefs):
                 # if sattr == 'coordinates':
                 #     import pdb; pdb.set_trace()
-                
-                if (isinstance(sattrs[sattr], str) and
+
+                if (isinstance(sattrs[sattr], six.string_types) and
                     file_variables.get(sattrs[sattr])):
                     # next: remove all use of set, everything is dict or orderedDict
                     var.attrs[sattr] = set((file_variables.get(sattrs[sattr]),))
-                elif isinstance(sattrs[sattr], str):
+                elif isinstance(sattrs[sattr], six.string_types):
                     potrefs_list = sattrs[sattr].split(',')
                     potrefs_set = sattrs[sattr].split(' ')
                     if len(potrefs_list) > 1:
