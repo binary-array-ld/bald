@@ -358,13 +358,14 @@ class Subject(object):
                     result = astring.replace('{}__'.format(prefix),
                                              self.prefixes()[prefix])
         elif isinstance(astring, six.string_types):
-            predicate_alias_query = ('prefix dct: <http://purl.org/dc/terms/> '
-                                     'prefix owl: <http://www.w3.org/2002/07/owl#> '
-                                     'select ?uri where '
-                                  '{{?uri dct:identifier "{}" ; '
-                                  '      rdf:type ?type. '
-                                  'FILTER(?type in (rdf:Property, owl:ObjectProperty) ) '
-                                     '}}'.format(astring))
+            qstr = ('prefix dct: <http://purl.org/dc/terms/> \n'
+                    'prefix owl: <http://www.w3.org/2002/07/owl#> \n'
+                    'select ?uri where \n'
+                    '{{?uri dct:identifier "{}" ; \n'
+                    '      rdf:type ?type. \n'
+                    'FILTER(?type in (rdf:Property, owl:ObjectProperty) ) \n'
+                    '}}\n')
+            predicate_alias_query = (six.text_type(qstr).format(astring))
 
             qres = self.alias_graph.query(predicate_alias_query)
             results = list(qres)
@@ -389,12 +390,13 @@ class Subject(object):
             #     msg = 'predicate must be a http uri, not {}'.format(predicate)
             #     raise ValueError(msg)
             # can be a file uri too
-            rdfobj_alias_query = ('prefix dct: <http://purl.org/dc/terms/> '
-                                  'select ?uri where '
-                                  '{{ <{pred}> rdfs:range ?range . '
-                                  '?uri dct:identifier "{id}" ; '
-                                  '     rdf:type ?range .'
-                                  '}}'.format(pred=predicate, id=astring))
+            qstr = ('prefix dct: <http://purl.org/dc/terms/> \n'
+                    'select ?uri where \n'
+                    '{{ <{pred}> rdfs:range ?range . \n'
+                    '?uri dct:identifier "{id}" ; \n'
+                    '     rdf:type ?range .\n'
+                    '}}\n')
+            rdfobj_alias_query = (six.text_type(qstr).format(pred=predicate, id=astring))
             # qres = self.alias_graph.query(rdfobj_alias_query)
             try:
                 qres = self.alias_graph.query(rdfobj_alias_query)

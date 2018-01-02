@@ -10,22 +10,29 @@ import bald
 from bald.tests import BaldTestCase
 from rdflib import Graph
 
+# a module level graph, to share for memory and performance
+thisGraph = [Graph()]
+loaded_boolean = []
+
 
 class Test(BaldTestCase):
     def setUp(self):
         self.cdl_path = os.path.join(os.path.dirname(__file__), 'CDL')
-        self.ttl_path = os.path.join(os.path.dirname(__file__), 'TTL')
-        self.graph = Graph()
 
-        #load bald graphs from cdl
-        for cdl_file in glob.glob(os.path.join(os.path.dirname(__file__), 'CDL', '*.cdl')):
-            with self.temp_filename('.nc') as tfile:
-               subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-               root_container = bald.load_netcdf(tfile, cache=self.acache)
-               curr_g = root_container.rdfgraph()
- 
-            #merge into graph in test obj
-            self.graph = self.graph  + curr_g
+        # Check to see if another test has already loaded the graph.
+        if not loaded_boolean:
+            # load bald graphs from cdl
+            for cdl_file in glob.glob(os.path.join(self.cdl_path, '*.cdl')):
+                with self.temp_filename('.nc') as tfile:
+                   subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+                   root_container = bald.load_netcdf(tfile, cache=self.acache)
+                   curr_g = root_container.rdfgraph()
+
+                #merge into graph in test obj
+                thisGraph[0] = thisGraph[0]  + curr_g
+            print('setting loaded_boolean')
+            loaded_boolean.append(True)
+        self.graph = thisGraph[0]
 
     def test_sparql_count_standard_names(self):
         #query standard_name values used and frequency
