@@ -1,5 +1,6 @@
 import contextlib
 import copy
+import os
 import re
 import time
 
@@ -641,12 +642,17 @@ def load(afilepath):
     elif afilepath.endswith('.nc'):
         loader = netCDF4.Dataset
     else:
-        raise ValueError('filepath suffix not supported')
+        raise ValueError('filepath suffix not supported: {}'.format(afilepath))
+    if not os.path.exists(afilepath):
+        raise IOError('{} not found'.format(afilepath))
     try:
         f = loader(afilepath, "r")
         yield f
     finally:
-        f.close()
+        try:
+            f.close()
+        except NameError:
+            pass
 
 def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
     """
