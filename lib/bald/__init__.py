@@ -225,7 +225,17 @@ for (var i = 0; i < instance_list.length; i++) {
 
 
 def is_http_uri(item):
-    return isinstance(item, six.string_types) and (item.startswith('http://') or item.startswith('https://'))
+    result = True
+    if not isinstance(item, six.string_types):
+        result = False
+    else:
+        if not (item.startswith('http://') or item.startswith('https://')):
+            result = False
+        if ',' in item:
+            result = False
+        if ' ' in item:
+            result = False
+    return result
 
 
 class HttpCache(object):
@@ -236,7 +246,7 @@ class HttpCache(object):
         self.cache = {}
 
     def is_http_uri(self, item):
-        return isinstance(item, six.string_types) and (item.startswith('http://') or item.startswith('https://'))
+        return is_http_uri(item)
 
     def __getitem__(self, item):
 
@@ -527,6 +537,9 @@ class Subject(object):
                 else:
                     rdfobj = self.unpack_rdfobject(obj, rdfpred)
                     if is_http_uri(rdfobj):
+                        # if rdfobj == 'http://www.ecmwf.int/research/EU_projects/ENSEMBLES/index.html, http://www.ecmwf.int/research/EU_projects/ENSEMBLES/experiments/index.html':
+                        #     import pdb; pdb.set_trace()
+
                         rdfobj = rdflib.URIRef(rdfobj)
                     else:
                         rdfobj = rdflib.Literal(rdfobj)
@@ -783,30 +796,31 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                         ig = terra.datetime.ISOGregorian()
                         tog = terra.datetime.parse_datetime(origin,
                                                             calendar=ig)
-                        dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
-                                              fhandle.variables[name].dtype.itemsize)
-                        fv = netCDF4.default_fillvals.get(dtype)
-                        if fhandle.variables[name][0] == fv:
-                            first = np.ma.MaskedArray(fhandle.variables[name][0],
-                                                      mask=True)
-                        else:
-                            first = fhandle.variables[name][0]
-
-                        edate_first = terra.datetime.EpochDateTimes(first,
-                                                                    quantity,
-                                                                    epoch=tog)
-
-                        sattrs['bald__first_value'] = str(edate_first)
-                        if len(fhandle.variables[name]) > 1:
+                        if tog is not None:
+                            dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
+                                                  fhandle.variables[name].dtype.itemsize)
+                            fv = netCDF4.default_fillvals.get(dtype)
                             if fhandle.variables[name][0] == fv:
-                                last = np.ma.MaskedArray(fhandle.variables[name][-1],
-                                                         mask=True)
+                                first = np.ma.MaskedArray(fhandle.variables[name][0],
+                                                          mask=True)
                             else:
-                                last = fhandle.variables[name][-1]
-                            edate_last = terra.datetime.EpochDateTimes(last,
-                                                                       quantity,
-                                                                       epoch=tog)
-                            sattrs['bald__last_value'] = str(edate_last)
+                                first = fhandle.variables[name][0]
+
+                            edate_first = terra.datetime.EpochDateTimes(first,
+                                                                        quantity,
+                                                                        epoch=tog)
+
+                            sattrs['bald__first_value'] = str(edate_first)
+                            if len(fhandle.variables[name]) > 1:
+                                if fhandle.variables[name][0] == fv:
+                                    last = np.ma.MaskedArray(fhandle.variables[name][-1],
+                                                             mask=True)
+                                else:
+                                    last = fhandle.variables[name][-1]
+                                edate_last = terra.datetime.EpochDateTimes(last,
+                                                                           quantity,
+                                                                           epoch=tog)
+                                sattrs['bald__last_value'] = str(edate_last)
 
 
 
