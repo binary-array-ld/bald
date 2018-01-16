@@ -66,14 +66,10 @@ ns1:location_variable a bald:Array,
 ns1:pdim0 a bald:Array,
         bald:Reference ;
     bald:array ns1:pdim0 ;
-    bald:first_value "None" ;
-    bald:last_value "None" ;
     bald:shape "(11,)" .
 
 ns1:pdim1 a bald:Array,
         bald:Reference ;
     bald:array ns1:pdim1 ;
-    bald:first_value "None" ;
-    bald:last_value "None" ;
     bald:shape "(17,)" .
 

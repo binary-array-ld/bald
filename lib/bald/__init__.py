@@ -537,10 +537,12 @@ class Subject(object):
                 else:
                     rdfobj = self.unpack_rdfobject(obj, rdfpred)
                     if is_http_uri(rdfobj):
-                        # if rdfobj == 'http://www.ecmwf.int/research/EU_projects/ENSEMBLES/index.html, http://www.ecmwf.int/research/EU_projects/ENSEMBLES/experiments/index.html':
-                        #     import pdb; pdb.set_trace()
 
                         rdfobj = rdflib.URIRef(rdfobj)
+                    elif terra_imp and isinstance(rdfobj, terra.datetime.EpochDateTimes):
+                        rdfobj = rdflib.Literal(str(rdfobj), datatype=rdflib.XSD.dateTime)
+                    elif isinstance(rdfobj, float):
+                        rdfobj = rdflib.Literal(rdfobj, datatype=rdflib.XSD.decimal)
                     else:
                         rdfobj = rdflib.Literal(rdfobj)
                 rdfpred = rdflib.URIRef(rdfpred)
@@ -780,9 +782,19 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 sattrs['bald__array'] = name
                 sattrs['rdf__type'] = 'bald__Reference'
 
-                sattrs['bald__first_value'] = fhandle.variables[name][0]
-                if len(fhandle.variables[name]) > 1:
-                    sattrs['bald__last_value'] = fhandle.variables[name][-1]
+                if not isinstance(fhandle.variables[name][0], np.ma.core.MaskedConstant):
+                    sattrs['bald__first_value'] = fhandle.variables[name][0]
+                    if np.issubdtype(sattrs['bald__first_value'], np.integer):
+                        sattrs['bald__first_value'] = int(sattrs['bald__first_value'])
+                    elif np.issubdtype(sattrs['bald__first_value'], np.float):
+                        sattrs['bald__first_value'] = float(sattrs['bald__first_value'])
+                    if (len(fhandle.variables[name]) > 1 and
+                        not isinstance(fhandle.variables[name][-1], np.ma.core.MaskedConstant)):
+                        sattrs['bald__last_value'] = fhandle.variables[name][-1]
+                        if np.issubdtype(sattrs['bald__last_value'], np.integer):
+                            sattrs['bald__last_value'] = int(sattrs['bald__last_value'])
+                        elif np.issubdtype(sattrs['bald__last_value'], np.float):
+                            sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
 
                 # datetime special case
                 if 'units' in fhandle.variables[name].ncattrs() and terra_imp:
@@ -805,22 +817,32 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                                           mask=True)
                             else:
                                 first = fhandle.variables[name][0]
+                            if first:
+                                try:
+                                    first = int(first)
+                                except Exception:
+                                    pass
+                                edate_first = terra.datetime.EpochDateTimes(first,
+                                                                            quantity,
+                                                                            epoch=tog)
 
-                            edate_first = terra.datetime.EpochDateTimes(first,
-                                                                        quantity,
-                                                                        epoch=tog)
-
-                            sattrs['bald__first_value'] = str(edate_first)
+                                sattrs['bald__first_value'] = edate_first
                             if len(fhandle.variables[name]) > 1:
                                 if fhandle.variables[name][0] == fv:
                                     last = np.ma.MaskedArray(fhandle.variables[name][-1],
                                                              mask=True)
                                 else:
                                     last = fhandle.variables[name][-1]
-                                edate_last = terra.datetime.EpochDateTimes(last,
-                                                                           quantity,
-                                                                           epoch=tog)
-                                sattrs['bald__last_value'] = str(edate_last)
+                                if last:
+                                    try:
+                                        last = round(last)
+                                    except Exception:
+                                        pass
+                                    edate_last = terra.datetime.EpochDateTimes(last,
+                                                                               quantity,
+                                                                               epoch=tog)
+
+                                    sattrs['bald__last_value'] = edate_last
 
 
 

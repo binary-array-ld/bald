@@ -29,10 +29,10 @@ ns1:co2 a bald:Array ;
         ns1:co2_time_ref,
         ns1:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
-    CFTerms:add_offset 4.031922e+02 ;
+    CFTerms:add_offset 403.19221938 ;
     CFTerms:long_name "Carbon Dioxide" ;
     CFTerms:missing_value "-32767" ;
-    CFTerms:scale_factor 9.816851e-04 ;
+    CFTerms:scale_factor 0.000981685145029 ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
     CFTerms:units "kg kg**-1" .
 
@@ -43,10 +43,10 @@ ns1:lnsp a bald:Array ;
         ns1:lnsp_time_ref,
         ns1:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
-    CFTerms:add_offset 1.120872e+01 ;
+    CFTerms:add_offset 11.2087164281 ;
     CFTerms:long_name "Logarithm of surface pressure" ;
     CFTerms:missing_value "-32767" ;
-    CFTerms:scale_factor 1.039525e-05 .
+    CFTerms:scale_factor 1.0395245784e-05 .
 
 ns1:co2_latitude_ref a bald:Reference,
         bald:Subject ;
@@ -81,8 +81,8 @@ ns1:lnsp_time_ref a bald:Reference,
 ns1:latitude a bald:Array,
         bald:Reference ;
     bald:array ns1:latitude ;
-    bald:first_value "90.0" ;
-    bald:last_value "-90.0" ;
+    bald:first_value 90.0 ;
+    bald:last_value -90.0 ;
     bald:shape "(181,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     CFTerms:units "degrees_north" .
@@ -90,16 +90,16 @@ ns1:latitude a bald:Array,
 ns1:levelist a bald:Array,
         bald:Reference ;
     bald:array ns1:levelist ;
-    bald:first_value "1" ;
-    bald:last_value "60" ;
+    bald:first_value 1 ;
+    bald:last_value 60 ;
     bald:shape "(60,)" ;
     CFTerms:long_name "model_level_number" .
 
 ns1:longitude a bald:Array,
         bald:Reference ;
     bald:array ns1:longitude ;
-    bald:first_value "0.0" ;
-    bald:last_value "359.0" ;
+    bald:first_value 0.0 ;
+    bald:last_value 359.0 ;
     bald:shape "(360,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     CFTerms:units "degrees_east" .
@@ -107,7 +107,7 @@ ns1:longitude a bald:Array,
 ns1:time a bald:Array,
         bald:Reference ;
     bald:array ns1:time ;
-    bald:first_value "2006-04-01T00:00:00" ;
+    bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
     bald:shape "(1,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
     CFTerms:units "hours since 1900-01-01 00:00:0.0" .

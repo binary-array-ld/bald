@@ -26,14 +26,14 @@
     ns1:geospatial_bounds "POINT (-123.458000 38.048000)" ;
     ns1:geospatial_bounds_crs "EPSG:4326" ;
     ns1:geospatial_bounds_vertical_crs "EPSG:5829" ;
-    ns1:geospatial_lat_max 3.8048e+01 ;
-    ns1:geospatial_lat_min 3.8048e+01 ;
+    ns1:geospatial_lat_max 38.048 ;
+    ns1:geospatial_lat_min 38.048 ;
     ns1:geospatial_lat_units "degrees_north" ;
-    ns1:geospatial_lon_max -1.23458e+02 ;
-    ns1:geospatial_lon_min -1.23458e+02 ;
+    ns1:geospatial_lon_max -123.458 ;
+    ns1:geospatial_lon_min -123.458 ;
     ns1:geospatial_lon_units "degrees_east" ;
-    ns1:geospatial_vertical_max 1.5e+00 ;
-    ns1:geospatial_vertical_min 1.5e+00 ;
+    ns1:geospatial_vertical_max 1.5 ;
+    ns1:geospatial_vertical_min 1.5 ;
     ns1:geospatial_vertical_positive "down" ;
     ns1:geospatial_vertical_units "m" ;
     ns1:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
@@ -81,9 +81,9 @@
 ns1:crs a bald:Subject ;
     ns1:epsg_code "EPSG:4326" ;
     ns1:grid_mapping_name "latitude_longitude" ;
-    ns1:inverse_flattening 2.982572e+02 ;
-    ns1:longitude_of_prime_meridian 0e+00 ;
-    ns1:semi_major_axis 6.378137e+06 .
+    ns1:inverse_flattening 298.257223563 ;
+    ns1:longitude_of_prime_meridian 0.0 ;
+    ns1:semi_major_axis 6378137.0 .
 
 ns1:instrument1 a bald:Subject ;
     ns1:accuracy "" ;
@@ -106,20 +106,20 @@ ns1:platform1 a bald:Subject ;
     CFTerms:long_name "cordell bank monitoring station" .
 
 ns1:sal a bald:Array ;
-    ns1:_FillValue -9.999e+03 ;
+    ns1:_FillValue -9999.0 ;
     ns1:comment "These data are bogus!!!!!" ;
     ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 3.3e+01 ;
-    ns1:data_min 3.3e+01 ;
+    ns1:data_max 33.0 ;
+    ns1:data_min 33.0 ;
     ns1:instrument "instrument1" ;
     ns1:ncei_name "SALINITY" ;
     ns1:platform "platform1" ;
     ns1:references <http://www.numpy.org/> ;
     ns1:source "numpy.random.rand function." ;
-    ns1:valid_max 1e+02 ;
-    ns1:valid_min 0e+00 ;
+    ns1:valid_max 100.0 ;
+    ns1:valid_min 0.0 ;
     bald:shape "(1,)" ;
-    CFTerms:add_offset 0e+00 ;
+    CFTerms:add_offset 0.0 ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:coordinates ns1:lat,
         ns1:lon,
@@ -127,26 +127,26 @@ ns1:sal a bald:Array ;
         ns1:z ;
     CFTerms:grid_mapping "crs" ;
     CFTerms:long_name "Salinity" ;
-    CFTerms:missing_value -8.888e+03 ;
-    CFTerms:scale_factor 1e+00 ;
+    CFTerms:missing_value -8888.0 ;
+    CFTerms:scale_factor 1.0 ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_salinity/> ;
     CFTerms:units "0.001" .
 
 ns1:temp a bald:Array ;
-    ns1:_FillValue -9.999e+03 ;
+    ns1:_FillValue -9999.0 ;
     ns1:comment "These data are bogus!!!!!" ;
     ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 1.3e+01 ;
-    ns1:data_min 1.3e+01 ;
+    ns1:data_max 13.0 ;
+    ns1:data_min 13.0 ;
     ns1:instrument "instrument1" ;
     ns1:ncei_name "WATER TEMPERATURE" ;
     ns1:platform "platform1" ;
     ns1:references <http://www.numpy.org/> ;
     ns1:source "numpy.random.rand function." ;
-    ns1:valid_max 1e+02 ;
-    ns1:valid_min 0e+00 ;
+    ns1:valid_max 100.0 ;
+    ns1:valid_min 0.0 ;
     bald:shape "(1,)" ;
-    CFTerms:add_offset 0e+00 ;
+    CFTerms:add_offset 0.0 ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:coordinates ns1:lat,
         ns1:lon,
@@ -154,16 +154,16 @@ ns1:temp a bald:Array ;
         ns1:z ;
     CFTerms:grid_mapping "crs" ;
     CFTerms:long_name "Temperature" ;
-    CFTerms:missing_value -8.888e+03 ;
-    CFTerms:scale_factor 1e+00 ;
+    CFTerms:missing_value -8888.0 ;
+    CFTerms:scale_factor 1.0 ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_temperature/> ;
     CFTerms:units "degree_Celsius" .
 
 ns1:lat a bald:Array ;
-    ns1:_FillValue -9.999e+03 ;
+    ns1:_FillValue -9999.0 ;
     ns1:comment "These data are bogus!!!!!" ;
-    ns1:valid_max 9e+01 ;
-    ns1:valid_min -9e+01 ;
+    ns1:valid_max 90.0 ;
+    ns1:valid_min -90.0 ;
     bald:shape "(1,)" ;
     CFTerms:axis "Y" ;
     CFTerms:long_name "Latitude" ;
@@ -171,10 +171,10 @@ ns1:lat a bald:Array ;
     CFTerms:units "degrees_north" .
 
 ns1:lon a bald:Array ;
-    ns1:_FillValue -9.999e+03 ;
+    ns1:_FillValue -9999.0 ;
     ns1:comment "These data are bogus!!!!!" ;
-    ns1:valid_max 1.8e+02 ;
-    ns1:valid_min -1.8e+02 ;
+    ns1:valid_max 180.0 ;
+    ns1:valid_min -180.0 ;
     bald:shape "(1,)" ;
     CFTerms:axis "X" ;
     CFTerms:long_name "Longitude" ;
@@ -182,7 +182,7 @@ ns1:lon a bald:Array ;
     CFTerms:units "degrees_east" .
 
 ns1:time a bald:Array ;
-    ns1:_FillValue -9.999e+03 ;
+    ns1:_FillValue -9999.0 ;
     ns1:comment "These data are bogus!!!!!" ;
     bald:shape "(1,)" ;
     CFTerms:axis "T" ;
@@ -192,10 +192,10 @@ ns1:time a bald:Array ;
     CFTerms:units "seconds since 1970-01-01 00:00:00 UTC" .
 
 ns1:z a bald:Array ;
-    ns1:_FillValue -9.999e+03 ;
+    ns1:_FillValue -9999.0 ;
     ns1:comment "These data are bogus!!!!!" ;
-    ns1:valid_max 1.0971e+04 ;
-    ns1:valid_min 0e+00 ;
+    ns1:valid_max 10971.0 ;
+    ns1:valid_min 0.0 ;
     bald:shape "(1,)" ;
     CFTerms:axis "Z" ;
     CFTerms:long_name "depth of sensor" ;
