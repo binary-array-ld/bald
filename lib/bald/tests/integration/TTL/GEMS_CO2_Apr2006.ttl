@@ -29,10 +29,10 @@ ns1:co2 a bald:Array ;
         ns1:co2_time_ref,
         ns1:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
-    CFTerms:add_offset 403.19221938 ;
+    CFTerms:add_offset 403.192219379918 ;
     CFTerms:long_name "Carbon Dioxide" ;
     CFTerms:missing_value "-32767" ;
-    CFTerms:scale_factor 0.000981685145029 ;
+    CFTerms:scale_factor 0.000981685145029486 ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
     CFTerms:units "kg kg**-1" .
 
@@ -43,10 +43,10 @@ ns1:lnsp a bald:Array ;
         ns1:lnsp_time_ref,
         ns1:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
-    CFTerms:add_offset 11.2087164281 ;
+    CFTerms:add_offset 11.2087164280841 ;
     CFTerms:long_name "Logarithm of surface pressure" ;
     CFTerms:missing_value "-32767" ;
-    CFTerms:scale_factor 1.0395245784e-05 .
+    CFTerms:scale_factor 1.03952457840347e-05 .
 
 ns1:co2_latitude_ref a bald:Reference,
         bald:Subject ;
