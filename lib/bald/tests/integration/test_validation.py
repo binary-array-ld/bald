@@ -33,7 +33,7 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -44,7 +44,7 @@ class Test(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.attrs['bald__turtle'] = 'bald__walnut'
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
@@ -58,7 +58,7 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -68,9 +68,16 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (11, 13))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            fname = ('file:///tests/integration/test_validation/Test/'
+                     'test_mismatch_zeroth.hdf')
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
             exns = validation.exceptions()
-            expected = ['parent_dataset declares a child of child_dataset but the arrays do not conform to the bald array reference rules']
+            expected = ['file:///tests/integration/test_validation/Test/'
+                        'test_mismatch_zeroth.hdf/parent_dataset declares a '
+                        'child of file:///tests/integration/test_validation/'
+                        'Test/test_mismatch_zeroth.hdf/child_dataset but the '
+                        'arrays do not conform to the bald array reference '
+                        'rules']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 
@@ -80,9 +87,16 @@ class TestArrayReference(BaldTestCase):
             f = _fattrs(f)
             f = _create_parent_child(f, (11, 17), (13, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            fname = ('file:///tests/integration/test_validation/Test/'
+                     'test_mismatch_oneth.hdf')
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
             exns = validation.exceptions()
-            expected = ['parent_dataset declares a child of child_dataset but the arrays do not conform to the bald array reference rules']
+            expected = ['file:///tests/integration/test_validation/Test/'
+                        'test_mismatch_oneth.hdf/parent_dataset declares a '
+                        'child of file:///tests/integration/test_validation/'
+                        'Test/test_mismatch_oneth.hdf/child_dataset but the'
+                        ' arrays do not conform to the bald array reference '
+                        'rules']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 
@@ -93,7 +107,7 @@ class TestArrayReference(BaldTestCase):
             # parent has leading dimension wrt child
             f = _create_parent_child(f, (4, 13, 17), (13, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
             exns = validation.exceptions()
             self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
 
@@ -104,9 +118,9 @@ class TestArrayReference(BaldTestCase):
             # child has leading dimension wrt parent
             f = _create_parent_child(f, (13, 17), (7, 13, 17))
             f.close()
-            validation = bald.validate_hdf5(tfile)
-            exns = validation.exceptions()
-            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exns))
+            validation = bald.validate_hdf5(tfile, cache=self.acache)
+            exs = validation.exceptions()
+            self.assertTrue(validation.is_valid(), msg='{}  != []'.format(exs))
 
     def test_mismatch_pdisjc_lead_dim(self):
         with self.temp_filename('.hdf') as tfile:
@@ -116,9 +130,17 @@ class TestArrayReference(BaldTestCase):
             f = _create_parent_child(f, (4, 13, 17), (7, 13, 17))
             
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            fname = ('file:///tests/integration/test_validation/Test/'
+                     'test_mismatch_pdisjc_lead_dim.hdf')
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
+
             exns = validation.exceptions()
-            expected = ['parent_dataset declares a child of child_dataset but the arrays do not conform to the bald array reference rules']
+            expected = ['file:///tests/integration/test_validation/Test/'
+                        'test_mismatch_pdisjc_lead_dim.hdf/parent_dataset '
+                        'declares a child of file:///tests/integration/'
+                        'test_validation/Test/test_mismatch_pdisjc_lead_dim'
+                        '.hdf/child_dataset but the arrays do not conform to'
+                        ' the bald array reference rules']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 
@@ -129,9 +151,17 @@ class TestArrayReference(BaldTestCase):
             # child and parent have disjoint trailing dimensions
             f = _create_parent_child(f, (13, 17, 2), (13, 17, 9))
             f.close()
-            validation = bald.validate_hdf5(tfile)
+            fname = ('file:///tests/integration/test_validation/Test/'
+                     'test_mismatch_pdisjc_trail_dim.hdf')
+            validation = bald.validate_hdf5(tfile, baseuri=fname, cache=self.acache)
+
             exns = validation.exceptions()
-            expected = ['parent_dataset declares a child of child_dataset but the arrays do not conform to the bald array reference rules']
+            expected = ['file:///tests/integration/test_validation/Test/'
+                        'test_mismatch_pdisjc_trail_dim.hdf/parent_dataset'
+                        ' declares a child of file:///tests/integration/'
+                        'test_validation/Test/test_mismatch_pdisjc_trail_dim'
+                        '.hdf/child_dataset but the arrays do not conform to '
+                        'the bald array reference rules']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 

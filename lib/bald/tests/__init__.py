@@ -4,8 +4,14 @@ import os
 import tempfile
 import unittest
 
+from bald import HttpCache
+
+acache = HttpCache()
 
 class BaldTestCase(unittest.TestCase):
+    # make a cache for testing optimistation
+    acache = acache
+
     @contextlib.contextmanager
     def temp_filename(self, suffix=''):
         temp_file = tempfile.mkstemp(suffix)
@@ -31,3 +37,4 @@ class BaldTestCase(unittest.TestCase):
             msg = ''.join(dlines)
 
         assertion_func(first, second, msg=msg)
+

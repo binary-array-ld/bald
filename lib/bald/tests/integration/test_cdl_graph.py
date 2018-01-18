@@ -15,9 +15,12 @@ class Test(BaldTestCase):
         
     def test_array_reference(self):
         with self.temp_filename('.nc') as tfile:
-            cdl_file = os.path.join(self.cdl_path, 'array_reference.cdl')
+            cdlname = 'array_reference.cdl'
+            cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-            root_container = bald.load_netcdf(tfile)
+            cdl_file_uri = 'file://CDL/{}'.format(cdlname)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
+
             html = root_container.viewgraph()
             # with open(os.path.join(self.html_path, 'array_reference.html'), 'w') as sf:
             #     sf.write(html)
@@ -27,9 +30,12 @@ class Test(BaldTestCase):
 
     def test_multi_array_reference(self):
         with self.temp_filename('.nc') as tfile:
-            cdl_file = os.path.join(self.cdl_path, 'multi_array_reference.cdl')
+            cdlname = 'multi_array_reference.cdl'
+            cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-            root_container = bald.load_netcdf(tfile)
+            cdl_file_uri = 'file://CDL/{}'.format(cdlname)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
+
             html = root_container.viewgraph()
             # with open(os.path.join(self.html_path, 'multi_array_reference.html'), 'w') as sf:
             #     sf.write(html)
