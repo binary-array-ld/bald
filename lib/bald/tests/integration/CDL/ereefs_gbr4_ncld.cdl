@@ -136,10 +136,9 @@ variables:
  
 	group: alias_list { 
 		// group attributes:
-		:unit_id = "http://qudt.org/1.1/schema/qudt#unit";
-		:medium_id = "http://environment.data.gov.au/def/op#matrix" ;
-		:scaledQuantityKind_id = "http://environment.data.gov.au/def/op#propertyKind" ;
-		:substanceOrTaxon_id = "http://environment.data.gov.au/def/op#objectOfInterest" ;		
+		:qudt = "http://qudt.org/1.1/schema/qudt";
+		:ed_gov_au_op = "http://environment.data.gov.au/def/op" ;
+
 	} // group bald__alias_list		
 	
 }

@@ -1,64 +1,75 @@
 @prefix bald: <http://binary-array-ld.net/latest/> .
 @prefix metce: <http://codes.wmo.int/common/observation-type/METCE/2013/> .
+@prefix ns1: <file://CDL/multi_array_reference.cdl/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<root> a bald:Container ;
-    bald:contains <location_reference_system>,
-        <location_variable>,
-        <pdim0>,
-        <pdim1>,
-        <variable1>,
-        <variable1_pdim0_ref>,
-        <variable2>,
-        <variable2_pdim0_ref> ;
+<file://CDL/multi_array_reference.cdl> a bald:Container ;
+    bald:contains ns1:data_variable1,
+        ns1:data_variable1_pdim0_ref,
+        ns1:data_variable2,
+        ns1:data_variable2_pdim0_ref,
+        ns1:list_collection,
+        ns1:location_reference_system,
+        ns1:location_variable,
+        ns1:pdim0,
+        ns1:pdim1,
+        ns1:set_collection ;
     bald:isPrefixedBy "prefix_list" .
 
-<variable1> a bald:Array ;
-    bald:references <location_variable>,
-        <pdim1>,
-        <variable1_pdim0_ref> ;
-    bald:shape "(11, 17)" ;
-    <long_name> "Gerald" ;
-    <obtype> metce:SamplingObservation .
-
-<variable2> a bald:Array ;
-    bald:references <location_variable>,
-        <pdim1>,
-        <variable2_pdim0_ref> ;
-    bald:shape "(11, 17)" ;
-    <long_name> "Imelda" ;
-    <obtype> metce:SamplingObservation .
-
-<variable1_pdim0_ref> a bald:Reference,
-        bald:Subject ;
-    bald:array <pdim0> ;
-    bald:childBroadcast "(11, 1)" .
-
-<variable2_pdim0_ref> a bald:Reference,
-        bald:Subject ;
-    bald:array <pdim0> ;
-    bald:childBroadcast "(11, 1)" .
-
-<location_reference_system> a bald:Subject ;
-    bald:array <location_reference_system> ;
-    <pcode> "4897" .
-
-<location_variable> a bald:Array,
-        bald:Reference ;
-    bald:array <location_variable> ;
-    bald:references <location_reference_system> ;
+ns1:data_variable1 a bald:Array ;
+    ns1:long_name "Gerald" ;
+    ns1:obtype metce:SamplingObservation ;
+    bald:references ns1:data_variable1_pdim0_ref,
+        ns1:location_variable,
+        ns1:pdim1 ;
     bald:shape "(11, 17)" .
 
-<pdim0> a bald:Array,
+ns1:data_variable2 a bald:Array ;
+    ns1:long_name "Imelda" ;
+    ns1:obtype metce:SamplingObservation ;
+    bald:references ns1:data_variable2_pdim0_ref,
+        ns1:location_variable,
+        ns1:pdim1 ;
+    bald:shape "(11, 17)" .
+
+ns1:list_collection a bald:Subject ;
+    bald:references ns1:data_variable1_pdim0_ref,
+        ns1:data_variable2_pdim0_ref .
+
+ns1:set_collection a bald:Subject ;
+    bald:references ns1:data_variable1_pdim0_ref,
+        ns1:data_variable2_pdim0_ref .
+
+ns1:location_reference_system a bald:Subject ;
+    ns1:pcode "4897" ;
+    bald:array ns1:location_reference_system .
+
+ns1:data_variable1_pdim0_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:pdim0 ;
+    bald:childBroadcast "(11, 1)" .
+
+ns1:data_variable2_pdim0_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:pdim0 ;
+    bald:childBroadcast "(11, 1)" .
+
+ns1:location_variable a bald:Array,
         bald:Reference ;
-    bald:array <pdim0> ;
+    bald:array ns1:location_variable ;
+    bald:references ns1:location_reference_system ;
+    bald:shape "(11, 17)" .
+
+ns1:pdim0 a bald:Array,
+        bald:Reference ;
+    bald:array ns1:pdim0 ;
     bald:shape "(11,)" .
 
-<pdim1> a bald:Array,
+ns1:pdim1 a bald:Array,
         bald:Reference ;
-    bald:array <pdim1> ;
+    bald:array ns1:pdim1 ;
     bald:shape "(17,)" .
 
