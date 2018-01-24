@@ -1,0 +1,75 @@
+netcdf GOES16_CONUS_20170810_020218_0.47_1km_33.3N_91.4W {
+dimensions:
+	y = 5120 ;
+	x = 6144 ;
+variables:
+	int time ;
+		time:units = "seconds since 2017-01-01" ;
+		time:standard_name = "time" ;
+		time:long_name = "The start date / time that the satellite began capturing the scene" ;
+		time:axis = "T" ;
+		time:calendar = "standard" ;
+	short Sectorized_CMI(y, x) ;
+		Sectorized_CMI:_FillValue = 0s ;
+		Sectorized_CMI:standard_name = "toa_bidirectional_reflectance" ;
+		Sectorized_CMI:units = "1" ;
+		Sectorized_CMI:grid_mapping = "lambert_projection" ;
+		Sectorized_CMI:add_offset = 0.f ;
+		Sectorized_CMI:scale_factor = 0.0002442f ;
+		Sectorized_CMI:valid_min = 0s ;
+		Sectorized_CMI:valid_max = 4095s ;
+		Sectorized_CMI:coordinates = "time y x" ;
+	short y(y) ;
+		y:standard_name = "projection_y_coordinate" ;
+		y:units = "meters" ;
+		y:scale_factor = -1015.88124999963 ;
+		y:add_offset = 3530198.70170504 ;
+	short x(x) ;
+		x:standard_name = "projection_x_coordinate" ;
+		x:units = "meters" ;
+		x:scale_factor = 1015.88125000009 ;
+		x:add_offset = -2782652.17616623 ;
+	int lambert_projection ;
+		lambert_projection:grid_mapping_name = "lambert_conformal_conic" ;
+		lambert_projection:standard_parallel = 25. ;
+		lambert_projection:longitude_of_central_meridian = -95. ;
+		lambert_projection:latitude_of_projection_origin = 25. ;
+		lambert_projection:false_easting = 0. ;
+		lambert_projection:false_northing = 0. ;
+		lambert_projection:semi_major = 6371200. ;
+		lambert_projection:semi_major_axis = 6371200. ;
+		lambert_projection:semi_minor = 6371200. ;
+		lambert_projection:semi_minor_axis = 6371200. ;
+
+// global attributes:
+		:title = "Sectorized Cloud and Moisture Imagery for the TCONUSM3 region." ;
+		:ICD_version = "GROUND SEGMENT (GS) TO ADVANCED WEATHER INTERACTIVE PROCESSING SYSTEM (AWIPS) INTERFACE CONTROL DOCUMENT (ICD) Revision B" ;
+		:Conventions = "CF-1.6" ;
+		:channel_id = 1 ;
+		:central_wavelength = 0.47f ;
+		:abi_mode = 3 ;
+		:source_scene = "CONUS" ;
+		:periodicity = 5.f ;
+		:production_location = "WCDAS" ;
+		:product_name = "TCONUS-010-B12-M3C01" ;
+		:satellite_id = "GOES-16" ;
+		:product_center_latitude = 33.294 ;
+		:product_center_longitude = -91.406 ;
+		:projection = "Lambert Conformal" ;
+		:bit_depth = 12 ;
+		:source_spatial_resolution = 1.f ;
+		:request_spatial_resolution = 1.015881f ;
+		:start_date_time = "2017222020218" ;
+		:number_product_tiles = 30 ;
+		:product_tile_width = 1024 ;
+		:product_tile_height = 1024 ;
+		:product_rows = 5120 ;
+		:product_columns = 6144 ;
+		:pixel_x_size = 1.01588125 ;
+		:pixel_y_size = 1.01588125 ;
+		:satellite_latitude = 0. ;
+		:satellite_longitude = -89.5 ;
+		:satellite_altitude = 35785831. ;
+		:created_by = "ldm-alchemy" ;
+		:product_tiles_received = 30LL ;
+}
