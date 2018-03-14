@@ -90,14 +90,40 @@ class Test(BaldTestCase):
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
 
+    def test_ProcessChain0300(self):
+        with self.temp_filename('.nc') as tfile:
+            name = 'ProcessChain0300'
+            cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
+            alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                         }
+            alias_dict = {}
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
+                                              alias_dict=alias_dict, cache=self.acache)
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            # with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
+            #     sf.write(ttl)
+            with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertEqual(expected_ttl, ttl)
+
     def test_ereefs(self):
         with self.temp_filename('.nc') as tfile:
-            cdl_file = os.path.join(self.cdl_path, 'ereefs_gbr4_ncld.cdl')
+            name = 'ereefs_gbr4_ncld'
+            cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile, cache=self.acache)
-            try:
-               g  = root_container.rdfgraph()
-               ttl = g.serialize(format='n3').decode("utf-8")
-            except TypeError:
-               self.fail("Test case could not convert ereefs CDL to RDF")
+            # try:
+            #    g  = root_container.rdfgraph()
+            #    ttl = g.serialize(format='n3').decode("utf-8")
+            # except TypeError:
+            #    self.fail("Test case could not convert ereefs CDL to RDF")
 
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            # with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
+            #     sf.write(ttl)
+            with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertEqual(expected_ttl, ttl)

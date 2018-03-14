@@ -10,6 +10,7 @@ import netCDF4
 import numpy as np
 import pyparsing
 import rdflib
+import rdflib.collection
 import requests
 import six
 
@@ -524,10 +525,12 @@ class Subject(object):
     def rdfnode(self, graph):
         selfnode = rdflib.URIRef(self.identity)
         for attr in self.attrs:
+            list_items = []
             objs = self.attrs[attr]
             if(isinstance(objs, np.ndarray)):
                 #try to convert np.ndarray to a list
                 objs = objs.tolist()
+
             if not (isinstance(objs, set) or isinstance(objs, list)):
                 objs = set([objs])
             for obj in objs:
@@ -546,16 +549,24 @@ class Subject(object):
                     else:
                         rdfobj = rdflib.Literal(rdfobj)
                 rdfpred = rdflib.URIRef(rdfpred)
-                try:
-                    graph.add((selfnode, rdfpred, rdfobj))
+                if isinstance(objs, set):
+                    try:
+                        graph.add((selfnode, rdfpred, rdfobj))
 
-                except AssertionError:
-
-                    graph.add((selfnode, rdfpred, rdfobj))
+                    except AssertionError:
+                        pass
+                        #graph.add((selfnode, rdfpred, rdfobj))
+                elif isinstance(objs, list):
+                    list_items.append(rdfobj)
                 if isinstance(obj, Subject):
                     obj_ref = rdflib.URIRef(obj.identity)
                     if (obj_ref, None, None) not in graph:
                         graph = obj.rdfnode(graph)
+            if list_items:
+                list_name = rdflib.BNode()
+                col = rdflib.collection.Collection(graph, list_name, list_items)
+                
+                graph.add((selfnode, rdfpred, list_name))
 
         return graph
 
@@ -887,10 +898,18 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 'filter(?rtype = owl:Class) '
                 '}')
         
+        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+                'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+                'prefix owl: <http://www.w3.org/2002/07/owl#> '
+                'select ?s '
+                'where { '
+                '  ?s rdfs:range ?type . '
+                'filter(?type in (rdfs:Literal, skos:Concept)) '
+                '}')
+        
         refs = reference_graph.query(qstr)
 
-        ref_prefs = [str(ref[0]) for ref in list(refs)]
-        
+        non_ref_prefs = [str(ref[0]) for ref in list(refs)]
         
         # cycle again and find references
         for name in fhandle.variables:
@@ -906,30 +925,29 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
-                          root_container.unpack_predicate(sattr) in ref_prefs):
-                # if sattr == 'coordinates':
-                #     import pdb; pdb.set_trace()
+                          root_container.unpack_predicate(sattr) not in non_ref_prefs):
 
                 if (isinstance(sattrs[sattr], six.string_types) and
                     file_variables.get(sattrs[sattr])):
                     # next: remove all use of set, everything is dict or orderedDict
                     var.attrs[sattr] = set((file_variables.get(sattrs[sattr]),))
                 elif isinstance(sattrs[sattr], six.string_types):
-                    potrefs_list = sattrs[sattr].split(',')
-                    potrefs_set = sattrs[sattr].split(' ')
-                    if len(potrefs_list) > 1:
-                        refs = np.array([file_variables.get(pref) is not None
-                                         for pref in potrefs_list])
-                        if np.all(refs):
-                            var.attrs[sattr] = [file_variables.get(pref)
-                                                for pref in potrefs_list]
-
-                    elif len(potrefs_set) > 1:
-                        refs = np.array([file_variables.get(pref) is not None
-                                         for pref in potrefs_set])
-                        if np.all(refs):
-                            var.attrs[sattr] = set([file_variables.get(pref)
-                                                    for pref in potrefs_set])
+                    if sattrs[sattr].startswith('(') and sattrs[sattr].endswith(')'):
+                        potrefs_list = sattrs[sattr].lstrip('( ').rstrip(' )').split(' ')
+                        if len(potrefs_list) > 1:
+                            refs = np.array([file_variables.get(pref) is not None
+                                             for pref in potrefs_list])
+                            if np.all(refs):
+                                var.attrs[sattr] = [file_variables.get(pref)
+                                                    for pref in potrefs_list]
+                    else:
+                        potrefs_set = sattrs[sattr].split(' ')
+                        if len(potrefs_set) > 1:
+                            refs = np.array([file_variables.get(pref) is not None
+                                             for pref in potrefs_set])
+                            if np.all(refs):
+                                var.attrs[sattr] = set([file_variables.get(pref)
+                                                        for pref in potrefs_set])
 
             # coordinate variables are bald__references except for
             # variables that already declare themselves as bald__Reference 
