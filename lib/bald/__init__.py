@@ -259,11 +259,11 @@ class HttpCache(object):
                 # print('trying: {}'.format(item))
 
                 headers = {'Accept': 'application/rdf+xml'}
-                self.cache[item] = requests.get(item, headers=headers, timeout=11)
+                self.cache[item] = requests.get(item, headers=headers, timeout=17)
             except Exception:
                 # print('retrying: {}'.format(item))
                 headers = {'Accept': 'text/html'}
-                self.cache[item] = requests.get(item, headers=headers, timeout=11)
+                self.cache[item] = requests.get(item, headers=headers, timeout=17)
 
         # print('in {} seconds'.format(time.time() - then))
         return self.cache[item]
@@ -774,7 +774,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         root_container = Container(baseuri, '', attrs, prefixes=prefixes,
                                    aliases=aliases, alias_graph=aliasgraph)
 
-        root_container.attrs['bald__contains'] = []
+        root_container.attrs['bald__contains'] = set()
         file_variables = {}
         for name in fhandle.variables:
             if name ==  prefix_var_name:
@@ -866,7 +866,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             else:
                 var = Subject(baseuri, name, sattrs, prefixes=prefixes,
                               aliases=aliases, alias_graph=aliasgraph)
-            root_container.attrs['bald__contains'].append(var)
+            root_container.attrs['bald__contains'].add(var)
             file_variables[name] = var
                 
 
@@ -979,7 +979,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                                prefixes=prefixes,
                                                aliases=aliases,
                                                alias_graph=aliasgraph)
-                            root_container.attrs['bald__contains'].append(ref_node)
+                            root_container.attrs['bald__contains'].add(ref_node)
                             file_variables[name] = ref_node
                             refset.add(ref_node)
                         var.attrs['bald__references'] = refset
@@ -1018,7 +1018,7 @@ def validate(root_container, sval=None, cache=None):
 
     root_val = bv.ContainerValidation(subject=root_container, httpcache=cache)
     sval.stored_exceptions += root_val.exceptions()
-    for subject in root_container.attrs.get('bald__contains', []):
+    for subject in root_container.attrs.get('bald__contains', set()):
         if isinstance(subject, Array):
             array_val = bv.ArrayValidation(subject, httpcache=cache)
             sval.stored_exceptions += array_val.exceptions()
@@ -1078,7 +1078,7 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
     root_container = Container(baseuri, identity, attrs, prefixes=prefixes,
                                aliases=aliases, alias_graph=aliasgraph)
 
-    root_container.attrs['bald__contains'] = []
+    root_container.attrs['bald__contains'] = set()
 
     file_variables = {}
     # iterate through the datasets and groups
@@ -1089,14 +1089,14 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
         if not skip:
             if isinstance(dataset, h5py._hl.group.Group):
                 new_cont, new_fvars = _hdf_group(dataset, name, baseuri, prefixes, aliases)
-                root_container.attrs['bald__contains'].append(new_cont)
+                root_container.attrs['bald__contains'].add(new_cont)
                 file_variables = careful_update(file_variables, new_fvars)
             #if hasattr(dataset, 'shape'):
             elif isinstance(dataset, h5py._hl.dataset.Dataset):
                 sattrs = dict(dataset.attrs)
                 sattrs['bald__shape'] = dataset.shape
                 dset = Array(baseuri, name, sattrs, prefixes, aliases, aliasgraph)
-                root_container.attrs['bald__contains'].append(dset)
+                root_container.attrs['bald__contains'].add(dset)
                 file_variables[dataset.name] = dset
     return root_container, file_variables
 

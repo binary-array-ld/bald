@@ -36,7 +36,7 @@ variables:
 	        set_collection:bald__references = "data_variable1 data_variable2" ;
 
 	int list_collection ;
-	        list_collection:bald__references = "data_variable1,data_variable2" ;
+	        list_collection:bald__references = "( data_variable1 data_variable2 )" ;
 
 
 // global attributes:
