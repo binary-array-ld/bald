@@ -78,6 +78,60 @@
         ns1:z ;
     CFTerms:featureType "point" .
 
+ns1:sal a bald:Array ;
+    ns1:_FillValue -9999.0 ;
+    ns1:comment "These data are bogus!!!!!" ;
+    ns1:coverage_content_type "physicalMeasurement" ;
+    ns1:data_max 33.0 ;
+    ns1:data_min 33.0 ;
+    ns1:instrument ns1:instrument1 ;
+    ns1:ncei_name "SALINITY" ;
+    ns1:platform ns1:platform1 ;
+    ns1:references <http://www.numpy.org/> ;
+    ns1:source "numpy.random.rand function." ;
+    ns1:valid_max 100.0 ;
+    ns1:valid_min 0.0 ;
+    bald:shape "(1,)" ;
+    CFTerms:add_offset 0.0 ;
+    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
+    CFTerms:coordinates ns1:lat,
+        ns1:lon,
+        ns1:time,
+        ns1:z ;
+    CFTerms:grid_mapping ns1:crs ;
+    CFTerms:long_name "Salinity" ;
+    CFTerms:missing_value -8888.0 ;
+    CFTerms:scale_factor 1.0 ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_salinity/> ;
+    CFTerms:units "0.001" .
+
+ns1:temp a bald:Array ;
+    ns1:_FillValue -9999.0 ;
+    ns1:comment "These data are bogus!!!!!" ;
+    ns1:coverage_content_type "physicalMeasurement" ;
+    ns1:data_max 13.0 ;
+    ns1:data_min 13.0 ;
+    ns1:instrument ns1:instrument1 ;
+    ns1:ncei_name "WATER TEMPERATURE" ;
+    ns1:platform ns1:platform1 ;
+    ns1:references <http://www.numpy.org/> ;
+    ns1:source "numpy.random.rand function." ;
+    ns1:valid_max 100.0 ;
+    ns1:valid_min 0.0 ;
+    bald:shape "(1,)" ;
+    CFTerms:add_offset 0.0 ;
+    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
+    CFTerms:coordinates ns1:lat,
+        ns1:lon,
+        ns1:time,
+        ns1:z ;
+    CFTerms:grid_mapping ns1:crs ;
+    CFTerms:long_name "Temperature" ;
+    CFTerms:missing_value -8888.0 ;
+    CFTerms:scale_factor 1.0 ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_temperature/> ;
+    CFTerms:units "degree_Celsius" .
+
 ns1:crs a bald:Subject ;
     ns1:epsg_code "EPSG:4326" ;
     ns1:grid_mapping_name "latitude_longitude" ;
@@ -94,70 +148,6 @@ ns1:instrument1 a bald:Subject ;
     ns1:precision "" ;
     ns1:serial_number "1859723" ;
     CFTerms:long_name "Seabird 37 Microcat" .
-
-ns1:platform1 a bald:Subject ;
-    ns1:call_sign "" ;
-    ns1:comment "Data is not actually collected from this platform, this is an example." ;
-    ns1:ices_code "" ;
-    ns1:imo_code "" ;
-    ns1:ioos_code "urn:ioos:station:NCEI:Mooring1" ;
-    ns1:ncei_code "FIXED PLATFORM, MOORINGS" ;
-    ns1:wmo_code "" ;
-    CFTerms:long_name "cordell bank monitoring station" .
-
-ns1:sal a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 33.0 ;
-    ns1:data_min 33.0 ;
-    ns1:instrument "instrument1" ;
-    ns1:ncei_name "SALINITY" ;
-    ns1:platform "platform1" ;
-    ns1:references <http://www.numpy.org/> ;
-    ns1:source "numpy.random.rand function." ;
-    ns1:valid_max 100.0 ;
-    ns1:valid_min 0.0 ;
-    bald:shape "(1,)" ;
-    CFTerms:add_offset 0.0 ;
-    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
-    CFTerms:coordinates ns1:lat,
-        ns1:lon,
-        ns1:time,
-        ns1:z ;
-    CFTerms:grid_mapping "crs" ;
-    CFTerms:long_name "Salinity" ;
-    CFTerms:missing_value -8888.0 ;
-    CFTerms:scale_factor 1.0 ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_salinity/> ;
-    CFTerms:units "0.001" .
-
-ns1:temp a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 13.0 ;
-    ns1:data_min 13.0 ;
-    ns1:instrument "instrument1" ;
-    ns1:ncei_name "WATER TEMPERATURE" ;
-    ns1:platform "platform1" ;
-    ns1:references <http://www.numpy.org/> ;
-    ns1:source "numpy.random.rand function." ;
-    ns1:valid_max 100.0 ;
-    ns1:valid_min 0.0 ;
-    bald:shape "(1,)" ;
-    CFTerms:add_offset 0.0 ;
-    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
-    CFTerms:coordinates ns1:lat,
-        ns1:lon,
-        ns1:time,
-        ns1:z ;
-    CFTerms:grid_mapping "crs" ;
-    CFTerms:long_name "Temperature" ;
-    CFTerms:missing_value -8888.0 ;
-    CFTerms:scale_factor 1.0 ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_temperature/> ;
-    CFTerms:units "degree_Celsius" .
 
 ns1:lat a bald:Array ;
     ns1:_FillValue -9999.0 ;
@@ -180,6 +170,16 @@ ns1:lon a bald:Array ;
     CFTerms:long_name "Longitude" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     CFTerms:units "degrees_east" .
+
+ns1:platform1 a bald:Subject ;
+    ns1:call_sign "" ;
+    ns1:comment "Data is not actually collected from this platform, this is an example." ;
+    ns1:ices_code "" ;
+    ns1:imo_code "" ;
+    ns1:ioos_code "urn:ioos:station:NCEI:Mooring1" ;
+    ns1:ncei_code "FIXED PLATFORM, MOORINGS" ;
+    ns1:wmo_code "" ;
+    CFTerms:long_name "cordell bank monitoring station" .
 
 ns1:time a bald:Array ;
     ns1:_FillValue -9999.0 ;
