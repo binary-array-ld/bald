@@ -259,11 +259,11 @@ class HttpCache(object):
                 # print('trying: {}'.format(item))
 
                 headers = {'Accept': 'application/rdf+xml'}
-                self.cache[item] = requests.get(item, headers=headers, timeout=17)
+                self.cache[item] = requests.get(item, headers=headers, timeout=11)
             except Exception:
                 # print('retrying: {}'.format(item))
                 headers = {'Accept': 'text/html'}
-                self.cache[item] = requests.get(item, headers=headers, timeout=17)
+                self.cache[item] = requests.get(item, headers=headers, timeout=11)
 
         # print('in {} seconds'.format(time.time() - then))
         return self.cache[item]
