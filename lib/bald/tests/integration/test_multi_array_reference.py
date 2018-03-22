@@ -29,11 +29,14 @@ class Test(BaldTestCase):
         cdlfile = os.path.join(self.cdl_path, 'multi_array_reference.cdl')
         with self.temp_filename('.nc') as tfile:
             subprocess.check_call(['ncgen', '-o', tfile, cdlfile])
-            inputs = bald.load_netcdf(tfile, cache=self.acache)
-            set_collection = inputs.bald__contains[6].bald__references
-            self.assertTrue(isinstance(set_collection, set))
-            list_collection = inputs.bald__contains[7].bald__references
-            self.assertTrue(isinstance(list_collection, list))
+            inputs = bald.load_netcdf(tfile, baseuri='file://CDL/multi_array_reference.nc',
+                                      cache=self.acache)
+
+            for contained in inputs.bald__contains:
+                if contained.identity == 'file://CDL/multi_array_reference.nc/list_collection':
+                    self.assertTrue(isinstance(contained.bald__references, list))
+                elif contained.identity == 'file://CDL/multi_array_reference.nc/set_collection':
+                    self.assertTrue(isinstance(contained.bald__references, set))
 
     def test_turtle(self):
         with self.temp_filename('.nc') as tfile:
@@ -43,8 +46,9 @@ class Test(BaldTestCase):
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
-            #     sf.write(ttl)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
+                    sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)

@@ -22,8 +22,9 @@ class Test(BaldTestCase):
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'w') as sf:
-            #     sf.write(ttl)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'w') as sf:
+                    sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
@@ -34,8 +35,9 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile, baseuri='http://example.org/base', cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            #with open(os.path.join(self.ttl_path, 'array_reference_withbase.ttl'), 'w') as sf:
-            #     sf.write(ttl)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'array_reference_withbase.ttl'), 'w') as sf:
+                    sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference_withbase.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
@@ -48,8 +50,9 @@ class Test(BaldTestCase):
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
-            #     sf.write(ttl)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
+                    sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
@@ -66,8 +69,9 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'w') as sf:
-            #     sf.write(ttl)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'w') as sf:
+                    sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
@@ -84,20 +88,44 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
-            # with open(os.path.join(self.ttl_path, 'GEMS_CO2_Apr2006.ttl'), 'w') as sf:
-            #     sf.write(ttl)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'GEMS_CO2_Apr2006.ttl'), 'w') as sf:
+                    sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'GEMS_CO2_Apr2006.ttl'), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertEqual(expected_ttl, ttl)
+
+    def test_ProcessChain0300(self):
+        with self.temp_filename('.nc') as tfile:
+            name = 'ProcessChain0300'
+            cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
+            alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                         }
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
+                                              alias_dict=alias_dict, cache=self.acache)
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
+                    sf.write(ttl)
+            with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
 
     def test_ereefs(self):
         with self.temp_filename('.nc') as tfile:
-            cdl_file = os.path.join(self.cdl_path, 'ereefs_gbr4_ncld.cdl')
+            name = 'ereefs_gbr4_ncld'
+            cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-            root_container = bald.load_netcdf(tfile, cache=self.acache)
-            try:
-               g  = root_container.rdfgraph()
-               ttl = g.serialize(format='n3').decode("utf-8")
-            except TypeError:
-               self.fail("Test case could not convert ereefs CDL to RDF")
-
+            cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
+                                              cache=self.acache)
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
+                    sf.write(ttl)
+            with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertEqual(expected_ttl, ttl)

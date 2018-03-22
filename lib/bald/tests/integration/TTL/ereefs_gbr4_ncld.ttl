@@ -1,0 +1,227 @@
+@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix ns1: <file://CDL/ereefs_gbr4_ncld.cdl/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<file://CDL/ereefs_gbr4_ncld.cdl> a bald:Container ;
+    ns1:Conventions "CF-1.0" ;
+    ns1:Run_ID 1.85 ;
+    ns1:hasVocab "1" ;
+    ns1:metadata_link <http://marlin.csiro.au/geonetwork/srv/eng/search?&uuid=72020224-f086-434a-bbe9-a222c8e5cf0d> ;
+    ns1:paramfile "in.prm" ;
+    ns1:paramhead "GBR 4km resolution grid" ;
+    ns1:shoc_version "v1.1 rev(5249)" ;
+    ns1:title "GBR4 Hydro" ;
+    bald:contains ns1:botz,
+        ns1:eta,
+        ns1:eta_time_ref,
+        ns1:latitude,
+        ns1:longitude,
+        ns1:salt,
+        ns1:salt_time_ref,
+        ns1:temp,
+        ns1:temp_time_ref,
+        ns1:time,
+        ns1:u,
+        ns1:u_time_ref,
+        ns1:v,
+        ns1:v_time_ref,
+        ns1:wspeed_u,
+        ns1:wspeed_u_time_ref,
+        ns1:wspeed_v,
+        ns1:wspeed_v_time_ref,
+        ns1:zc ;
+    bald:isPrefixedBy "prefix_list" .
+
+ns1:botz a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude ;
+    ns1:long_name "Depth of sea-bed" ;
+    ns1:missing_value -99.0 ;
+    ns1:outside "9999" ;
+    ns1:positive "down" ;
+    ns1:standard_name "depth" ;
+    ns1:units "metre" ;
+    bald:shape "(180, 600)" .
+
+ns1:eta a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time ;
+    ns1:long_name "Surface elevation" ;
+    ns1:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
+    ns1:missing_value "1e+35" ;
+    ns1:positive "up" ;
+    ns1:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_surface_elevation> ;
+    ns1:standard_name "sea_surface_height_above_sea_level" ;
+    ns1:substanceOrTaxon_id <http://environment.data.gov.au/def/feature/ocean_near_surface> ;
+    ns1:unit_id <http://qudt.org/vocab/unit#Meter> ;
+    ns1:units "metre" ;
+    ns1:valid_range ( -10.0 10.0 ) ;
+    bald:references ns1:eta_time_ref ;
+    bald:shape "(5, 180, 600)" .
+
+ns1:salt a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time,
+        ns1:zc ;
+    ns1:long_name "Salinity" ;
+    ns1:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
+    ns1:missing_value "1e+35" ;
+    ns1:scaledQuantityKind_id <http://environment.data.gov.au/def/property/practical_salinity> ;
+    ns1:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
+    ns1:unit_id <http://environment.data.gov.au/water/quality/def/unit/PSU> ;
+    ns1:units "PSU" ;
+    ns1:valid_range ( 0.0 40.0 ) ;
+    bald:references ns1:salt_time_ref ;
+    bald:shape "(5, 47, 180, 600)" .
+
+ns1:temp a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time,
+        ns1:zc ;
+    ns1:long_name "Temperature" ;
+    ns1:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
+    ns1:missing_value "1e+35" ;
+    ns1:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_water_temperature> ;
+    ns1:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
+    ns1:unit_id <http://qudt.org/vocab/unit#DegreeCelsius> ;
+    ns1:units "degrees C" ;
+    ns1:valid_range ( 0.0 40.0 ) ;
+    bald:references ns1:temp_time_ref ;
+    bald:shape "(5, 47, 180, 600)" .
+
+ns1:wspeed_u a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time ;
+    ns1:long_name "eastward_wind" ;
+    ns1:missing_value "1e+35" ;
+    ns1:units "ms-1" ;
+    ns1:valid_range ( -1000.0 1000.0 ) ;
+    bald:references ns1:wspeed_u_time_ref ;
+    bald:shape "(5, 180, 600)" .
+
+ns1:wspeed_v a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time ;
+    ns1:long_name "northward_wind" ;
+    ns1:missing_value "1e+35" ;
+    ns1:units "ms-1" ;
+    ns1:valid_range ( -1000.0 1000.0 ) ;
+    bald:references ns1:wspeed_v_time_ref ;
+    bald:shape "(5, 180, 600)" .
+
+ns1:eta_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1)" .
+
+ns1:salt_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1, 1)" .
+
+ns1:temp_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1, 1)" .
+
+ns1:u a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time,
+        ns1:zc ;
+    ns1:long_name "Eastward current" ;
+    ns1:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
+    ns1:missing_value "1e+35" ;
+    ns1:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_water_velocity_eastward> ;
+    ns1:standard_name "eastward_sea_water_velocity" ;
+    ns1:substanceOrTaxon_id <http://environment.data.gov.au/def/feature/ocean_current> ;
+    ns1:unit_id <http://qudt.org/vocab/unit#MeterPerSecond> ;
+    ns1:units "ms-1" ;
+    ns1:valid_range ( -100.0 100.0 ) ;
+    ns1:vector_components ns1:u,
+        ns1:v ;
+    ns1:vector_name "Currents" ;
+    bald:references ns1:u_time_ref ;
+    bald:shape "(5, 47, 180, 600)" .
+
+ns1:v_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1, 1)" .
+
+ns1:wspeed_u_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1)" .
+
+ns1:wspeed_v_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1)" .
+
+ns1:u_time_ref a bald:Reference,
+        bald:Subject ;
+    bald:array ns1:time ;
+    bald:childBroadcast "(5, 1, 1, 1)" .
+
+ns1:v a bald:Array ;
+    ns1:coordinates ns1:latitude,
+        ns1:longitude,
+        ns1:time,
+        ns1:zc ;
+    ns1:long_name "Northward current" ;
+    ns1:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
+    ns1:missing_value "1e+35" ;
+    ns1:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_water_velocity_northward> ;
+    ns1:standard_name "northward_sea_water_velocity" ;
+    ns1:substanceOrTaxon_id <http://environment.data.gov.au/def/feature/ocean_current> ;
+    ns1:unit_id <http://qudt.org/vocab/unit#MeterPerSecond> ;
+    ns1:units "ms-1" ;
+    ns1:valid_range ( -100.0 100.0 ) ;
+    ns1:vector_components ns1:u_time_ref,
+        ns1:v ;
+    ns1:vector_name "Currents" ;
+    bald:references ns1:v_time_ref ;
+    bald:shape "(5, 47, 180, 600)" .
+
+ns1:zc a bald:Array ;
+    ns1:axis "Z" ;
+    ns1:coordinate_type "Z" ;
+    ns1:long_name "Z coordinate" ;
+    ns1:positive "up" ;
+    ns1:units "m" ;
+    bald:shape "(47,)" .
+
+ns1:latitude a bald:Array ;
+    ns1:coordinate_type ns1:latitude ;
+    ns1:long_name "Latitude" ;
+    ns1:projection "geographic" ;
+    ns1:standard_name ns1:latitude ;
+    ns1:units "degrees_north" ;
+    bald:shape "(180, 600)" .
+
+ns1:longitude a bald:Array ;
+    ns1:coordinate_type ns1:longitude ;
+    ns1:long_name "Longitude" ;
+    ns1:projection "geographic" ;
+    ns1:standard_name ns1:longitude ;
+    ns1:units "degrees_east" ;
+    bald:shape "(180, 600)" .
+
+ns1:time a bald:Array,
+        bald:Reference ;
+    ns1:coordinate_type ns1:time ;
+    ns1:long_name "Time" ;
+    ns1:standard_name ns1:time ;
+    ns1:units "days since 1990-01-01 00:00:00 +10" ;
+    bald:array ns1:time ;
+    bald:shape "(5,)" .
+
