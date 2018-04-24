@@ -9,7 +9,6 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <file://CDL/GEMS_CO2_Apr2006.cdl> a bald:Container ;
-    NetCDF:Conventions "CF-1.0" ;
     bald:contains ns1:co2,
         ns1:co2_latitude_ref,
         ns1:co2_levelist_ref,
@@ -21,32 +20,33 @@
         ns1:lnsp_levelist_ref,
         ns1:lnsp_time_ref,
         ns1:longitude,
-        ns1:time .
+        ns1:time ;
+    NetCDF:Conventions "CF-1.0" .
 
 ns1:co2 a bald:Array ;
-    ns1:_FillValue "-32767" ;
     bald:references ns1:co2_latitude_ref,
         ns1:co2_levelist_ref,
         ns1:co2_time_ref,
         ns1:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
+    CFTerms:missing_value "-32767" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
+    NetCDF:FillValue "-32767" ;
     NetCDF:add_offset 403.192219379918 ;
     NetCDF:long_name "Carbon Dioxide" ;
-    CFTerms:missing_value "-32767" ;
     NetCDF:scale_factor 0.000981685145029486 ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
     NetCDF:units "kg kg**-1" .
 
 ns1:lnsp a bald:Array ;
-    ns1:_FillValue "-32767" ;
     bald:references ns1:lnsp_latitude_ref,
         ns1:lnsp_levelist_ref,
         ns1:lnsp_time_ref,
         ns1:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
+    CFTerms:missing_value "-32767" ;
+    NetCDF:FillValue "-32767" ;
     NetCDF:add_offset 11.2087164280841 ;
     NetCDF:long_name "Logarithm of surface pressure" ;
-    CFTerms:missing_value "-32767" ;
     NetCDF:scale_factor 1.03952457840347e-05 .
 
 ns1:co2_latitude_ref a bald:Reference,

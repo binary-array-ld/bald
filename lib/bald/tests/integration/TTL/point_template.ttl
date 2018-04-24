@@ -79,13 +79,6 @@
     NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
     NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" .
 
-ns1:crs a bald:Subject ;
-    ns1:epsg_code "EPSG:4326" ;
-    ns1:grid_mapping_name "latitude_longitude" ;
-    ns1:inverse_flattening 298.257223563 ;
-    ns1:longitude_of_prime_meridian 0.0 ;
-    ns1:semi_major_axis 6378137.0 .
-
 ns1:sal a bald:Array ;
     ns1:coverage_content_type "physicalMeasurement" ;
     ns1:data_max 33.0 ;
@@ -127,7 +120,7 @@ ns1:temp a bald:Array ;
         ns1:lon,
         ns1:time,
         ns1:z ;
-    CFTerms:grid_mapping "crs" ;
+    CFTerms:grid_mapping ns1:crs ;
     CFTerms:missing_value -8888.0 ;
     CFTerms:references <http://www.numpy.org/> ;
     CFTerms:source "numpy.random.rand function." ;
@@ -139,6 +132,13 @@ ns1:temp a bald:Array ;
     NetCDF:units "degree_Celsius" ;
     NetCDF:valid_max 100.0 ;
     NetCDF:valid_min 0.0 .
+
+ns1:crs a bald:Subject ;
+    ns1:epsg_code "EPSG:4326" ;
+    ns1:grid_mapping_name "latitude_longitude" ;
+    ns1:inverse_flattening 298.257223563 ;
+    ns1:longitude_of_prime_meridian 0.0 ;
+    ns1:semi_major_axis 6378137.0 .
 
 ns1:instrument1 a bald:Subject ;
     ns1:accuracy "" ;
