@@ -9,17 +9,18 @@ variables:
 		prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
 		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;
 		prefix_list:geo__ = "http://www.opengis.net/ont/geosparql#" ;
+		prefix_list:nc__ = "http://def.scitools.org.uk/NetCDF/" ;
 
 	int temp(pdim0, pdim1) ;
 	        temp:cf__standard_name = "air_temperature" ;
-	        temp:cf__long_name = "Air temperature obs example at point" ;
+	        temp:nc__long_name = "Air temperature obs example at point" ;
 	        temp:rdfs__label = "Air temperature obs example at point" ;
 		temp:geo__asWKT = "POINT(-77.03524 38.889468)" ;
 
 	int pressure(pdim0, pdim1) ;
 		:rdf__type = "geo__Geometry" ;
 	        pressure:cf__standard_name = "air_pressure" ;
-	        pressure:cf__long_name = "Air pressure at UCAR Centre Green" ;
+	        pressure:nc__long_name = "Air pressure at UCAR Centre Green" ;
 	        pressure:rdfs__label = "Air pressure at UCAR Centre Green" ;
 		pressure:geo__asWKT = "POINT(-105.24584700000003 40.0315278)" ;
 
