@@ -1,4 +1,5 @@
 @prefix CFTerms: <http://def.scitools.org.uk/CFTerms/> .
+@prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <http://binary-array-ld.net/latest/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
 @prefix ns1: <file://CDL/point_template.cdl/> .
@@ -8,10 +9,8 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <file://CDL/point_template.cdl> a bald:Container ;
-    ns1:Conventions "CF-1.6, ACDD-1.3" ;
     ns1:acknowledgement "thanks to the NCEI netCDF working group" ;
     ns1:cdm_data_type "Point" ;
-    ns1:comment "This data file is just an example, the data are completely BOGUS!" ;
     ns1:contributor_name "NCEI" ;
     ns1:contributor_role "Data Center" ;
     ns1:creator_email "Mathew.Biddle@noaa.gov" ;
@@ -36,9 +35,7 @@
     ns1:geospatial_vertical_min 1.5 ;
     ns1:geospatial_vertical_positive "down" ;
     ns1:geospatial_vertical_units "m" ;
-    ns1:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
     ns1:id "NCEI_point_template_v2.0_2016-09-22_181606.590413.nc" ;
-    ns1:institution "NCEI" ;
     ns1:instrument "In Situ/Laboratory Instruments > Profilers/Sounders > > > CTD" ;
     ns1:instrument_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
     ns1:keywords "Oceans > Ocean Temperature > Water Temperature, Oceans > Salinity/Density > Salinity" ;
@@ -58,14 +55,11 @@
     ns1:publisher_name "NCEI Data Manager" ;
     ns1:publisher_type "position" ;
     ns1:publisher_url <http://www.ncei.noaa.gov/> ;
-    ns1:references <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
     ns1:sea_name "Cordell Bank National Marine Sanctuary, North Pacific Ocean" ;
-    ns1:source "Python script generate_NCEI_netCDF_template.py with options: {'template_version': '2.0', 'feature_type': 'point'}" ;
     ns1:standard_name_vocabulary "CF Standard Name Table v30" ;
     ns1:summary "This is an example of the Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25. The data contained within this file are completely bogus and are generated using the python module numpy.random.rand() function. This file can be used for testing with various applications. The uuid was generated using the uuid python module, invoking the command uuid.uuid4()." ;
     ns1:time_coverage_end "2015-03-25T22:20:17Z" ;
     ns1:time_coverage_start "2015-03-25T22:20:17Z" ;
-    ns1:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" ;
     ns1:uuid "ade5a344-d574-4716-b1f6-fda75ff0cfc1" ;
     bald:contains ns1:crs,
         ns1:instrument1,
@@ -76,61 +70,14 @@
         ns1:temp,
         ns1:time,
         ns1:z ;
-    CFTerms:featureType "point" .
-
-ns1:sal a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 33.0 ;
-    ns1:data_min 33.0 ;
-    ns1:instrument ns1:instrument1 ;
-    ns1:ncei_name "SALINITY" ;
-    ns1:platform ns1:platform1 ;
-    ns1:references <http://www.numpy.org/> ;
-    ns1:source "numpy.random.rand function." ;
-    ns1:valid_max 100.0 ;
-    ns1:valid_min 0.0 ;
-    bald:shape "(1,)" ;
-    CFTerms:add_offset 0.0 ;
-    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
-    CFTerms:coordinates ns1:lat,
-        ns1:lon,
-        ns1:time,
-        ns1:z ;
-    CFTerms:grid_mapping ns1:crs ;
-    CFTerms:long_name "Salinity" ;
-    CFTerms:missing_value -8888.0 ;
-    CFTerms:scale_factor 1.0 ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_salinity/> ;
-    CFTerms:units "0.001" .
-
-ns1:temp a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 13.0 ;
-    ns1:data_min 13.0 ;
-    ns1:instrument ns1:instrument1 ;
-    ns1:ncei_name "WATER TEMPERATURE" ;
-    ns1:platform ns1:platform1 ;
-    ns1:references <http://www.numpy.org/> ;
-    ns1:source "numpy.random.rand function." ;
-    ns1:valid_max 100.0 ;
-    ns1:valid_min 0.0 ;
-    bald:shape "(1,)" ;
-    CFTerms:add_offset 0.0 ;
-    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
-    CFTerms:coordinates ns1:lat,
-        ns1:lon,
-        ns1:time,
-        ns1:z ;
-    CFTerms:grid_mapping ns1:crs ;
-    CFTerms:long_name "Temperature" ;
-    CFTerms:missing_value -8888.0 ;
-    CFTerms:scale_factor 1.0 ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_temperature/> ;
-    CFTerms:units "degree_Celsius" .
+    CFTerms:comment "This data file is just an example, the data are completely BOGUS!" ;
+    CFTerms:featureType "point" ;
+    CFTerms:institution "NCEI" ;
+    CFTerms:references <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
+    CFTerms:source "Python script generate_NCEI_netCDF_template.py with options: {'template_version': '2.0', 'feature_type': 'point'}" ;
+    NetCDF:Conventions "CF-1.6, ACDD-1.3" ;
+    NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
+    NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" .
 
 ns1:crs a bald:Subject ;
     ns1:epsg_code "EPSG:4326" ;
@@ -139,67 +86,121 @@ ns1:crs a bald:Subject ;
     ns1:longitude_of_prime_meridian 0.0 ;
     ns1:semi_major_axis 6378137.0 .
 
+ns1:sal a bald:Array ;
+    ns1:coverage_content_type "physicalMeasurement" ;
+    ns1:data_max 33.0 ;
+    ns1:data_min 33.0 ;
+    ns1:instrument ns1:instrument1 ;
+    ns1:ncei_name "SALINITY" ;
+    ns1:platform ns1:platform1 ;
+    bald:shape "(1,)" ;
+    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
+    CFTerms:coordinates ns1:lat,
+        ns1:lon,
+        ns1:time,
+        ns1:z ;
+    CFTerms:grid_mapping ns1:crs ;
+    CFTerms:missing_value -8888.0 ;
+    CFTerms:references <http://www.numpy.org/> ;
+    CFTerms:source "numpy.random.rand function." ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_salinity/> ;
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:add_offset 0.0 ;
+    NetCDF:long_name "Salinity" ;
+    NetCDF:scale_factor 1.0 ;
+    NetCDF:units "0.001" ;
+    NetCDF:valid_max 100.0 ;
+    NetCDF:valid_min 0.0 .
+
+ns1:temp a bald:Array ;
+    ns1:coverage_content_type "physicalMeasurement" ;
+    ns1:data_max 13.0 ;
+    ns1:data_min 13.0 ;
+    ns1:instrument ns1:instrument1 ;
+    ns1:ncei_name "WATER TEMPERATURE" ;
+    ns1:platform ns1:platform1 ;
+    bald:shape "(1,)" ;
+    CFTerms:cell_methods "time: point longitude: point latitude: point" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
+    CFTerms:coordinates ns1:lat,
+        ns1:lon,
+        ns1:time,
+        ns1:z ;
+    CFTerms:grid_mapping "crs" ;
+    CFTerms:missing_value -8888.0 ;
+    CFTerms:references <http://www.numpy.org/> ;
+    CFTerms:source "numpy.random.rand function." ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_temperature/> ;
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:add_offset 0.0 ;
+    NetCDF:long_name "Temperature" ;
+    NetCDF:scale_factor 1.0 ;
+    NetCDF:units "degree_Celsius" ;
+    NetCDF:valid_max 100.0 ;
+    NetCDF:valid_min 0.0 .
+
 ns1:instrument1 a bald:Subject ;
     ns1:accuracy "" ;
     ns1:calibration_date "2016-03-25" ;
-    ns1:comment "serial number and calibration dates are bogus" ;
     ns1:make_model "SBE-37" ;
     ns1:ncei_name "CTD" ;
     ns1:precision "" ;
     ns1:serial_number "1859723" ;
-    CFTerms:long_name "Seabird 37 Microcat" .
+    CFTerms:comment "serial number and calibration dates are bogus" ;
+    NetCDF:long_name "Seabird 37 Microcat" .
 
 ns1:lat a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:valid_max 90.0 ;
-    ns1:valid_min -90.0 ;
     bald:shape "(1,)" ;
     CFTerms:axis "Y" ;
-    CFTerms:long_name "Latitude" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
-    CFTerms:units "degrees_north" .
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:long_name "Latitude" ;
+    NetCDF:units "degrees_north" ;
+    NetCDF:valid_max 90.0 ;
+    NetCDF:valid_min -90.0 .
 
 ns1:lon a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:valid_max 180.0 ;
-    ns1:valid_min -180.0 ;
     bald:shape "(1,)" ;
     CFTerms:axis "X" ;
-    CFTerms:long_name "Longitude" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
-    CFTerms:units "degrees_east" .
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:long_name "Longitude" ;
+    NetCDF:units "degrees_east" ;
+    NetCDF:valid_max 180.0 ;
+    NetCDF:valid_min -180.0 .
 
 ns1:platform1 a bald:Subject ;
     ns1:call_sign "" ;
-    ns1:comment "Data is not actually collected from this platform, this is an example." ;
     ns1:ices_code "" ;
     ns1:imo_code "" ;
     ns1:ioos_code "urn:ioos:station:NCEI:Mooring1" ;
     ns1:ncei_code "FIXED PLATFORM, MOORINGS" ;
     ns1:wmo_code "" ;
-    CFTerms:long_name "cordell bank monitoring station" .
+    CFTerms:comment "Data is not actually collected from this platform, this is an example." ;
+    NetCDF:long_name "cordell bank monitoring station" .
 
 ns1:time a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
     bald:shape "(1,)" ;
     CFTerms:axis "T" ;
     CFTerms:calendar "julian" ;
-    CFTerms:long_name "Time" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
-    CFTerms:units "seconds since 1970-01-01 00:00:00 UTC" .
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:long_name "Time" ;
+    NetCDF:units "seconds since 1970-01-01 00:00:00 UTC" .
 
 ns1:z a bald:Array ;
-    ns1:_FillValue -9999.0 ;
-    ns1:comment "These data are bogus!!!!!" ;
-    ns1:valid_max 10971.0 ;
-    ns1:valid_min 0.0 ;
     bald:shape "(1,)" ;
     CFTerms:axis "Z" ;
-    CFTerms:long_name "depth of sensor" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:positive "down" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/depth/> ;
-    CFTerms:units "m" .
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:long_name "depth of sensor" ;
+    NetCDF:units "m" ;
+    NetCDF:valid_max 10971.0 ;
+    NetCDF:valid_min 0.0 .
 
