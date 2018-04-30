@@ -577,6 +577,7 @@ class Subject(object):
         """
         graph = rdflib.Graph()
         graph.bind('bald', 'http://binary-array-ld.net/latest/')
+        graph.bind('ns1', self.baseuri + '/')
         for prefix_name in self.prefixes():
             
             #strip the double underscore suffix

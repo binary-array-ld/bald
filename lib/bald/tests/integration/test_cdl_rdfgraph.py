@@ -63,7 +63,8 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+            alias_dict = {'NetCDF': 'http://def.scitools.org.uk/NetCDF',
+                          'CFTerms': 'http://def.scitools.org.uk/CFTerms',
                           'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
                          }
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
@@ -82,7 +83,8 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, cdlname)
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-            alias_dict = {'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+            alias_dict = {'NetCDF': 'http://def.scitools.org.uk/NetCDF',
+                          'CFTerms': 'http://def.scitools.org.uk/CFTerms',
                           'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
                          }
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
