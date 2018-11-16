@@ -36,8 +36,7 @@ this:data_variable2 a bald:Array ;
     bald:shape "(11, 17)" .
 
 this:list_collection a bald:Subject ;
-    bald:references this:data_variable1_pdim0_ref,
-        this:data_variable2_pdim0_ref .
+    bald:references ( this:data_variable1_pdim0_ref this:data_variable2_pdim0_ref ) .
 
 this:set_collection a bald:Subject ;
     bald:references this:data_variable1_pdim0_ref,
