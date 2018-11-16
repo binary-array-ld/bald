@@ -32,7 +32,7 @@ install:
   - sudo python3 setup.py --quiet install
   - python3 -c 'import bald; print(bald); print(bald.__version__)'
   - which python3
-  - python3 -c 'import numpy; print('numpy: ' + numpy.__version__); import netCDF4; print('netCDF4: ' + netCDF4.__version__)'
+  - python3 -c 'import numpy; print('numpy: ' + numpy.__version__); import netCDF4; print('netCDF4: ' + netCDF4.__version__); print('###')'
 
 script:
   python3 -m unittest discover -s bald.tests -v
