@@ -254,6 +254,8 @@ class HttpCache(object):
         if not self.is_http_uri(item):
             raise ValueError('{} is not a HTTP URI.'.format(item))
         if item not in self.cache:
+            # null response, as a fall back
+            self.cache[item] = requests.models.Response()
             # now = time.time()
             try:
                 # print('trying: {}'.format(item))
@@ -261,9 +263,12 @@ class HttpCache(object):
                 headers = {'Accept': 'application/rdf+xml'}
                 self.cache[item] = requests.get(item, headers=headers, timeout=11)
             except Exception:
-                # print('retrying: {}'.format(item))
-                headers = {'Accept': 'text/html'}
-                self.cache[item] = requests.get(item, headers=headers, timeout=11)
+                try:
+                    # print('retrying: {}'.format(item))
+                    headers = {'Accept': 'text/html'}
+                    self.cache[item] = requests.get(item, headers=headers, timeout=11)
+                except Exception:
+                    pass
 
         # print('in {} seconds'.format(time.time() - then))
         return self.cache[item]
@@ -577,7 +582,7 @@ class Subject(object):
         """
         graph = rdflib.Graph()
         graph.bind('bald', 'http://binary-array-ld.net/latest/')
-        graph.bind('ns1', self.baseuri + '/')
+        graph.bind('this', self.baseuri + '/')
         for prefix_name in self.prefixes():
             
             #strip the double underscore suffix

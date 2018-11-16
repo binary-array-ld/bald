@@ -2,20 +2,21 @@
 @prefix ns1: <file://CDL/array_reference.cdl/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix this: <file://CDL/array_reference.cdl/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <file://CDL/array_reference.cdl> a bald:Container ;
-    bald:contains ns1:child_variable,
-        ns1:parent_variable ;
+    bald:contains this:child_variable,
+        this:parent_variable ;
     bald:isPrefixedBy "prefix_list" .
 
-ns1:parent_variable a bald:Array ;
-    bald:references ns1:child_variable ;
+this:parent_variable a bald:Array ;
+    bald:references this:child_variable ;
     bald:shape "(11, 17)" .
 
-ns1:child_variable a bald:Array,
+this:child_variable a bald:Array,
         bald:Reference ;
-    bald:array ns1:child_variable ;
+    bald:array this:child_variable ;
     bald:shape "(11, 17)" .
 
