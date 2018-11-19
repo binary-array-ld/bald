@@ -21,6 +21,9 @@ def baldgraph2schemaorg(graph):
        Transforms to a rdflib.Graph bald style
        Returns a new graph in schema.org profile
     """
+    # HACK: The following mappings ignore prefixes as well as prefixes in nc file
+    # TODO: Fix references to prefixes/aliases proper
+
     #load mappings
     mapping_idx = {}
     mapping_data = []
