@@ -75,8 +75,7 @@ this:salt a bald:Array ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://environment.data.gov.au/water/quality/def/unit/PSU> ;
     this:units "PSU" ;
-    this:valid_range [ rdf:first 0.0 ;
-            rdf:rest ( 40.0 ) ] ;
+    this:valid_range ( 0.0 40.0 ) ;
     bald:references this:salt_time_ref ;
     bald:shape "(5, 47, 180, 600)" .
 
@@ -92,8 +91,7 @@ this:temp a bald:Array ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://qudt.org/vocab/unit#DegreeCelsius> ;
     this:units "degrees C" ;
-    this:valid_range [ rdf:first 0.0 ;
-            rdf:rest ( 40.0 ) ] ;
+    this:valid_range ( 0.0 40.0 ) ;
     bald:references this:temp_time_ref ;
     bald:shape "(5, 47, 180, 600)" .
 
