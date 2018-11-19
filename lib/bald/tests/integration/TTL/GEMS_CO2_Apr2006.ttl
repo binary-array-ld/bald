@@ -2,32 +2,32 @@
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <http://binary-array-ld.net/latest/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
-@prefix ns1: <file://CDL/GEMS_CO2_Apr2006.cdl/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix this: <file://CDL/GEMS_CO2_Apr2006.cdl/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <file://CDL/GEMS_CO2_Apr2006.cdl> a bald:Container ;
-    bald:contains ns1:co2,
-        ns1:co2_latitude_ref,
-        ns1:co2_levelist_ref,
-        ns1:co2_time_ref,
-        ns1:latitude,
-        ns1:levelist,
-        ns1:lnsp,
-        ns1:lnsp_latitude_ref,
-        ns1:lnsp_levelist_ref,
-        ns1:lnsp_time_ref,
-        ns1:longitude,
-        ns1:time ;
+    bald:contains this:co2,
+        this:co2_latitude_ref,
+        this:co2_levelist_ref,
+        this:co2_time_ref,
+        this:latitude,
+        this:levelist,
+        this:lnsp,
+        this:lnsp_latitude_ref,
+        this:lnsp_levelist_ref,
+        this:lnsp_time_ref,
+        this:longitude,
+        this:time ;
     NetCDF:Conventions "CF-1.0" .
 
-ns1:co2 a bald:Array ;
-    bald:references ns1:co2_latitude_ref,
-        ns1:co2_levelist_ref,
-        ns1:co2_time_ref,
-        ns1:longitude ;
+this:co2 a bald:Array ;
+    bald:references this:co2_latitude_ref,
+        this:co2_levelist_ref,
+        this:co2_time_ref,
+        this:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
     CFTerms:missing_value "-32767" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
@@ -37,11 +37,11 @@ ns1:co2 a bald:Array ;
     NetCDF:scale_factor 0.000981685145029486 ;
     NetCDF:units "kg kg**-1" .
 
-ns1:lnsp a bald:Array ;
-    bald:references ns1:lnsp_latitude_ref,
-        ns1:lnsp_levelist_ref,
-        ns1:lnsp_time_ref,
-        ns1:longitude ;
+this:lnsp a bald:Array ;
+    bald:references this:lnsp_latitude_ref,
+        this:lnsp_levelist_ref,
+        this:lnsp_time_ref,
+        this:longitude ;
     bald:shape "(1, 60, 181, 360)" ;
     CFTerms:missing_value "-32767" ;
     NetCDF:FillValue "-32767" ;
@@ -49,65 +49,65 @@ ns1:lnsp a bald:Array ;
     NetCDF:long_name "Logarithm of surface pressure" ;
     NetCDF:scale_factor 1.03952457840347e-05 .
 
-ns1:co2_latitude_ref a bald:Reference,
+this:co2_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array ns1:latitude ;
+    bald:array this:latitude ;
     bald:childBroadcast "(1, 1, 181, 1)" .
 
-ns1:co2_levelist_ref a bald:Reference,
+this:co2_levelist_ref a bald:Reference,
         bald:Subject ;
-    bald:array ns1:levelist ;
+    bald:array this:levelist ;
     bald:childBroadcast "(1, 60, 1, 1)" .
 
-ns1:co2_time_ref a bald:Reference,
+this:co2_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array ns1:time ;
+    bald:array this:time ;
     bald:childBroadcast "(1, 1, 1, 1)" .
 
-ns1:lnsp_latitude_ref a bald:Reference,
+this:lnsp_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array ns1:latitude ;
+    bald:array this:latitude ;
     bald:childBroadcast "(1, 1, 181, 1)" .
 
-ns1:lnsp_levelist_ref a bald:Reference,
+this:lnsp_levelist_ref a bald:Reference,
         bald:Subject ;
-    bald:array ns1:levelist ;
+    bald:array this:levelist ;
     bald:childBroadcast "(1, 60, 1, 1)" .
 
-ns1:lnsp_time_ref a bald:Reference,
+this:lnsp_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array ns1:time ;
+    bald:array this:time ;
     bald:childBroadcast "(1, 1, 1, 1)" .
 
-ns1:latitude a bald:Array,
+this:latitude a bald:Array,
         bald:Reference ;
-    bald:array ns1:latitude ;
+    bald:array this:latitude ;
     bald:first_value 90.0 ;
     bald:last_value -90.0 ;
     bald:shape "(181,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     NetCDF:units "degrees_north" .
 
-ns1:levelist a bald:Array,
+this:levelist a bald:Array,
         bald:Reference ;
-    bald:array ns1:levelist ;
+    bald:array this:levelist ;
     bald:first_value 1 ;
     bald:last_value 60 ;
     bald:shape "(60,)" ;
     NetCDF:long_name "model_level_number" .
 
-ns1:longitude a bald:Array,
+this:longitude a bald:Array,
         bald:Reference ;
-    bald:array ns1:longitude ;
+    bald:array this:longitude ;
     bald:first_value 0.0 ;
     bald:last_value 359.0 ;
     bald:shape "(360,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     NetCDF:units "degrees_east" .
 
-ns1:time a bald:Array,
+this:time a bald:Array,
         bald:Reference ;
-    bald:array ns1:time ;
+    bald:array this:time ;
     bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
     bald:shape "(1,)" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;

@@ -8,6 +8,7 @@ variables:
   		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
 		prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
 		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;
+		prefix_list:nc__ = "http://def.scitools.org.uk/NetCDF/" ;
 		prefix_list:geo__ = "http://www.opengis.net/ont/geosparql#" ;
 		prefix_list:nc__ = "http://def.scitools.org.uk/NetCDF/" ;
 
