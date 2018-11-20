@@ -50,7 +50,7 @@ def baldgraph2schemaorg(graph):
        currField = getBasename(str(row[0])).strip()
        #print(getBasename(str(row[0])) + ' (type: ' + str(type(row[0])) + ")" + " :: " + row[1] + ' (type: ' + str(type(row[1])) + ")")
        if(currField in mapping_idx.keys()):
-          print('schemaorg:' + mapping_idx[currField], "\t", row[1])
+          #print('schemaorg:' + mapping_idx[currField], "\t", row[1])
           predUri = URIRef("http://schema.org/" + mapping_idx[currField])
           lit = Literal(row[1])
           schema_g.add( (container, predUri, lit) )
