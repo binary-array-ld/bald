@@ -1,11 +1,11 @@
 @prefix bald: <http://binary-array-ld.net/latest/> .
-@prefix ns1: <file://CDL/array_reference.cdl/> .
+@prefix ns1: <http://example.org/base/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<file://CDL/array_reference.cdl> a bald:Container ;
+<http://example.org/base> a bald:Container ;
     bald:contains ns1:child_variable,
         ns1:parent_variable ;
     bald:isPrefixedBy "prefix_list" .

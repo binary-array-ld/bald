@@ -1,4 +1,4 @@
-The ncldDump application requires the python packages jinja2, netCDF4, and
+The ncldDump application requires the python packages six, jinja2, netCDF4, and
 numpy.
 
 To see how to run the application, run it with a single '-h' argument.
@@ -26,4 +26,4 @@ Quick-start
 $ python ncldDump.py -a aliases.json -o test.html test.nc
 
 
-Note: this currently works in Python 2.7
+Note: this currently works in Python 2.7 and 3.6.

@@ -126,20 +126,11 @@ variables:
 		:metadata_link = "http://marlin.csiro.au/geonetwork/srv/eng/search?&uuid=72020224-f086-434a-bbe9-a222c8e5cf0d" ;
 		:rdf__type = "bald__Container" ;
  		:bald__isPrefixedBy = "prefix_list" ;
- 		:bald__isAliasedBy = "alias_list" ;
 
 	group: prefix_list { 
 		// group attributes:
    		:bald__ = "http://binary-array-ld.net/latest/" ;
    		:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
     } // group bald__prefix_list
- 
-	group: alias_list { 
-		// group attributes:
-		:unit_id = "http://qudt.org/1.1/schema/qudt#unit";
-		:medium_id = "http://environment.data.gov.au/def/op#matrix" ;
-		:scaledQuantityKind_id = "http://environment.data.gov.au/def/op#propertyKind" ;
-		:substanceOrTaxon_id = "http://environment.data.gov.au/def/op#objectOfInterest" ;		
-	} // group bald__alias_list		
 	
 }
