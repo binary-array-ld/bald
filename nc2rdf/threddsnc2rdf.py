@@ -213,7 +213,7 @@ def process_dataset(assign_url_map, dataset_address, thredds_url, thredds_catalo
        unique_dataset_id = uuid.uuid4().hex
        outputpath = OUTDIR + "/" + unique_dataset_id + ".json"
        print("emitting to " + outputpath)
-       nc2rdf.nc2schemaorg(opendap_url, outputformat, outputfile=outputpath, baseuri=opendap_url)
+       nc2rdf.nc2schemaorg(opendap_url, outputformat, outputfile=outputpath, baseuri=None)
     elif outputformat == 'turtle':
        unique_dataset_id = uuid.uuid4().hex
        outputpath = OUTDIR + "/" + unique_dataset_id + ".ttl"
