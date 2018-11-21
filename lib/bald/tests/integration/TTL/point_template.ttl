@@ -2,74 +2,74 @@
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <http://binary-array-ld.net/latest/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
-@prefix ns1: <file://CDL/point_template.cdl/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix this: <file://CDL/point_template.cdl/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <file://CDL/point_template.cdl> a bald:Container ;
-    ns1:acknowledgement "thanks to the NCEI netCDF working group" ;
-    ns1:cdm_data_type "Point" ;
-    ns1:contributor_name "NCEI" ;
-    ns1:contributor_role "Data Center" ;
-    ns1:creator_email "Mathew.Biddle@noaa.gov" ;
-    ns1:creator_institution "NCEI" ;
-    ns1:creator_name "Mathew Biddle" ;
-    ns1:creator_type "person" ;
-    ns1:creator_url <http://www.nodc.noaa.gov/> ;
-    ns1:date_created "2016-09-22T18:16:06.590413Z" ;
-    ns1:date_issued "2016-09-22T18:16:06.590413Z" ;
-    ns1:date_metadata_modified "2016-09-22T18:16:06.590413Z" ;
-    ns1:date_modified "2016-09-22T18:16:06.590413Z" ;
-    ns1:geospatial_bounds "POINT (-123.458000 38.048000)" ;
-    ns1:geospatial_bounds_crs "EPSG:4326" ;
-    ns1:geospatial_bounds_vertical_crs "EPSG:5829" ;
-    ns1:geospatial_lat_max 38.048 ;
-    ns1:geospatial_lat_min 38.048 ;
-    ns1:geospatial_lat_units "degrees_north" ;
-    ns1:geospatial_lon_max -123.458 ;
-    ns1:geospatial_lon_min -123.458 ;
-    ns1:geospatial_lon_units "degrees_east" ;
-    ns1:geospatial_vertical_max 1.5 ;
-    ns1:geospatial_vertical_min 1.5 ;
-    ns1:geospatial_vertical_positive "down" ;
-    ns1:geospatial_vertical_units "m" ;
-    ns1:id "NCEI_point_template_v2.0_2016-09-22_181606.590413.nc" ;
-    ns1:instrument "In Situ/Laboratory Instruments > Profilers/Sounders > > > CTD" ;
-    ns1:instrument_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
-    ns1:keywords "Oceans > Ocean Temperature > Water Temperature, Oceans > Salinity/Density > Salinity" ;
-    ns1:keywords_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
-    ns1:license "Freely available" ;
-    ns1:metadata_link <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
-    ns1:naming_authority "gov.noaa.ncei" ;
-    ns1:ncei_template_version "NCEI_NetCDF_Point_Template_v2.0" ;
-    ns1:platform "In Situ Ocean-based Platforms > MOORINGS" ;
-    ns1:platform_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
-    ns1:processing_level "BOGUS DATA" ;
-    ns1:product_version "v1" ;
-    ns1:program "NCEI-IOOS Data Pipeline" ;
-    ns1:project "NCEI NetCDF templates" ;
-    ns1:publisher_email "ncei.ioos@noaa.gov" ;
-    ns1:publisher_institution "NCEI" ;
-    ns1:publisher_name "NCEI Data Manager" ;
-    ns1:publisher_type "position" ;
-    ns1:publisher_url <http://www.ncei.noaa.gov/> ;
-    ns1:sea_name "Cordell Bank National Marine Sanctuary, North Pacific Ocean" ;
-    ns1:standard_name_vocabulary "CF Standard Name Table v30" ;
-    ns1:summary "This is an example of the Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25. The data contained within this file are completely bogus and are generated using the python module numpy.random.rand() function. This file can be used for testing with various applications. The uuid was generated using the uuid python module, invoking the command uuid.uuid4()." ;
-    ns1:time_coverage_end "2015-03-25T22:20:17Z" ;
-    ns1:time_coverage_start "2015-03-25T22:20:17Z" ;
-    ns1:uuid "ade5a344-d574-4716-b1f6-fda75ff0cfc1" ;
-    bald:contains ns1:crs,
-        ns1:instrument1,
-        ns1:lat,
-        ns1:lon,
-        ns1:platform1,
-        ns1:sal,
-        ns1:temp,
-        ns1:time,
-        ns1:z ;
+    this:acknowledgement "thanks to the NCEI netCDF working group" ;
+    this:cdm_data_type "Point" ;
+    this:contributor_name "NCEI" ;
+    this:contributor_role "Data Center" ;
+    this:creator_email "Mathew.Biddle@noaa.gov" ;
+    this:creator_institution "NCEI" ;
+    this:creator_name "Mathew Biddle" ;
+    this:creator_type "person" ;
+    this:creator_url <http://www.nodc.noaa.gov/> ;
+    this:date_created "2016-09-22T18:16:06.590413Z" ;
+    this:date_issued "2016-09-22T18:16:06.590413Z" ;
+    this:date_metadata_modified "2016-09-22T18:16:06.590413Z" ;
+    this:date_modified "2016-09-22T18:16:06.590413Z" ;
+    this:geospatial_bounds "POINT (-123.458000 38.048000)" ;
+    this:geospatial_bounds_crs "EPSG:4326" ;
+    this:geospatial_bounds_vertical_crs "EPSG:5829" ;
+    this:geospatial_lat_max 38.048 ;
+    this:geospatial_lat_min 38.048 ;
+    this:geospatial_lat_units "degrees_north" ;
+    this:geospatial_lon_max -123.458 ;
+    this:geospatial_lon_min -123.458 ;
+    this:geospatial_lon_units "degrees_east" ;
+    this:geospatial_vertical_max 1.5 ;
+    this:geospatial_vertical_min 1.5 ;
+    this:geospatial_vertical_positive "down" ;
+    this:geospatial_vertical_units "m" ;
+    this:id "NCEI_point_template_v2.0_2016-09-22_181606.590413.nc" ;
+    this:instrument "In Situ/Laboratory Instruments > Profilers/Sounders > > > CTD" ;
+    this:instrument_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
+    this:keywords "Oceans > Ocean Temperature > Water Temperature, Oceans > Salinity/Density > Salinity" ;
+    this:keywords_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
+    this:license "Freely available" ;
+    this:metadata_link <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
+    this:naming_authority "gov.noaa.ncei" ;
+    this:ncei_template_version "NCEI_NetCDF_Point_Template_v2.0" ;
+    this:platform "In Situ Ocean-based Platforms > MOORINGS" ;
+    this:platform_vocabulary "GCMD Earth Science Keywords. Version 5.3.3" ;
+    this:processing_level "BOGUS DATA" ;
+    this:product_version "v1" ;
+    this:program "NCEI-IOOS Data Pipeline" ;
+    this:project "NCEI NetCDF templates" ;
+    this:publisher_email "ncei.ioos@noaa.gov" ;
+    this:publisher_institution "NCEI" ;
+    this:publisher_name "NCEI Data Manager" ;
+    this:publisher_type "position" ;
+    this:publisher_url <http://www.ncei.noaa.gov/> ;
+    this:sea_name "Cordell Bank National Marine Sanctuary, North Pacific Ocean" ;
+    this:standard_name_vocabulary "CF Standard Name Table v30" ;
+    this:summary "This is an example of the Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25. The data contained within this file are completely bogus and are generated using the python module numpy.random.rand() function. This file can be used for testing with various applications. The uuid was generated using the uuid python module, invoking the command uuid.uuid4()." ;
+    this:time_coverage_end "2015-03-25T22:20:17Z" ;
+    this:time_coverage_start "2015-03-25T22:20:17Z" ;
+    this:uuid "ade5a344-d574-4716-b1f6-fda75ff0cfc1" ;
+    bald:contains this:crs,
+        this:instrument1,
+        this:lat,
+        this:lon,
+        this:platform1,
+        this:sal,
+        this:temp,
+        this:time,
+        this:z ;
     CFTerms:comment "This data file is just an example, the data are completely BOGUS!" ;
     CFTerms:featureType "point" ;
     CFTerms:institution "NCEI" ;
@@ -79,21 +79,21 @@
     NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
     NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" .
 
-ns1:sal a bald:Array ;
-    ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 33.0 ;
-    ns1:data_min 33.0 ;
-    ns1:instrument ns1:instrument1 ;
-    ns1:ncei_name "SALINITY" ;
-    ns1:platform ns1:platform1 ;
+this:sal a bald:Array ;
+    this:coverage_content_type "physicalMeasurement" ;
+    this:data_max 33.0 ;
+    this:data_min 33.0 ;
+    this:instrument this:instrument1 ;
+    this:ncei_name "SALINITY" ;
+    this:platform this:platform1 ;
     bald:shape "(1,)" ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:comment "These data are bogus!!!!!" ;
-    CFTerms:coordinates ns1:lat,
-        ns1:lon,
-        ns1:time,
-        ns1:z ;
-    CFTerms:grid_mapping ns1:crs ;
+    CFTerms:coordinates this:lat,
+        this:lon,
+        this:time,
+        this:z ;
+    CFTerms:grid_mapping this:crs ;
     CFTerms:missing_value -8888.0 ;
     CFTerms:references <http://www.numpy.org/> ;
     CFTerms:source "numpy.random.rand function." ;
@@ -106,21 +106,21 @@ ns1:sal a bald:Array ;
     NetCDF:valid_max 100.0 ;
     NetCDF:valid_min 0.0 .
 
-ns1:temp a bald:Array ;
-    ns1:coverage_content_type "physicalMeasurement" ;
-    ns1:data_max 13.0 ;
-    ns1:data_min 13.0 ;
-    ns1:instrument ns1:instrument1 ;
-    ns1:ncei_name "WATER TEMPERATURE" ;
-    ns1:platform ns1:platform1 ;
+this:temp a bald:Array ;
+    this:coverage_content_type "physicalMeasurement" ;
+    this:data_max 13.0 ;
+    this:data_min 13.0 ;
+    this:instrument this:instrument1 ;
+    this:ncei_name "WATER TEMPERATURE" ;
+    this:platform this:platform1 ;
     bald:shape "(1,)" ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:comment "These data are bogus!!!!!" ;
-    CFTerms:coordinates ns1:lat,
-        ns1:lon,
-        ns1:time,
-        ns1:z ;
-    CFTerms:grid_mapping ns1:crs ;
+    CFTerms:coordinates this:lat,
+        this:lon,
+        this:time,
+        this:z ;
+    CFTerms:grid_mapping this:crs ;
     CFTerms:missing_value -8888.0 ;
     CFTerms:references <http://www.numpy.org/> ;
     CFTerms:source "numpy.random.rand function." ;
@@ -133,24 +133,24 @@ ns1:temp a bald:Array ;
     NetCDF:valid_max 100.0 ;
     NetCDF:valid_min 0.0 .
 
-ns1:crs a bald:Subject ;
-    ns1:epsg_code "EPSG:4326" ;
-    ns1:grid_mapping_name "latitude_longitude" ;
-    ns1:inverse_flattening 298.257223563 ;
-    ns1:longitude_of_prime_meridian 0.0 ;
-    ns1:semi_major_axis 6378137.0 .
+this:crs a bald:Subject ;
+    this:epsg_code "EPSG:4326" ;
+    this:grid_mapping_name "latitude_longitude" ;
+    this:inverse_flattening 298.257223563 ;
+    this:longitude_of_prime_meridian 0.0 ;
+    this:semi_major_axis 6378137.0 .
 
-ns1:instrument1 a bald:Subject ;
-    ns1:accuracy "" ;
-    ns1:calibration_date "2016-03-25" ;
-    ns1:make_model "SBE-37" ;
-    ns1:ncei_name "CTD" ;
-    ns1:precision "" ;
-    ns1:serial_number "1859723" ;
+this:instrument1 a bald:Subject ;
+    this:accuracy "" ;
+    this:calibration_date "2016-03-25" ;
+    this:make_model "SBE-37" ;
+    this:ncei_name "CTD" ;
+    this:precision "" ;
+    this:serial_number "1859723" ;
     CFTerms:comment "serial number and calibration dates are bogus" ;
     NetCDF:long_name "Seabird 37 Microcat" .
 
-ns1:lat a bald:Array ;
+this:lat a bald:Array ;
     bald:shape "(1,)" ;
     CFTerms:axis "Y" ;
     CFTerms:comment "These data are bogus!!!!!" ;
@@ -161,7 +161,7 @@ ns1:lat a bald:Array ;
     NetCDF:valid_max 90.0 ;
     NetCDF:valid_min -90.0 .
 
-ns1:lon a bald:Array ;
+this:lon a bald:Array ;
     bald:shape "(1,)" ;
     CFTerms:axis "X" ;
     CFTerms:comment "These data are bogus!!!!!" ;
@@ -172,17 +172,17 @@ ns1:lon a bald:Array ;
     NetCDF:valid_max 180.0 ;
     NetCDF:valid_min -180.0 .
 
-ns1:platform1 a bald:Subject ;
-    ns1:call_sign "" ;
-    ns1:ices_code "" ;
-    ns1:imo_code "" ;
-    ns1:ioos_code "urn:ioos:station:NCEI:Mooring1" ;
-    ns1:ncei_code "FIXED PLATFORM, MOORINGS" ;
-    ns1:wmo_code "" ;
+this:platform1 a bald:Subject ;
+    this:call_sign "" ;
+    this:ices_code "" ;
+    this:imo_code "" ;
+    this:ioos_code "urn:ioos:station:NCEI:Mooring1" ;
+    this:ncei_code "FIXED PLATFORM, MOORINGS" ;
+    this:wmo_code "" ;
     CFTerms:comment "Data is not actually collected from this platform, this is an example." ;
     NetCDF:long_name "cordell bank monitoring station" .
 
-ns1:time a bald:Array ;
+this:time a bald:Array ;
     bald:shape "(1,)" ;
     CFTerms:axis "T" ;
     CFTerms:calendar "julian" ;
@@ -192,7 +192,7 @@ ns1:time a bald:Array ;
     NetCDF:long_name "Time" ;
     NetCDF:units "seconds since 1970-01-01 00:00:00 UTC" .
 
-ns1:z a bald:Array ;
+this:z a bald:Array ;
     bald:shape "(1,)" ;
     CFTerms:axis "Z" ;
     CFTerms:comment "These data are bogus!!!!!" ;
