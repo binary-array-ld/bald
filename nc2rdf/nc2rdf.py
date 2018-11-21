@@ -9,12 +9,24 @@ import rdflib
 import json
 from rdflib import Namespace, BNode, URIRef, Literal
 from rdflib.namespace import RDF
+try:
+    # python 3
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
+def isUrl(url):
+    try:
+        result = urlparse(url)
+        if all([result.scheme, result.netloc, result.path]) and (result.scheme == 'https' or result.scheme == 'http'):
+           return True
+    except:
+        return False
 
 def getBasename(urlstr):
    return os.path.basename(urlstr)
 
-def baldgraph2schemaorg(graph):
+def baldgraph2schemaorg(graph, path=None, baseuri=None):
     """
        Input: netCDF file
        Transforms to a rdflib.Graph bald style
@@ -41,16 +53,34 @@ def baldgraph2schemaorg(graph):
        }""")
  
     schema_g = rdflib.Graph()
-    container = BNode()
+
+    if baseuri is not None:
+       container = URIRef(baseuri)
+    else:
+       container = BNode()
+
     so = Namespace("http://schema.org/")
     schema_g.add( (container, URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), so.Dataset) )
+
+    if path is not None and isUrl(path):
+       predUri = URIRef("http://schema.org/url")
+       schema_g.add( (container, predUri, URIRef(path)) )
 
     for row in qres:
        currField = getBasename(str(row[0])).strip()
        #print(getBasename(str(row[0])) + ' (type: ' + str(type(row[0])) + ")" + " :: " + row[1] + ' (type: ' + str(type(row[1])) + ")")
        if(currField in mapping_idx.keys()):
-          #print('schemaorg:' + mapping_idx[currField], "\t", row[1])
           predUri = URIRef("http://schema.org/" + mapping_idx[currField])
+          if currField == 'keywords':
+             for x in row[1].split(','):
+                kw = x.strip()
+                if len(kw) == 0:
+                   continue
+                lit = Literal(kw)
+                schema_g.add( (container, predUri, lit) )
+             continue
+
+          #print('schemaorg:' + mapping_idx[currField], "\t", row[1])
           lit = Literal(row[1])
           schema_g.add( (container, predUri, lit) )
     return schema_g
@@ -58,7 +88,7 @@ def baldgraph2schemaorg(graph):
 def nc2schemaorg(ncfilename, outformat, outputfile=None, baseuri=None):
     root_container = bald.load_netcdf(ncfilename, baseuri=baseuri)
     graph = root_container.rdfgraph()
-    schema_g = baldgraph2schemaorg(graph)
+    schema_g = baldgraph2schemaorg(graph, path=ncfilename, baseuri=baseuri)
     destination = None
     if outputfile is not None:
        destination = outputfile
