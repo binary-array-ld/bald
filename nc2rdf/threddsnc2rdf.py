@@ -227,6 +227,9 @@ def perform_harvest(thredds_url, thredds_catalog_url, outputformat='turtle', isS
     #print thredds_url
     #print thredds_catalog_url
     list_datasets_address = harvester.lookup_datasets_in_catalog(thredds_url, thredds_catalog_url, [])
+    if list_datasets_address is None:
+       return
+
     #print list_datasets_address
     dataset_uri = ''
 
