@@ -31,4 +31,19 @@ $ python nc2rdf.py -o ttl myfile.nc
 $ python nc2rdf.py -o xml myfile.nc
 ```
 
+## nc2schemaorg
+
+This feature provides users a way to create schema.org descriptions from
+ACDD/CF/NUG conformant values in a nc file.
+
+```
+$ python nc2rdf.py -o json-ld --schema-org [cdl or nc file]
+```
+
+Example:
+```
+$ python nc2rdf.py -o json-ld --schema-org ../lib/bald/tests/integration/CDL/trajectoryProfile_template.cdl
+```
+
+
 Note: This command-line tool is experimental and is subject to changes, however serves as a prototype for accessing bald functions for netCDF related files to RDF.

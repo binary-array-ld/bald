@@ -1,0 +1,8 @@
+[
+   { "bald" : "summary", "schemaorg": "description" }, 
+   { "bald" : "title", "schemaorg": "name" }, 
+   { "bald" : "id", "schemaorg": "identifier" }, 
+   { "bald" : "keywords", "schemaorg": "keywords" }, 
+   { "bald" : "license", "schemaorg": "license" }, 
+   { "bald" : "standard_name", "schemaorg": "variableMeasured" }
+]

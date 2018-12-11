@@ -675,8 +675,10 @@ def load(afilepath):
         loader = netCDF4.Dataset
     else:
         raise ValueError('filepath suffix not supported: {}'.format(afilepath))
-    if not os.path.exists(afilepath):
-        raise IOError('{} not found'.format(afilepath))
+    #Disable this check for now to allow URL input
+    #TODO: Add feature to check both local files and files on the web, e.g. URLs
+    #if not os.path.exists(afilepath):
+    #    raise IOError('{} not found'.format(afilepath))
     try:
         f = loader(afilepath, "r")
         yield f
