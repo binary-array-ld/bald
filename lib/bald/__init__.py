@@ -918,7 +918,22 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         refs = reference_graph.query(qstr)
 
         non_ref_prefs = [str(ref[0]) for ref in list(refs)]
+
+        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+                'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+                'prefix owl: <http://www.w3.org/2002/07/owl#> '
+                'select ?s '
+                'where { '
+                '   {?s rdfs:range bald:Subject .} '
+                '  UNION '
+                '  {?s rdfs:range ?as . '
+                '  ?as rdfs:subClassOf bald:Subject .} '
+                '}')
         
+        refs = reference_graph.query(qstr)
+
+        ref_prefs = [str(ref[0]) for ref in list(refs)]
+
         # cycle again and find references
         for name in fhandle.variables:
             if name ==  prefix_var_name:
@@ -933,7 +948,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
-                          root_container.unpack_predicate(sattr) not in non_ref_prefs):
+                          root_container.unpack_predicate(sattr) in ref_prefs):
 
                 if (isinstance(sattrs[sattr], six.string_types) and
                     file_variables.get(sattrs[sattr])):

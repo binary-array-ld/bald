@@ -18,7 +18,7 @@
     bald:isPrefixedBy "prefix_list" .
 
 this:gfsmos_process_chain a bald:Subject ;
-    this:OM_Process ( this:step1 this:step2 ) .
+    this:OM_Process "(step1 step2)" .
 
 this:step1 a bald:Subject ;
     this:LE_ProcessStep <https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13> ;

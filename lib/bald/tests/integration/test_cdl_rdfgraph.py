@@ -122,8 +122,12 @@ class Test(BaldTestCase):
             cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
+            alias_dict = {'NetCDF': 'http://def.scitools.org.uk/NetCDF',
+                          'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                         }
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
-                                              cache=self.acache)
+                                              alias_dict=alias_dict, cache=self.acache)
             ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
