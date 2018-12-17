@@ -15,11 +15,8 @@ except ImportError:
 import lxml
 import json
 import requests
-from dateutil import parser
 from pydap.client import open_url
 import pydap.lib
-from owslib.wms import WebMapService
-from owslib.iso import *
 import urllib
 from timeit import default_timer as timer
 import code, traceback, signal

@@ -1,6 +1,3 @@
 lxml
 pydap
-requests-futures
-owslib
 urllib3
-python-dateutil
