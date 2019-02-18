@@ -950,28 +950,21 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             for sattr in (sattr for sattr in sattrs if
                           root_container.unpack_predicate(sattr) in ref_prefs):
 
-                # if (isinstance(sattrs[sattr], six.string_types) and
-                #     file_variables.get(sattrs[sattr])):
-                #     import pdb; pdb.set_trace()
-                #     var.attrs[sattr] = set((file_variables.get(sattrs[sattr]),))
-                # el
                 if isinstance(sattrs[sattr], six.string_types):
 
                     if sattrs[sattr].startswith('(') and sattrs[sattr].endswith(')'):
                         potrefs_list = sattrs[sattr].lstrip('( ').rstrip(' )').split(' ')
-                        #if len(potrefs_list) > 1:
                         refs = np.array([file_variables.get(pref) is not None
                                          for pref in potrefs_list])
                         if np.all(refs):
                             var.attrs[sattr] = [file_variables.get(pref)
                                                 for pref in potrefs_list]
                             for pref in potrefs_list:
-                                cv_shape = fhandle.variables[pref].shape
-                                var_shape = fhandle.variables[name].shape
-                                identity = '{}_{}_ref'.format(name, pref)
-                                rattrs = {}
-                                rattrs['rdf__type'] = 'bald__Reference'
-                                reshape = [1 for adim in var_shape]
+                                _make_ref_entities(var, fhandle,
+                                                   pref, name, baseuri,
+                                                   root_container,
+                                                   file_variables, prefixes,
+                                                   aliases, aliasgraph)
 
                     else:
                         potrefs_set = sattrs[sattr].split(' ')
@@ -981,79 +974,61 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                             var.attrs[sattr] = set([file_variables.get(pref)
                                                     for pref in potrefs_set])
                             for pref in potrefs_set:
-                                shapematch = (fhandle.variables[name].shape ==
-                                              fhandle.variables[pref].shape)
-                                if (fhandle.variables[name].shape and
-                                    not shapematch and
-                                    fhandle.variables[pref].shape):
-                                    # if .shape is not null and .shapes don't match
-                                    refset = var.attrs.get('bald__references',
-                                                           set())
-                                    cv_shape = fhandle.variables[pref].shape
-                                    var_shape = fhandle.variables[name].shape
-                                    identity = '{}_{}_ref'.format(name, pref)
-                                    rattrs = {}
-                                    rattrs['rdf__type'] = 'bald__Reference'
-                                    reshape = [1 for adim in var_shape]
-                                    # if name == 'salt':
-                                    #     import pdb; pdb.set_trace()
-                                    dims = fhandle.variables[pref].dimensions
-                                    for dim in dims:
-                                        try:
-                                            cvi = fhandle.variables[name].dimensions.index(dim)
-                                        except Exception:
-                                            import pdb; pdb.set_trace()
-                                        cvi = fhandle.variables[name].dimensions.index(dim)
-                                        reshape[cvi] = int(fhandle.dimensions[dim].size)
-                                    rattrs['bald__childBroadcast'] = reshape
-                                    rattrs['bald__array'] = set((file_variables.get(pref),))
-                                    ref_node = Subject(baseuri, identity, rattrs,
-                                                       prefixes=prefixes,
-                                                       aliases=aliases,
-                                                       alias_graph=aliasgraph)
-                                    root_container.attrs['bald__contains'].add(ref_node)
-                                    file_variables[identity] = ref_node
-                                    refset.add(ref_node)
-                                    var.attrs['bald__references'] = refset
+                                _make_ref_entities(var, fhandle,
+                                                   pref, name, baseuri,
+                                                   root_container,
+                                                   file_variables, prefixes,
+                                                   aliases, aliasgraph)
 
 
-
-            # coordinate variables are bald__references except for
-            # variables that already declare themselves as bald__Reference 
+            # coordinate variables are bald__references too
             if 'bald__Reference' not in var.rdf__type:
                 for dim in fhandle.variables[name].dimensions:
                     if file_variables.get(dim) and name != dim:
-                        cv_shape = fhandle.variables[dim].shape
-                        var_shape = fhandle.variables[name].shape
-                        refset = var.attrs.get('bald__references', set())
-                        # Only the dimension defining the last dimension will
-                        # broadcase correctly. But create all references
-                        # equally, for consistency.
-                        identity = '{}_{}_ref'.format(name, dim)
-
-                        rattrs = {}
-                        rattrs['rdf__type'] = 'bald__Reference'
-                        reshape = [1 for adim in var_shape]
-
-                        cvi = fhandle.variables[name].dimensions.index(dim)
-                        reshape[cvi] = int(fhandle.variables[dim].size)
-
-                        rattrs['bald__childBroadcast'] = reshape
-                        rattrs['bald__array'] = set((file_variables.get(dim),))
-                        ref_node = Subject(baseuri, identity, rattrs,
-                                           prefixes=prefixes,
-                                           aliases=aliases,
-                                           alias_graph=aliasgraph)
-                        root_container.attrs['bald__contains'].add(ref_node)
-                        file_variables[identity] = ref_node
-                        refset.add(ref_node)
-                        # br = careful_update(var.attrs.get('bald__references',
-                        #                                   {}), refset)
-                        # var.attrs['bald__references'] = br
-                        var.attrs['bald__references'] = refset
-
+                        _make_ref_entities(var, fhandle, dim, name,
+                                           baseuri, root_container,
+                                           file_variables, prefixes,
+                                           aliases, aliasgraph)
 
     return root_container
+
+def _make_ref_entities(var, fhandle, pref, name, baseuri,
+                       root_container, file_variables,
+                       prefixes, aliases, aliasgraph):
+    shapematch = (fhandle.variables[name].shape ==
+                  fhandle.variables[pref].shape)
+
+    if (fhandle.variables[name].shape and not shapematch and
+        fhandle.variables[pref].shape):
+        try:
+            refset = var.attrs.get('bald__references', set())
+            cv_shape = fhandle.variables[pref].shape
+            var_shape = fhandle.variables[name].shape
+            identity = '{}_{}_ref'.format(name, pref)
+            rattrs = {}
+            rattrs['rdf__type'] = 'bald__Reference'
+            reshape = [1 for adim in var_shape]
+
+            dims = fhandle.variables[pref].dimensions
+            for dim in dims:
+                cvi = fhandle.variables[name].dimensions.index(dim)
+                reshape[cvi] = int(fhandle.dimensions[dim].size)
+            rattrs['bald__childBroadcast'] = reshape
+            rattrs['bald__array'] = set((file_variables.get(pref),))
+            ref_node = Subject(baseuri, identity, rattrs,
+                               prefixes=prefixes,
+                               aliases=aliases,
+                               alias_graph=aliasgraph)
+            root_container.attrs['bald__contains'].add(ref_node)
+            file_variables[identity] = ref_node
+            refset.add(ref_node)
+            var.attrs['bald__references'] = refset
+        except ValueError:
+            # Indexing and dimension identification can fail, especially
+            # with unexpectedy formated files.  Fail silently on load, to
+            # that a partial graph may be returned.  Issues like this are
+            # deferred to validation.
+            pass
 
 
 def validate_netcdf(afilepath, baseuri=None, cache=None, uris_resolve=False):

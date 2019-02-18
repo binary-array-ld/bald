@@ -22,8 +22,9 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
 
             html = root_container.viewgraph()
-            # with open(os.path.join(self.html_path, 'array_reference.html'), 'w') as sf:
-            #     sf.write(html)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.html_path, 'array_reference.html'), 'w') as sf:
+                    sf.write(html)
             with open(os.path.join(self.html_path, 'array_reference.html'), 'r') as sf:
                 expected_html = sf.read()
             self.assertStringEqual(expected_html, html)
@@ -37,8 +38,9 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
 
             html = root_container.viewgraph()
-            # with open(os.path.join(self.html_path, 'multi_array_reference.html'), 'w') as sf:
-            #     sf.write(html)
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.html_path, 'multi_array_reference.html'), 'w') as sf:
+                    sf.write(html)
             with open(os.path.join(self.html_path, 'multi_array_reference.html'), 'r') as sf:
                 expected_html = sf.read()
             self.assertStringEqual(expected_html, html)

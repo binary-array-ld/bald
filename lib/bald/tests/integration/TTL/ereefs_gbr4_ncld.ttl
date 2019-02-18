@@ -103,8 +103,7 @@ this:salt a bald:Array ;
     CFTerms:missing_value "1e+35" ;
     NetCDF:long_name "Salinity" ;
     NetCDF:units "PSU" ;
-    NetCDF:valid_range [ rdf:first 0.0 ;
-            rdf:rest ( 40.0 ) ] .
+    NetCDF:valid_range ( 0.0 40.0 ) .
 
 this:temp a bald:Array ;
     this:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
@@ -123,8 +122,7 @@ this:temp a bald:Array ;
     CFTerms:missing_value "1e+35" ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degrees C" ;
-    NetCDF:valid_range [ rdf:first 0.0 ;
-            rdf:rest ( 40.0 ) ] .
+    NetCDF:valid_range ( 0.0 40.0 ) .
 
 this:u a bald:Array ;
     this:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
