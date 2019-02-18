@@ -12,12 +12,14 @@
     bald:contains this:co2,
         this:co2_latitude_ref,
         this:co2_levelist_ref,
+        this:co2_longitude_ref,
         this:co2_time_ref,
         this:latitude,
         this:levelist,
         this:lnsp,
         this:lnsp_latitude_ref,
         this:lnsp_levelist_ref,
+        this:lnsp_longitude_ref,
         this:lnsp_time_ref,
         this:longitude,
         this:time ;
@@ -26,9 +28,9 @@
 this:co2 a bald:Array ;
     bald:references this:co2_latitude_ref,
         this:co2_levelist_ref,
-        this:co2_time_ref,
-        this:longitude ;
-    bald:shape "(1, 60, 181, 360)" ;
+        this:co2_longitude_ref,
+        this:co2_time_ref ;
+    bald:shape ( 1 60 181 360 ) ;
     CFTerms:missing_value "-32767" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
     NetCDF:FillValue "-32767" ;
@@ -40,9 +42,9 @@ this:co2 a bald:Array ;
 this:lnsp a bald:Array ;
     bald:references this:lnsp_latitude_ref,
         this:lnsp_levelist_ref,
-        this:lnsp_time_ref,
-        this:longitude ;
-    bald:shape "(1, 60, 181, 360)" ;
+        this:lnsp_longitude_ref,
+        this:lnsp_time_ref ;
+    bald:shape ( 1 60 181 360 ) ;
     CFTerms:missing_value "-32767" ;
     NetCDF:FillValue "-32767" ;
     NetCDF:add_offset 11.2087164280841 ;
@@ -52,39 +54,49 @@ this:lnsp a bald:Array ;
 this:co2_latitude_ref a bald:Reference,
         bald:Subject ;
     bald:array this:latitude ;
-    bald:childBroadcast "(1, 1, 181, 1)" .
+    bald:childBroadcast ( 1 1 181 1 ) .
 
 this:co2_levelist_ref a bald:Reference,
         bald:Subject ;
     bald:array this:levelist ;
-    bald:childBroadcast "(1, 60, 1, 1)" .
+    bald:childBroadcast ( 1 60 1 1 ) .
+
+this:co2_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 1 1 360 ) .
 
 this:co2_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
-    bald:childBroadcast "(1, 1, 1, 1)" .
+    bald:childBroadcast ( 1 1 1 1 ) .
 
 this:lnsp_latitude_ref a bald:Reference,
         bald:Subject ;
     bald:array this:latitude ;
-    bald:childBroadcast "(1, 1, 181, 1)" .
+    bald:childBroadcast ( 1 1 181 1 ) .
 
 this:lnsp_levelist_ref a bald:Reference,
         bald:Subject ;
     bald:array this:levelist ;
-    bald:childBroadcast "(1, 60, 1, 1)" .
+    bald:childBroadcast ( 1 60 1 1 ) .
+
+this:lnsp_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 1 1 360 ) .
 
 this:lnsp_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
-    bald:childBroadcast "(1, 1, 1, 1)" .
+    bald:childBroadcast ( 1 1 1 1 ) .
 
 this:latitude a bald:Array,
         bald:Reference ;
     bald:array this:latitude ;
     bald:first_value 90.0 ;
     bald:last_value -90.0 ;
-    bald:shape "(181,)" ;
+    bald:shape ( 181 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     NetCDF:units "degrees_north" .
 
@@ -93,7 +105,7 @@ this:levelist a bald:Array,
     bald:array this:levelist ;
     bald:first_value 1 ;
     bald:last_value 60 ;
-    bald:shape "(60,)" ;
+    bald:shape ( 60 ) ;
     NetCDF:long_name "model_level_number" .
 
 this:longitude a bald:Array,
@@ -101,7 +113,7 @@ this:longitude a bald:Array,
     bald:array this:longitude ;
     bald:first_value 0.0 ;
     bald:last_value 359.0 ;
-    bald:shape "(360,)" ;
+    bald:shape ( 360 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     NetCDF:units "degrees_east" .
 
@@ -109,7 +121,7 @@ this:time a bald:Array,
         bald:Reference ;
     bald:array this:time ;
     bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
     NetCDF:units "hours since 1900-01-01 00:00:0.0" .
 

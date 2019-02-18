@@ -12,10 +12,10 @@
 
 this:parent_variable a bald:Array ;
     bald:references this:child_variable ;
-    bald:shape "(11, 17)" .
+    bald:shape ( 11 17 ) .
 
 this:child_variable a bald:Array,
         bald:Reference ;
     bald:array this:child_variable ;
-    bald:shape "(11, 17)" .
+    bald:shape ( 11 17 ) .
 

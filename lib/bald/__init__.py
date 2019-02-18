@@ -805,14 +805,14 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                     sattrs['bald__first_value'] = fhandle.variables[name][0]
                     if np.issubdtype(sattrs['bald__first_value'], np.integer):
                         sattrs['bald__first_value'] = int(sattrs['bald__first_value'])
-                    elif np.issubdtype(sattrs['bald__first_value'], np.float):
+                    elif np.issubdtype(sattrs['bald__first_value'], np.floating):
                         sattrs['bald__first_value'] = float(sattrs['bald__first_value'])
                     if (len(fhandle.variables[name]) > 1 and
                         not isinstance(fhandle.variables[name][-1], np.ma.core.MaskedConstant)):
                         sattrs['bald__last_value'] = fhandle.variables[name][-1]
                         if np.issubdtype(sattrs['bald__last_value'], np.integer):
                             sattrs['bald__last_value'] = int(sattrs['bald__last_value'])
-                        elif np.issubdtype(sattrs['bald__last_value'], np.float):
+                        elif np.issubdtype(sattrs['bald__last_value'], np.floating):
                             sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
 
                 # datetime special case
@@ -868,7 +868,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
                 
             if fhandle.variables[name].shape:
-                sattrs['bald__shape'] = fhandle.variables[name].shape
+                sattrs['bald__shape'] = list(fhandle.variables[name].shape)
                 var = Array(baseuri, name, sattrs, prefixes=prefixes,
                             aliases=aliases, alias_graph=aliasgraph)
             else:
@@ -981,30 +981,26 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                         var_shape = fhandle.variables[name].shape
                         refset = var.attrs.get('bald__references', set())
                         # Only the dimension defining the last dimension will
-                        # broadcase correctly
-                        if var_shape[-1] == cv_shape[0]:
-                            refset.add(file_variables.get(dim))
-                        # Else, define a bald:childBroadcast
-                        else:
-                            # import pdb; pdb.set_trace()
-                            identity = '{}_{}_ref'.format(name, dim)
-                            # if baseuri is not None:
-                            #     identity = baseuri + '/' +  '{}_{}_ref'.format(name, dim)
-                            rattrs = {}
-                            rattrs['rdf__type'] = 'bald__Reference'
-                            reshape = [1 for adim in var_shape]
+                        # broadcase correctly. But create all references
+                        # equally, for consistency.
+                        identity = '{}_{}_ref'.format(name, dim)
 
-                            cvi = fhandle.variables[name].dimensions.index(dim)
-                            reshape[cvi] = fhandle.variables[dim].size
-                            rattrs['bald__childBroadcast'] = tuple(reshape)
-                            rattrs['bald__array'] = set((file_variables.get(dim),))
-                            ref_node = Subject(baseuri, identity, rattrs,
-                                               prefixes=prefixes,
-                                               aliases=aliases,
-                                               alias_graph=aliasgraph)
-                            root_container.attrs['bald__contains'].add(ref_node)
-                            file_variables[name] = ref_node
-                            refset.add(ref_node)
+                        rattrs = {}
+                        rattrs['rdf__type'] = 'bald__Reference'
+                        reshape = [1 for adim in var_shape]
+
+                        cvi = fhandle.variables[name].dimensions.index(dim)
+                        reshape[cvi] = int(fhandle.variables[dim].size)
+
+                        rattrs['bald__childBroadcast'] = reshape
+                        rattrs['bald__array'] = set((file_variables.get(dim),))
+                        ref_node = Subject(baseuri, identity, rattrs,
+                                           prefixes=prefixes,
+                                           aliases=aliases,
+                                           alias_graph=aliasgraph)
+                        root_container.attrs['bald__contains'].add(ref_node)
+                        file_variables[name] = ref_node
+                        refset.add(ref_node)
                         var.attrs['bald__references'] = refset
 
 
@@ -1121,7 +1117,7 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
             #if hasattr(dataset, 'shape'):
             elif isinstance(dataset, h5py._hl.dataset.Dataset):
                 sattrs = dict(dataset.attrs)
-                sattrs['bald__shape'] = dataset.shape
+                sattrs['bald__shape'] = list(dataset.shape)
                 dset = Array(baseuri, name, sattrs, prefixes, aliases, aliasgraph)
                 root_container.attrs['bald__contains'].add(dset)
                 file_variables[dataset.name] = dset
