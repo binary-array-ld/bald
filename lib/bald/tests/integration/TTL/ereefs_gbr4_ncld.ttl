@@ -17,21 +17,39 @@
     this:shoc_version "v1.1 rev(5249)" ;
     bald:contains this:botz,
         this:eta,
+        this:eta_latitude_ref,
+        this:eta_longitude_ref,
         this:eta_time_ref,
         this:latitude,
         this:longitude,
         this:salt,
+        this:salt_latitude_ref,
+        this:salt_longitude_ref,
         this:salt_time_ref,
+        this:salt_zc_ref,
         this:temp,
+        this:temp_latitude_ref,
+        this:temp_longitude_ref,
         this:temp_time_ref,
+        this:temp_zc_ref,
         this:time,
         this:u,
+        this:u_latitude_ref,
+        this:u_longitude_ref,
         this:u_time_ref,
+        this:u_zc_ref,
         this:v,
+        this:v_latitude_ref,
+        this:v_longitude_ref,
         this:v_time_ref,
+        this:v_zc_ref,
         this:wspeed_u,
+        this:wspeed_u_latitude_ref,
+        this:wspeed_u_longitude_ref,
         this:wspeed_u_time_ref,
         this:wspeed_v,
+        this:wspeed_v_latitude_ref,
+        this:wspeed_v_longitude_ref,
         this:wspeed_v_time_ref,
         this:zc ;
     bald:isPrefixedBy "prefix_list" ;
@@ -54,7 +72,9 @@ this:eta a bald:Array ;
     this:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_surface_elevation> ;
     this:substanceOrTaxon_id <http://environment.data.gov.au/def/feature/ocean_near_surface> ;
     this:unit_id <http://qudt.org/vocab/unit#Meter> ;
-    bald:references this:eta_time_ref ;
+    bald:references this:eta_latitude_ref,
+        this:eta_longitude_ref,
+        this:eta_time_ref ;
     bald:shape ( 5 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -71,7 +91,10 @@ this:salt a bald:Array ;
     this:scaledQuantityKind_id <http://environment.data.gov.au/def/property/practical_salinity> ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://environment.data.gov.au/water/quality/def/unit/PSU> ;
-    bald:references this:salt_time_ref ;
+    bald:references this:salt_latitude_ref,
+        this:salt_longitude_ref,
+        this:salt_time_ref,
+        this:salt_zc_ref ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -88,7 +111,10 @@ this:temp a bald:Array ;
     this:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_water_temperature> ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://qudt.org/vocab/unit#DegreeCelsius> ;
-    bald:references this:temp_time_ref ;
+    bald:references this:temp_latitude_ref,
+        this:temp_longitude_ref,
+        this:temp_time_ref,
+        this:temp_zc_ref ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -107,7 +133,10 @@ this:u a bald:Array ;
     this:unit_id <http://qudt.org/vocab/unit#MeterPerSecond> ;
     this:vector_components "u v" ;
     this:vector_name "Currents" ;
-    bald:references this:u_time_ref ;
+    bald:references this:u_latitude_ref,
+        this:u_longitude_ref,
+        this:u_time_ref,
+        this:u_zc_ref ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -126,7 +155,10 @@ this:v a bald:Array ;
     this:unit_id <http://qudt.org/vocab/unit#MeterPerSecond> ;
     this:vector_components "u v" ;
     this:vector_name "Currents" ;
-    bald:references this:v_time_ref ;
+    bald:references this:v_latitude_ref,
+        this:v_longitude_ref,
+        this:v_time_ref,
+        this:v_zc_ref ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -139,7 +171,9 @@ this:v a bald:Array ;
     NetCDF:valid_range ( -100.0 100.0 ) .
 
 this:wspeed_u a bald:Array ;
-    bald:references this:wspeed_u_time_ref ;
+    bald:references this:wspeed_u_latitude_ref,
+        this:wspeed_u_longitude_ref,
+        this:wspeed_u_time_ref ;
     bald:shape ( 5 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -150,7 +184,9 @@ this:wspeed_u a bald:Array ;
     NetCDF:valid_range ( -1000.0 1000.0 ) .
 
 this:wspeed_v a bald:Array ;
-    bald:references this:wspeed_v_time_ref ;
+    bald:references this:wspeed_v_latitude_ref,
+        this:wspeed_v_longitude_ref,
+        this:wspeed_v_time_ref ;
     bald:shape ( 5 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -160,35 +196,125 @@ this:wspeed_v a bald:Array ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -1000.0 1000.0 ) .
 
+this:eta_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 180 600 ) .
+
+this:eta_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 180 600 ) .
+
 this:eta_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
     bald:childBroadcast ( 5 1 1 ) .
+
+this:salt_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
+
+this:salt_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
 
 this:salt_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
     bald:childBroadcast ( 5 1 1 1 ) .
 
+this:salt_zc_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:zc ;
+    bald:childBroadcast ( 1 47 1 1 ) .
+
+this:temp_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
+
+this:temp_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
+
 this:temp_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
     bald:childBroadcast ( 5 1 1 1 ) .
+
+this:temp_zc_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:zc ;
+    bald:childBroadcast ( 1 47 1 1 ) .
+
+this:u_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
+
+this:u_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
 
 this:u_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
     bald:childBroadcast ( 5 1 1 1 ) .
 
+this:u_zc_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:zc ;
+    bald:childBroadcast ( 1 47 1 1 ) .
+
+this:v_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
+
+this:v_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 1 180 600 ) .
+
 this:v_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
     bald:childBroadcast ( 5 1 1 1 ) .
 
+this:v_zc_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:zc ;
+    bald:childBroadcast ( 1 47 1 1 ) .
+
+this:wspeed_u_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 180 600 ) .
+
+this:wspeed_u_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 180 600 ) .
+
 this:wspeed_u_time_ref a bald:Reference,
         bald:Subject ;
     bald:array this:time ;
     bald:childBroadcast ( 5 1 1 ) .
+
+this:wspeed_v_latitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:latitude ;
+    bald:childBroadcast ( 1 180 600 ) .
+
+this:wspeed_v_longitude_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:longitude ;
+    bald:childBroadcast ( 1 180 600 ) .
 
 this:wspeed_v_time_ref a bald:Reference,
         bald:Subject ;

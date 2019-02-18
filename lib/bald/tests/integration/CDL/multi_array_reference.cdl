@@ -23,13 +23,9 @@ variables:
         int pdim1(pdim1) ;
 
 	int location_variable(pdim0, pdim1) ;
-	        location_variable:rdf__type = "bald__Reference";
-		location_variable:bald__array = "location_variable" ;
 		location_variable:bald__references = "location_reference_system" ;
 
 	int location_reference_system;
-	        location_variable:rdf__type = "bald__Reference";
-	        location_reference_system:bald__array = "location_reference_system";
 		location_reference_system:pcode = "4897";
 
 	int set_collection ;

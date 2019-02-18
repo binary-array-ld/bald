@@ -16,10 +16,52 @@
         this:list_collection,
         this:location_reference_system,
         this:location_variable,
+        this:location_variable_pdim0_ref,
+        this:location_variable_pdim1_ref,
         this:pdim0,
         this:pdim1,
         this:set_collection ;
     bald:isPrefixedBy "prefix_list" .
+
+this:list_collection a bald:Subject ;
+    bald:references ( this:data_variable1 this:data_variable2 ) .
+
+this:set_collection a bald:Subject ;
+    bald:references this:data_variable1,
+        this:data_variable2 .
+
+this:data_variable1_pdim0_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:pdim0 ;
+    bald:childBroadcast ( 11 1 ) .
+
+this:data_variable1_pdim1_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:pdim1 ;
+    bald:childBroadcast ( 1 17 ) .
+
+this:data_variable2_pdim0_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:pdim0 ;
+    bald:childBroadcast ( 11 1 ) .
+
+this:data_variable2_pdim1_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:pdim1 ;
+    bald:childBroadcast ( 1 17 ) .
+
+this:location_reference_system a bald:Subject ;
+    this:pcode "4897" .
+
+this:location_variable_pdim0_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:pdim0 ;
+    bald:childBroadcast ( 11 1 ) .
+
+this:location_variable_pdim1_ref a bald:Reference,
+        bald:Subject ;
+    bald:array this:pdim1 ;
+    bald:childBroadcast ( 1 17 ) .
 
 this:data_variable1 a bald:Array ;
     this:long_name "Gerald" ;
@@ -37,41 +79,10 @@ this:data_variable2 a bald:Array ;
         this:location_variable ;
     bald:shape ( 11 17 ) .
 
-this:list_collection a bald:Subject ;
-    bald:references ( this:data_variable1_pdim1_ref this:data_variable2_pdim1_ref ) .
-
-this:set_collection a bald:Subject ;
-    bald:references this:data_variable1_pdim1_ref,
-        this:data_variable2_pdim1_ref .
-
-this:data_variable1_pdim0_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim0 ;
-    bald:childBroadcast ( 11 1 ) .
-
-this:data_variable2_pdim0_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim0 ;
-    bald:childBroadcast ( 11 1 ) .
-
-this:location_reference_system a bald:Subject ;
-    this:pcode "4897" ;
-    bald:array this:location_reference_system .
-
-this:data_variable1_pdim1_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim1 ;
-    bald:childBroadcast ( 1 17 ) .
-
-this:data_variable2_pdim1_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim1 ;
-    bald:childBroadcast ( 1 17 ) .
-
-this:location_variable a bald:Array,
-        bald:Reference ;
-    bald:array this:location_variable ;
-    bald:references this:location_reference_system ;
+this:location_variable a bald:Array ;
+    bald:references this:location_reference_system,
+        this:location_variable_pdim0_ref,
+        this:location_variable_pdim1_ref ;
     bald:shape ( 11 17 ) .
 
 this:pdim0 a bald:Array,
