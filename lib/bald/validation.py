@@ -62,19 +62,23 @@ class StoredValidation(Validation):
 
 
 class SubjectValidation(Validation):
-    def __init__(self, subject, httpcache=None):
+    def __init__(self, subject, httpcache=None, uris_resolve=False):
         self.subject = subject
         if isinstance(httpcache, bald.HttpCache):
             self.cache = httpcache
         else:
             self.cache = bald.HttpCache()
+        self.uris_resolve = False
+        if uris_resolve == True:
+            self.uris_resolve = True
 
     def is_valid(self):
         return not self.exceptions()
 
     def exceptions(self):
         exceptions = []
-        exceptions = self.check_attr_uris(exceptions)
+        if self.uris_resolve:
+            exceptions = self.check_attr_uris(exceptions)
         exceptions = self.check_attr_domain_range(exceptions)
         exceptions = self._extra_exceptions(exceptions)
         return exceptions
@@ -158,10 +162,9 @@ class ContainerValidation(SubjectValidation):
 
 
 class ArrayValidation(SubjectValidation):
-
-    def __init__(self, array, httpcache=None):
+    def __init__(self, array, httpcache=None, uris_resolve=False):
         self.array = array
-        super(ArrayValidation, self).__init__(array, httpcache)
+        super(ArrayValidation, self).__init__(array, httpcache, uris_resolve)
 
     def _extra_exceptions(self, exceptions):
         exceptions = self.check_array_references(exceptions)

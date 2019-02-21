@@ -49,13 +49,13 @@ class Test(BaldTestCase):
             f = _fattrs(f)
             setattr(f, 'bald__turtle', 'bald__walnut')
             f.close()
-            validation = bald.validate_netcdf(tfile, cache=self.acache)
+            validation = bald.validate_netcdf(tfile, cache=self.acache,
+                                              uris_resolve=True)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
-
 
 class TestArrayReference(BaldTestCase):
     def test_match(self):
