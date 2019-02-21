@@ -44,7 +44,8 @@ class Test(BaldTestCase):
             f = _create_parent_child(f, (11, 17), (11, 17))
             f.attrs['bald__turtle'] = 'bald__walnut'
             f.close()
-            validation = bald.validate_hdf5(tfile, cache=self.acache)
+            validation = bald.validate_hdf5(tfile, cache=self.acache,
+                                            uris_resolve=True)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']

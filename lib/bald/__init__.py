@@ -1011,26 +1011,26 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
     return root_container
 
 
-def validate_netcdf(afilepath, baseuri=None, cache=None):
+def validate_netcdf(afilepath, baseuri=None, cache=None, uris_resolve=False):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
 
     """
     root_container = load_netcdf(afilepath, baseuri=baseuri, cache=cache)
-    return validate(root_container, cache=cache)
+    return validate(root_container, cache=cache, uris_resolve=uris_resolve)
 
 
-def validate_hdf5(afilepath, baseuri=None, cache=None):
+def validate_hdf5(afilepath, baseuri=None, cache=None, uris_resolve=False):
     """
     Validate a file with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
 
     """
     root_container = load_hdf5(afilepath, baseuri=baseuri, cache=cache)
-    return validate(root_container, cache=cache)
+    return validate(root_container, cache=cache, uris_resolve=uris_resolve)
 
-def validate(root_container, sval=None, cache=None):
+def validate(root_container, sval=None, cache=None, uris_resolve=False):
     """
     Validate a Container with respect to binary-array-linked-data.
     Returns a :class:`bald.validation.Validation`
@@ -1039,16 +1039,20 @@ def validate(root_container, sval=None, cache=None):
     if sval is None:
         sval = bv.StoredValidation()
 
-    root_val = bv.ContainerValidation(subject=root_container, httpcache=cache)
+    root_val = bv.ContainerValidation(subject=root_container, httpcache=cache,
+                                      uris_resolve=uris_resolve)
     sval.stored_exceptions += root_val.exceptions()
     for subject in root_container.attrs.get('bald__contains', set()):
         if isinstance(subject, Array):
-            array_val = bv.ArrayValidation(subject, httpcache=cache)
+            array_val = bv.ArrayValidation(subject, httpcache=cache,
+                                           uris_resolve=uris_resolve)
             sval.stored_exceptions += array_val.exceptions()
         elif isinstance(subject, Container):
-            sval = validate(subject, sval=sval, cache=cache)
+            sval = validate(subject, sval=sval, cache=cache,
+                            uris_resolve=uris_resolve)
         elif isinstance(subject, Subject):
-            subject_val = bv.SubjectValidation(subject, httpcache=cache)
+            subject_val = bv.SubjectValidation(subject, httpcache=cache,
+                                               uris_resolve=uris_resolve)
             sval.stored_exceptions += subject_val.exceptions()
 
     return sval

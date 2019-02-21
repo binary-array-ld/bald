@@ -52,7 +52,8 @@ class Test(BaldTestCase):
             dsetp = f.create_dataset("parent_dataset", (11, 17), dtype='i')
             dsetp.attrs['skosPrefLabel'] = 'alabel'
             f.close()
-            validation = bald.validate_hdf5(tfile, cache=self.acache)
+            validation = bald.validate_hdf5(tfile, cache=self.acache,
+                                            uris_resolve=True)
             exns = validation.exceptions()
             expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
                         'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
