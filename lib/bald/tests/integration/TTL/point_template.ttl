@@ -106,7 +106,7 @@ this:sal a bald:Array ;
     this:instrument "instrument1" ;
     this:ncei_name "SALINITY" ;
     this:platform "platform1" ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:coordinates this:lat,
@@ -133,7 +133,7 @@ this:temp a bald:Array ;
     this:instrument "instrument1" ;
     this:ncei_name "WATER TEMPERATURE" ;
     this:platform "platform1" ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:coordinates this:lat,
@@ -161,7 +161,7 @@ this:crs a bald:Subject ;
     this:semi_major_axis 6378137.0 .
 
 this:lat a bald:Array ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:axis "Y" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
@@ -172,7 +172,7 @@ this:lat a bald:Array ;
     NetCDF:valid_min -90.0 .
 
 this:lon a bald:Array ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:axis "X" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
@@ -183,7 +183,7 @@ this:lon a bald:Array ;
     NetCDF:valid_min -180.0 .
 
 this:time a bald:Array ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:axis "T" ;
     CFTerms:calendar "julian" ;
     CFTerms:comment "These data are bogus!!!!!" ;
@@ -193,7 +193,7 @@ this:time a bald:Array ;
     NetCDF:units "seconds since 1970-01-01 00:00:00 UTC" .
 
 this:z a bald:Array ;
-    bald:shape "(1,)" ;
+    bald:shape ( 1 ) ;
     CFTerms:axis "Z" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:positive "down" ;
