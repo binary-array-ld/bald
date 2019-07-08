@@ -43,3 +43,20 @@ class Test(BaldTestCase):
             with open(os.path.join(self.ttl_path, 'ogcClassB.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
             self.assertEqual(expected_ttl, ttl)
+
+    def test_conformance_c(self):
+        with self.temp_filename('.nc') as tfile:
+            cdlname = 'ogcClassC.cdl'
+            cdl_file = os.path.join(self.cdl_path, cdlname)
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            cdl_file_uri = 'http://secret.binary-array-ld.net/alias.nc'
+            alias_dict = {'NetCDF': 'http://def.scitools.org.uk/NetCDF'}
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
+                                              alias_dict=alias_dict, cache=self.acache)
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, 'ogcClassC.ttl'), 'w') as sf:
+                    sf.write(ttl)
+            with open(os.path.join(self.ttl_path, 'ogcClassC.ttl'), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertEqual(expected_ttl, ttl)
