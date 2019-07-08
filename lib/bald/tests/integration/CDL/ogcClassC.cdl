@@ -1,4 +1,4 @@
-netcdf ogcClassA {
+netcdf ogcClassC {
 dimensions:
         d0 = 1 ;
 	d1 = 1 ;
