@@ -711,37 +711,6 @@ def netcdf_shared_dimensions(source_var, target_var):
     return result
 
 
-
-# def netcdf_shared_dimensions(source_var, target_var):
-#     result = OrderedDict((('sourceReshape', OrderedDict()),
-#                           ('targetReshape', OrderedDict())))
-#     source_dims = OrderedDict(zip(source_var.dimensions, source_var.shape))
-#     target_dims = OrderedDict(zip(target_var.dimensions, target_var.shape))
-#     initial = OrderedDict((('sourceReshape', source_dims),
-#                            ('targetReshape', target_dims)))
-
-#     if list(target_dims.keys())[0] not in source_dims.keys():
-#         result['sourceReshape'] = OrderedDict(list(target_dims.items()) +
-#                                               list(source_dims.items()))
-#         result['targetReshape'] = OrderedDict(list(target_dims.items()) +
-#                                               list(source_dims.items()))
-#     else:
-#         result['sourceReshape'] = OrderedDict(list(source_dims.items()) +
-#                                               list(target_dims.items()))
-#         result['targetReshape'] = OrderedDict(list(source_dims.items()) +
-#                                               list(target_dims.items()))
-#     for k in result:
-#         for rk in result[k]:
-#             if rk not in initial[k]:
-#                 result[k][rk] = 1
-#     # check overall nValues is consistent
-#     # is this validation?
-#     # or, can this only be a code bug, given nc dims???
-#     for k in result:
-#         if six.moves.reduce(operator.mul, [i[1] for i in result[k].items()], 1) != six.moves.reduce(operator.mul, [i[1] for i in initial[k].items()], 1):
-#             raise ValueError('Reshape lists must have the same count for the multiplication of elements')
-#     return result
-
 @contextlib.contextmanager
 def load(afilepath):
     if afilepath.endswith('.hdf'):
@@ -1097,7 +1066,6 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
             refset.add(ref_node)
             var.attrs['bald__references'] = refset
         except ValueError:
-            import pdb; pdb.set_trace()
             # Indexing and dimension identification can fail, especially
             # with unexpectedy formated files.  Fail silently on load, to
             # that a partial graph may be returned.  Issues like this are
