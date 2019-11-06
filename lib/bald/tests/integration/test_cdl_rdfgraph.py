@@ -27,7 +27,7 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
 
     def test_array_reference_with_baseuri(self):
         with self.temp_filename('.nc') as tfile:
@@ -40,7 +40,7 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference_withbase.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
 
     def test_multi_array_reference(self):
         with self.temp_filename('.nc') as tfile:
@@ -55,7 +55,7 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
 
     def test_point_template(self):
         with self.temp_filename('.nc') as tfile:
@@ -75,7 +75,7 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
 
     def test_gems_co2(self):
         with self.temp_filename('.nc') as tfile:
@@ -95,7 +95,7 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'GEMS_CO2_Apr2006.ttl'), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
 
     def test_ProcessChain0300(self):
         with self.temp_filename('.nc') as tfile:
@@ -114,7 +114,7 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
 
     def test_ereefs(self):
         with self.temp_filename('.nc') as tfile:
@@ -134,4 +134,24 @@ class Test(BaldTestCase):
                     sf.write(ttl)
             with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
                 expected_ttl = sf.read()
-            self.assertEqual(expected_ttl, ttl)
+            self.assertMultiLineEqual(expected_ttl, ttl)
+
+    def test_votemper(self):
+        with self.temp_filename('.nc') as tfile:
+            name = 'votemper'
+            cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
+            alias_dict = {'NetCDF': 'http://def.scitools.org.uk/NetCDF',
+                          'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                         }
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
+                                              alias_dict=alias_dict, cache=self.acache)
+            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
+                    sf.write(ttl)
+            with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
+                expected_ttl = sf.read()
+            self.assertMultiLineEqual(expected_ttl, ttl)

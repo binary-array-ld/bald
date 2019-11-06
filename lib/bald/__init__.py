@@ -1,5 +1,8 @@
+from collections import OrderedDict
 import contextlib
 import copy
+from difflib import SequenceMatcher
+import operator
 import os
 import re
 import time
@@ -667,6 +670,78 @@ class Container(Subject):
         return instances, links
 
 
+def _merge_sequences(seq1,seq2):
+    sm=SequenceMatcher(a=seq1,b=seq2)
+    res = []
+    for (op, start1, end1, start2, end2) in sm.get_opcodes():
+        if op == 'equal' or op=='delete':
+            #This range appears in both sequences, or only in the first one.
+            res += seq1[start1:end1]
+        elif op == 'insert':
+            #This range appears in only the second sequence.
+            res += seq2[start2:end2]
+        elif op == 'replace':
+            #There are different ranges in each sequence - add both.
+            res += seq1[start1:end1]
+            res += seq2[start2:end2]
+    return res
+
+def netcdf_shared_dimensions(source_var, target_var):
+    result = OrderedDict((('sourceReshape', OrderedDict()),
+                          ('targetReshape', OrderedDict())))
+    source_dims = OrderedDict(zip(source_var.dimensions, source_var.shape))
+    target_dims = OrderedDict(zip(target_var.dimensions, target_var.shape))
+    initial = OrderedDict((('sourceReshape', source_dims),
+                           ('targetReshape', target_dims)))
+    combined_dims_unordered = OrderedDict(source_dims.items() | target_dims.items())
+    myorder = _merge_sequences(source_var.dimensions, target_var.dimensions)
+    ordered_dims = OrderedDict((k, combined_dims_unordered[k]) for k in myorder)
+    result = OrderedDict((('sourceReshape', OrderedDict((k, combined_dims_unordered[k]) for k in myorder)),
+                          ('targetReshape', OrderedDict((k, combined_dims_unordered[k]) for k in myorder))))
+    for k in result:
+        for rk in result[k]:
+            if rk not in initial[k]:
+                result[k][rk] = 1
+    # check overall nValues is consistent
+    # is this validation?
+    # or, can this only be a code bug, given nc dims???
+    for k in result:
+        if six.moves.reduce(operator.mul, [i[1] for i in result[k].items()], 1) != six.moves.reduce(operator.mul, [i[1] for i in initial[k].items()], 1):
+            raise ValueError('Reshape lists must have the same count for the multiplication of elements')
+    return result
+
+
+
+# def netcdf_shared_dimensions(source_var, target_var):
+#     result = OrderedDict((('sourceReshape', OrderedDict()),
+#                           ('targetReshape', OrderedDict())))
+#     source_dims = OrderedDict(zip(source_var.dimensions, source_var.shape))
+#     target_dims = OrderedDict(zip(target_var.dimensions, target_var.shape))
+#     initial = OrderedDict((('sourceReshape', source_dims),
+#                            ('targetReshape', target_dims)))
+
+#     if list(target_dims.keys())[0] not in source_dims.keys():
+#         result['sourceReshape'] = OrderedDict(list(target_dims.items()) +
+#                                               list(source_dims.items()))
+#         result['targetReshape'] = OrderedDict(list(target_dims.items()) +
+#                                               list(source_dims.items()))
+#     else:
+#         result['sourceReshape'] = OrderedDict(list(source_dims.items()) +
+#                                               list(target_dims.items()))
+#         result['targetReshape'] = OrderedDict(list(source_dims.items()) +
+#                                               list(target_dims.items()))
+#     for k in result:
+#         for rk in result[k]:
+#             if rk not in initial[k]:
+#                 result[k][rk] = 1
+#     # check overall nValues is consistent
+#     # is this validation?
+#     # or, can this only be a code bug, given nc dims???
+#     for k in result:
+#         if six.moves.reduce(operator.mul, [i[1] for i in result[k].items()], 1) != six.moves.reduce(operator.mul, [i[1] for i in initial[k].items()], 1):
+#             raise ValueError('Reshape lists must have the same count for the multiplication of elements')
+#     return result
+
 @contextlib.contextmanager
 def load(afilepath):
     if afilepath.endswith('.hdf'):
@@ -831,12 +906,13 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                             dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
                                                   fhandle.variables[name].dtype.itemsize)
                             fv = netCDF4.default_fillvals.get(dtype)
+                            first = None
                             if fhandle.variables[name][0] == fv:
                                 first = np.ma.MaskedArray(fhandle.variables[name][0],
                                                           mask=True)
                             else:
                                 first = fhandle.variables[name][0]
-                            if first:
+                            if first is not None:
                                 try:
                                     first = int(first)
                                 except Exception:
@@ -1002,19 +1078,40 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
         fhandle.variables[pref].shape):
         try:
             refset = var.attrs.get('bald__references', set())
-            cv_shape = fhandle.variables[pref].shape
-            var_shape = fhandle.variables[name].shape
+            # cv_shape = fhandle.variables[pref].shape
+            # var_shape = fhandle.variables[name].shape
             identity = '{}_{}_ref'.format(name, pref)
             rattrs = {}
             rattrs['rdf__type'] = 'bald__Reference'
-            reshape = [1 for adim in var_shape]
+            # reshape = [1 for adim in var_shape]
+            # reshape_name = [1 for adim in set(fhandle.variables[name].dimensions).union(set(fhandle.variables[pref].dimensions))]
+            # reshape_pref = [1 for adim in set(fhandle.variables[name].dimensions).union(set(fhandle.variables[pref].dimensions))]
+            # name_dims = OrderedDict(zip(fhandle.variables[name].dimensions, var_shape))
+            # pref_dims = OrderedDict(zip(fhandle.variables[pref].dimensions, cv_shape))
+            # combined_dims = OrderedDict(list(pref_dims.items())+list(name_dims.items()))
+            # reverse_combined_dims = OrderedDict(list(name_dims.items())+list(pref_dims.items()))
+            # # also
+            # # name_dims.update(pref_dims)
+            # # pref_dims.update(name_dims)
 
-            dims = fhandle.variables[pref].dimensions
-            for dim in dims:
-                cvi = fhandle.variables[name].dimensions.index(dim)
-                reshape[cvi] = int(fhandle.dimensions[dim].size)
-            rattrs['bald__childBroadcast'] = reshape
-            rattrs['bald__array'] = set((file_variables.get(pref),))
+            # dims = fhandle.variables[pref].dimensions
+            # for dim in dims:
+            #     cvi = fhandle.variables[name].dimensions.index(dim)
+            #     reshape[cvi] = int(fhandle.dimensions[dim].size)
+            # rattrs['bald__childBroadcast'] = reshape
+            # rattrs['bald__array'] = set((file_variables.get(pref),))
+
+            reshapes = netcdf_shared_dimensions(fhandle.variables[name],
+                                                fhandle.variables[pref])
+            rattrs['bald__sourceShape'] = list(fhandle.variables[name].shape)
+            rattrs['bald__targetShape'] = list(fhandle.variables[pref].shape)
+            sourceReshape =  [i[1] for i in reshapes['sourceReshape'].items()]
+            if sourceReshape != list(fhandle.variables[name].shape):
+                rattrs['bald__sourceReshape'] = sourceReshape
+            targetReshape = [i[1] for i in reshapes['targetReshape'].items()]
+            if targetReshape != list(fhandle.variables[pref].shape):
+                rattrs['bald__targetReshape'] = targetReshape
+            rattrs['bald__target'] = set((file_variables.get(pref),))
             ref_node = Subject(baseuri, identity, rattrs,
                                prefixes=prefixes,
                                aliases=aliases,
@@ -1024,6 +1121,7 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
             refset.add(ref_node)
             var.attrs['bald__references'] = refset
         except ValueError:
+            import pdb; pdb.set_trace()
             # Indexing and dimension identification can fail, especially
             # with unexpectedy formated files.  Fail silently on load, to
             # that a partial graph may be returned.  Issues like this are

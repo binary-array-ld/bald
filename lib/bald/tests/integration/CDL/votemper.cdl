@@ -1,0 +1,66 @@
+netcdf orca2_votemper {
+dimensions:
+	dim0 = 148 ;
+	dim1 = 180 ;
+	bnds = 2 ;
+	bnds_4 = 4 ;
+	time = 3 ;
+	deptht = 4 ;
+	percentiles = 19 ; 
+variables:
+	float votemper(time, deptht, dim0, dim1) ;
+		votemper:_FillValue = 9.96921e+36f ;
+		votemper:standard_name = "sea_water_potential_temperature" ;
+		votemper:long_name = "Temperature" ;
+		votemper:units = "degC" ;
+		votemper:cell_methods = "time: mean" ;
+		votemper:coordinates = "deptht nav_lat nav_lon time" ;
+		votemper:ancillary_variables = "votemper_pdf" ;
+	float votemper_pdf(percentiles, time, deptht, dim0, dim1) ;
+		votemper_pdf:_FillValue = 9.96921e+36f ;
+		votemper_pdf:standard_name = "sea_water_potential_temperature" ;
+		votemper_pdf:long_name = "Temperature" ;
+		votemper_pdf:units = "degC" ;
+		votemper_pdf:coordinates = "deptht nav_lat nav_lon time" ;
+	float percentiles(percentiles) ;
+	        percentiles:units = "1" ;
+		percentiles:long_name = "percentile" ;
+	float deptht(deptht) ;
+		deptht:bounds = "deptht_bnds" ;
+		deptht:units = "m" ;
+		deptht:standard_name = "depth" ;
+		deptht:long_name = "Vertical T levels" ;
+		deptht:positive = "down" ;
+		deptht:title = "deptht" ;
+	double deptht_bnds(deptht, bnds) ;
+	float nav_lat(dim0, dim1) ;
+		nav_lat:bounds = "nav_lat_bnds" ;
+		nav_lat:units = "degrees" ;
+		nav_lat:standard_name = "latitude" ;
+		nav_lat:long_name = "Latitude" ;
+		nav_lat:nav_model = "Default grid" ;
+	double nav_lat_bnds(dim0, dim1, bnds_4) ;
+	float nav_lon(dim0, dim1) ;
+		nav_lon:bounds = "nav_lon_bnds" ;
+		nav_lon:units = "degrees" ;
+		nav_lon:standard_name = "longitude" ;
+		nav_lon:long_name = "Longitude" ;
+		nav_lon:nav_model = "Default grid" ;
+	double nav_lon_bnds(dim0, dim1, bnds_4) ;
+	int time(time) ;
+		time:units = "hours since 2001-01-01 00:00:00" ;
+		time:standard_name = "time" ;
+		time:long_name = "Time axis" ;
+		time:calendar = "360_day" ;
+		time:time_origin = "2001-JAN-01 00:00:00" ;
+		time:title = "Time" ;
+
+// global attributes:
+		:Conventions = "CF-1.5" ;
+
+data:
+        time = 0, 24, 48 ;
+	deptht = 0., 10., 100., 1000. ;
+	percentiles = 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95 ;
+
+}
