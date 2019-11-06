@@ -196,128 +196,178 @@ this:wspeed_v a bald:Array ;
 
 this:eta_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 180 600 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:eta_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 180 600 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:eta_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:salt_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:salt_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:salt_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:salt_zc_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:zc ;
-    bald:childBroadcast ( 1 47 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:zc ;
+    bald:targetReshape ( 1 47 1 1 ) ;
+    bald:targetShape ( 47 ) .
 
 this:temp_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:temp_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:temp_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:temp_zc_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:zc ;
-    bald:childBroadcast ( 1 47 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:zc ;
+    bald:targetReshape ( 1 47 1 1 ) ;
+    bald:targetShape ( 47 ) .
 
 this:u_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:u_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:u_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:u_zc_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:zc ;
-    bald:childBroadcast ( 1 47 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:zc ;
+    bald:targetReshape ( 1 47 1 1 ) ;
+    bald:targetShape ( 47 ) .
 
 this:v_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:v_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 1 180 600 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:v_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:v_zc_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:zc ;
-    bald:childBroadcast ( 1 47 1 1 ) .
+    bald:sourceShape ( 5 47 180 600 ) ;
+    bald:target this:zc ;
+    bald:targetReshape ( 1 47 1 1 ) ;
+    bald:targetShape ( 47 ) .
 
 this:wspeed_u_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 180 600 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:wspeed_u_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 180 600 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:wspeed_u_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:wspeed_v_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 180 600 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:wspeed_v_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 180 600 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 180 600 ) ;
+    bald:targetShape ( 180 600 ) .
 
 this:wspeed_v_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 5 1 1 ) .
+    bald:sourceShape ( 5 180 600 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 5 1 1 ) ;
+    bald:targetShape ( 5 ) .
 
 this:zc a bald:Array ;
     this:coordinate_type "Z" ;
@@ -326,6 +376,13 @@ this:zc a bald:Array ;
     CFTerms:positive "up" ;
     NetCDF:long_name "Z coordinate" ;
     NetCDF:units "m" .
+
+this:time a bald:Array ;
+    this:coordinate_type "time" ;
+    bald:shape ( 5 ) ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
+    NetCDF:long_name "Time" ;
+    NetCDF:units "days since 1990-01-01 00:00:00 +10" .
 
 this:latitude a bald:Array ;
     this:coordinate_type "latitude" ;
@@ -342,13 +399,4 @@ this:longitude a bald:Array ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     NetCDF:long_name "Longitude" ;
     NetCDF:units "degrees_east" .
-
-this:time a bald:Array,
-        bald:Reference ;
-    this:coordinate_type "time" ;
-    bald:array this:time ;
-    bald:shape ( 5 ) ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
-    NetCDF:long_name "Time" ;
-    NetCDF:units "days since 1990-01-01 00:00:00 +10" .
 

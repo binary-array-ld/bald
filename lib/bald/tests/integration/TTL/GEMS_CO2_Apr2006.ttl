@@ -53,73 +53,81 @@ this:lnsp a bald:Array ;
 
 this:co2_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 1 181 1 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 1 181 1 ) ;
+    bald:targetShape ( 181 ) .
 
 this:co2_levelist_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:levelist ;
-    bald:childBroadcast ( 1 60 1 1 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:levelist ;
+    bald:targetReshape ( 1 60 1 1 ) ;
+    bald:targetShape ( 60 ) .
 
 this:co2_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 1 1 360 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 1 1 360 ) ;
+    bald:targetShape ( 360 ) .
 
 this:co2_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 1 1 1 1 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 1 1 1 1 ) ;
+    bald:targetShape ( 1 ) .
 
 this:lnsp_latitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:latitude ;
-    bald:childBroadcast ( 1 1 181 1 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:latitude ;
+    bald:targetReshape ( 1 1 181 1 ) ;
+    bald:targetShape ( 181 ) .
 
 this:lnsp_levelist_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:levelist ;
-    bald:childBroadcast ( 1 60 1 1 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:levelist ;
+    bald:targetReshape ( 1 60 1 1 ) ;
+    bald:targetShape ( 60 ) .
 
 this:lnsp_longitude_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:longitude ;
-    bald:childBroadcast ( 1 1 1 360 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:longitude ;
+    bald:targetReshape ( 1 1 1 360 ) ;
+    bald:targetShape ( 360 ) .
 
 this:lnsp_time_ref a bald:Reference,
         bald:Subject ;
-    bald:array this:time ;
-    bald:childBroadcast ( 1 1 1 1 ) .
+    bald:sourceShape ( 1 60 181 360 ) ;
+    bald:target this:time ;
+    bald:targetReshape ( 1 1 1 1 ) ;
+    bald:targetShape ( 1 ) .
 
-this:latitude a bald:Array,
-        bald:Reference ;
-    bald:array this:latitude ;
+this:latitude a bald:Array ;
     bald:first_value 90.0 ;
     bald:last_value -90.0 ;
     bald:shape ( 181 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     NetCDF:units "degrees_north" .
 
-this:levelist a bald:Array,
-        bald:Reference ;
-    bald:array this:levelist ;
+this:levelist a bald:Array ;
     bald:first_value 1 ;
     bald:last_value 60 ;
     bald:shape ( 60 ) ;
     NetCDF:long_name "model_level_number" .
 
-this:longitude a bald:Array,
-        bald:Reference ;
-    bald:array this:longitude ;
+this:longitude a bald:Array ;
     bald:first_value 0.0 ;
     bald:last_value 359.0 ;
     bald:shape ( 360 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     NetCDF:units "degrees_east" .
 
-this:time a bald:Array,
-        bald:Reference ;
-    bald:array this:time ;
+this:time a bald:Array ;
     bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
     bald:shape ( 1 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;

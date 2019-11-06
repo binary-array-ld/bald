@@ -873,8 +873,6 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             if (len(fhandle.variables[name].dimensions) == 1 and
                 fhandle.variables[name].dimensions[0] == name and
                 len(fhandle.variables[name]) > 0):
-                sattrs['bald__array'] = name
-                sattrs['rdf__type'] = 'bald__Reference'
 
                 if not isinstance(fhandle.variables[name][0], np.ma.core.MaskedConstant):
                     sattrs['bald__first_value'] = fhandle.variables[name][0]
@@ -920,8 +918,8 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                 edate_first = terra.datetime.EpochDateTimes(first,
                                                                             quantity,
                                                                             epoch=tog)
-
-                                sattrs['bald__first_value'] = edate_first
+                                if first is not np.ma.masked:
+                                    sattrs['bald__first_value'] = edate_first
                             if len(fhandle.variables[name]) > 1:
                                 if fhandle.variables[name][0] == fv:
                                     last = np.ma.MaskedArray(fhandle.variables[name][-1],
@@ -1017,10 +1015,6 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
             var = file_variables[name]
             sattrs = fhandle.variables[name].__dict__.copy()
-            # netCDF coordinate variable special case
-            if (len(fhandle.variables[name].dimensions) == 1 and
-                fhandle.variables[name].dimensions[0] == name):
-                sattrs['bald__array'] = name
 
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
@@ -1078,28 +1072,10 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
         fhandle.variables[pref].shape):
         try:
             refset = var.attrs.get('bald__references', set())
-            # cv_shape = fhandle.variables[pref].shape
-            # var_shape = fhandle.variables[name].shape
+
             identity = '{}_{}_ref'.format(name, pref)
             rattrs = {}
             rattrs['rdf__type'] = 'bald__Reference'
-            # reshape = [1 for adim in var_shape]
-            # reshape_name = [1 for adim in set(fhandle.variables[name].dimensions).union(set(fhandle.variables[pref].dimensions))]
-            # reshape_pref = [1 for adim in set(fhandle.variables[name].dimensions).union(set(fhandle.variables[pref].dimensions))]
-            # name_dims = OrderedDict(zip(fhandle.variables[name].dimensions, var_shape))
-            # pref_dims = OrderedDict(zip(fhandle.variables[pref].dimensions, cv_shape))
-            # combined_dims = OrderedDict(list(pref_dims.items())+list(name_dims.items()))
-            # reverse_combined_dims = OrderedDict(list(name_dims.items())+list(pref_dims.items()))
-            # # also
-            # # name_dims.update(pref_dims)
-            # # pref_dims.update(name_dims)
-
-            # dims = fhandle.variables[pref].dimensions
-            # for dim in dims:
-            #     cvi = fhandle.variables[name].dimensions.index(dim)
-            #     reshape[cvi] = int(fhandle.dimensions[dim].size)
-            # rattrs['bald__childBroadcast'] = reshape
-            # rattrs['bald__array'] = set((file_variables.get(pref),))
 
             reshapes = netcdf_shared_dimensions(fhandle.variables[name],
                                                 fhandle.variables[pref])

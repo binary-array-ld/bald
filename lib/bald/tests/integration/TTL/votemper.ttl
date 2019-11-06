@@ -13,7 +13,6 @@
         this:deptht_bnds,
         this:deptht_bnds_deptht_ref,
         this:deptht_deptht_bnds_ref,
-        this:deptht_deptht_ref,
         this:nav_lat,
         this:nav_lat_bnds,
         this:nav_lat_nav_lat_bnds_ref,
@@ -21,9 +20,7 @@
         this:nav_lon_bnds,
         this:nav_lon_nav_lon_bnds_ref,
         this:percentiles,
-        this:percentiles_percentiles_ref,
         this:time,
-        this:time_time_ref,
         this:votemper,
         this:votemper_deptht_ref,
         this:votemper_nav_lat_ref,
@@ -70,12 +67,6 @@ this:deptht_deptht_bnds_ref a bald:Reference,
     bald:target this:deptht_bnds ;
     bald:targetShape ( 4 2 ) .
 
-this:deptht_deptht_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 4 ) ;
-    bald:target this:deptht ;
-    bald:targetShape ( 4 ) .
-
 this:nav_lat_nav_lat_bnds_ref a bald:Reference,
         bald:Subject ;
     bald:sourceReshape ( 148 180 1 ) ;
@@ -90,17 +81,12 @@ this:nav_lon_nav_lon_bnds_ref a bald:Reference,
     bald:target this:nav_lon_bnds ;
     bald:targetShape ( 148 180 4 ) .
 
-this:percentiles_percentiles_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 19 ) ;
-    bald:target this:percentiles ;
-    bald:targetShape ( 19 ) .
-
-this:time_time_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 3 ) ;
-    bald:target this:time ;
-    bald:targetShape ( 3 ) .
+this:percentiles a bald:Array ;
+    bald:first_value 5.0 ;
+    bald:last_value 95.0 ;
+    bald:shape ( 19 ) ;
+    NetCDF:long_name "percentile" ;
+    NetCDF:units "1" .
 
 this:votemper_deptht_ref a bald:Reference,
         bald:Subject ;
@@ -198,16 +184,6 @@ this:votemper_pdf a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" .
 
-this:percentiles a bald:Array,
-        bald:Reference ;
-    bald:array this:percentiles ;
-    bald:first_value 5.0 ;
-    bald:last_value 95.0 ;
-    bald:references this:percentiles_percentiles_ref ;
-    bald:shape ( 19 ) ;
-    NetCDF:long_name "percentile" ;
-    NetCDF:units "1" .
-
 this:nav_lat a bald:Array ;
     this:nav_model "Default grid" ;
     bald:references this:nav_lat_nav_lat_bnds_ref ;
@@ -226,13 +202,10 @@ this:nav_lon a bald:Array ;
     NetCDF:long_name "Longitude" ;
     NetCDF:units "degrees" .
 
-this:time a bald:Array,
-        bald:Reference ;
+this:time a bald:Array ;
     this:time_origin "2001-JAN-01 00:00:00" ;
-    bald:array this:time ;
     bald:first_value "2001-01-01T00:00:00"^^xsd:dateTime ;
     bald:last_value "2001-01-03T00:00:00"^^xsd:dateTime ;
-    bald:references this:time_time_ref ;
     bald:shape ( 3 ) ;
     CFTerms:calendar "360_day" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
@@ -240,13 +213,10 @@ this:time a bald:Array,
     NetCDF:title "Time" ;
     NetCDF:units "hours since 2001-01-01 00:00:00" .
 
-this:deptht a bald:Array,
-        bald:Reference ;
-    bald:array this:deptht ;
+this:deptht a bald:Array ;
     bald:first_value 0.0 ;
     bald:last_value 1000.0 ;
-    bald:references this:deptht_deptht_bnds_ref,
-        this:deptht_deptht_ref ;
+    bald:references this:deptht_deptht_bnds_ref ;
     bald:shape ( 4 ) ;
     CFTerms:bounds this:deptht_bnds ;
     CFTerms:positive "down" ;
