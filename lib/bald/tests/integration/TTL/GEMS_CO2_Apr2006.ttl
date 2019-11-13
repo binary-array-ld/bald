@@ -10,26 +10,30 @@
 
 <file://CDL/GEMS_CO2_Apr2006.cdl> a bald:Container ;
     bald:contains this:co2,
-        this:co2_latitude_ref,
-        this:co2_levelist_ref,
-        this:co2_longitude_ref,
-        this:co2_time_ref,
         this:latitude,
         this:levelist,
         this:lnsp,
-        this:lnsp_latitude_ref,
-        this:lnsp_levelist_ref,
-        this:lnsp_longitude_ref,
-        this:lnsp_time_ref,
         this:longitude,
         this:time ;
     NetCDF:Conventions "CF-1.0" .
 
 this:co2 a bald:Array ;
-    bald:references this:co2_latitude_ref,
-        this:co2_levelist_ref,
-        this:co2_longitude_ref,
-        this:co2_time_ref ;
+    bald:references [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 181 1 ) ;
+            bald:targetShape ( 181 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 1 1 1 ) ;
+            bald:targetShape ( 1 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 1 360 ) ;
+            bald:targetShape ( 360 ) ],
+        [ a bald:Reference ;
+            bald:target this:levelist ;
+            bald:targetReshape ( 1 60 1 1 ) ;
+            bald:targetShape ( 60 ) ] ;
     bald:shape ( 1 60 181 360 ) ;
     CFTerms:missing_value "-32767" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
@@ -40,72 +44,28 @@ this:co2 a bald:Array ;
     NetCDF:units "kg kg**-1" .
 
 this:lnsp a bald:Array ;
-    bald:references this:lnsp_latitude_ref,
-        this:lnsp_levelist_ref,
-        this:lnsp_longitude_ref,
-        this:lnsp_time_ref ;
+    bald:references [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 1 360 ) ;
+            bald:targetShape ( 360 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 181 1 ) ;
+            bald:targetShape ( 181 ) ],
+        [ a bald:Reference ;
+            bald:target this:levelist ;
+            bald:targetReshape ( 1 60 1 1 ) ;
+            bald:targetShape ( 60 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 1 1 1 ) ;
+            bald:targetShape ( 1 ) ] ;
     bald:shape ( 1 60 181 360 ) ;
     CFTerms:missing_value "-32767" ;
     NetCDF:FillValue "-32767" ;
     NetCDF:add_offset 11.2087164280841 ;
     NetCDF:long_name "Logarithm of surface pressure" ;
     NetCDF:scale_factor 1.03952457840347e-05 .
-
-this:co2_latitude_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:latitude ;
-    bald:targetReshape ( 1 1 181 1 ) ;
-    bald:targetShape ( 181 ) .
-
-this:co2_levelist_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:levelist ;
-    bald:targetReshape ( 1 60 1 1 ) ;
-    bald:targetShape ( 60 ) .
-
-this:co2_longitude_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:longitude ;
-    bald:targetReshape ( 1 1 1 360 ) ;
-    bald:targetShape ( 360 ) .
-
-this:co2_time_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:time ;
-    bald:targetReshape ( 1 1 1 1 ) ;
-    bald:targetShape ( 1 ) .
-
-this:lnsp_latitude_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:latitude ;
-    bald:targetReshape ( 1 1 181 1 ) ;
-    bald:targetShape ( 181 ) .
-
-this:lnsp_levelist_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:levelist ;
-    bald:targetReshape ( 1 60 1 1 ) ;
-    bald:targetShape ( 60 ) .
-
-this:lnsp_longitude_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:longitude ;
-    bald:targetReshape ( 1 1 1 360 ) ;
-    bald:targetShape ( 360 ) .
-
-this:lnsp_time_ref a bald:Reference,
-        bald:Subject ;
-    bald:sourceShape ( 1 60 181 360 ) ;
-    bald:target this:time ;
-    bald:targetReshape ( 1 1 1 1 ) ;
-    bald:targetShape ( 1 ) .
 
 this:latitude a bald:Array ;
     bald:first_value 90.0 ;

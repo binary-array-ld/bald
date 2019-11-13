@@ -4,7 +4,7 @@ dimensions:
 	dim1 = 180 ;
 	bnds = 2 ;
 	bnds_4 = 4 ;
-	time = 3 ;
+	time = 4 ;
 	deptht = 4 ;
 	percentiles = 19 ; 
 variables:
@@ -59,7 +59,7 @@ variables:
 		:Conventions = "CF-1.5" ;
 
 data:
-        time = 0, 24, 48 ;
+        time = 0, 24, 48, 72 ;
 	deptht = 0., 10., 100., 1000. ;
 	percentiles = 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95 ;
 

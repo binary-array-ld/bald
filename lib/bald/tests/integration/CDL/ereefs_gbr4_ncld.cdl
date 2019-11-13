@@ -82,7 +82,6 @@ variables:
 		salt:coordinates = "time zc latitude longitude" ;
 		salt:units = "PSU" ;
 		salt:long_name = "Salinity" ;
-		salt:valid_range = 0.f, 40.f ;
 		salt:missing_value = 1.e+35f ;
 		salt:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
 		salt:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/practical_salinity" ;
@@ -93,7 +92,7 @@ variables:
 		temp:coordinates = "time zc latitude longitude" ;
 		temp:units = "degrees C" ;
 		temp:long_name = "Temperature" ;
-		temp:valid_range = 0.f, 40.f ;
+		temp:valid_range = -3.f, 40.f ;
 		temp:missing_value = 1.e+35f ;
 		temp:medium_id = "http://environment.data.gov.au/def/feature/ocean" ;
 		temp:scaledQuantityKind_id = "http://environment.data.gov.au/def/property/sea_water_temperature" ;

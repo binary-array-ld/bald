@@ -318,7 +318,9 @@ class Subject(object):
 
     @property
     def identity(self):
-        if self.relative_id:
+        if self.relative_id is None:
+            result = None
+        elif self.relative_id:
             result = '/'.join([self.baseuri, self.relative_id])
         else:
             result = self.baseuri
@@ -531,7 +533,16 @@ class Subject(object):
         return html
 
     def rdfnode(self, graph):
-        selfnode = rdflib.URIRef(self.identity)
+        """
+        Create an RDF Node,
+        add it to the supplied graph,
+        return the node.
+
+        """
+        if self.identity is None:
+            selfnode = rdflib.BNode()
+        else:
+            selfnode = rdflib.URIRef(self.identity)
         for attr in self.attrs:
             list_items = []
             objs = self.attrs[attr]
@@ -542,9 +553,19 @@ class Subject(object):
             if not (isinstance(objs, set) or isinstance(objs, list)):
                 objs = set([objs])
             for obj in objs:
+                if isinstance(obj, Subject):
+                    if obj.identity is None:
+                        node = obj.rdfnode(graph)
+                    else:
+                        obj_ref = rdflib.URIRef(obj.identity)
+                        if (obj_ref, None, None) not in graph:
+                            node = obj.rdfnode(graph)
+                        else:
+                            node = obj_ref
+
                 rdfpred = self.unpack_predicate(attr)
                 if isinstance(obj, Subject):
-                    rdfobj = rdflib.URIRef(obj.identity)
+                    rdfobj = node #rdflib.URIRef(obj.identity)
                 else:
                     rdfobj = self.unpack_rdfobject(obj, rdfpred)
                     if is_http_uri(rdfobj):
@@ -566,17 +587,12 @@ class Subject(object):
                         #graph.add((selfnode, rdfpred, rdfobj))
                 elif isinstance(objs, list):
                     list_items.append(rdfobj)
-                if isinstance(obj, Subject):
-                    obj_ref = rdflib.URIRef(obj.identity)
-                    if (obj_ref, None, None) not in graph:
-                        graph = obj.rdfnode(graph)
             if list_items:
                 list_name = rdflib.BNode()
                 col = rdflib.collection.Collection(graph, list_name, list_items)
-                
                 graph.add((selfnode, rdfpred, list_name))
 
-        return graph
+        return selfnode
 
     def rdfgraph(self):
         """
@@ -603,10 +619,14 @@ class Subject(object):
                 uri = uri + '/'
             graph.bind(alias_name, uri)
         
-        graph = self.rdfnode(graph)
+        self.rdfnode(graph)
         
         return graph
-        
+
+
+class Reference(Subject):
+    _rdftype = 'bald__Reference'
+
 
 class Array(Subject):
     _rdftype = 'bald__Array'
@@ -918,6 +938,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 var = Subject(baseuri, name, sattrs, prefixes=prefixes,
                               aliases=aliases, alias_graph=aliasgraph)
             root_container.attrs['bald__contains'].add(var)
+
             file_variables[name] = var
                 
 
@@ -1042,13 +1063,12 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
         try:
             refset = var.attrs.get('bald__references', set())
 
-            identity = '{}_{}_ref'.format(name, pref)
+            identity = None
             rattrs = {}
-            rattrs['rdf__type'] = 'bald__Reference'
 
             reshapes = netcdf_shared_dimensions(fhandle.variables[name],
                                                 fhandle.variables[pref])
-            rattrs['bald__sourceShape'] = list(fhandle.variables[name].shape)
+
             rattrs['bald__targetShape'] = list(fhandle.variables[pref].shape)
             sourceReshape =  [i[1] for i in reshapes['sourceReshape'].items()]
             if sourceReshape != list(fhandle.variables[name].shape):
@@ -1057,12 +1077,11 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
             if targetReshape != list(fhandle.variables[pref].shape):
                 rattrs['bald__targetReshape'] = targetReshape
             rattrs['bald__target'] = set((file_variables.get(pref),))
-            ref_node = Subject(baseuri, identity, rattrs,
+            ref_node = Reference(baseuri, identity, rattrs,
                                prefixes=prefixes,
                                aliases=aliases,
                                alias_graph=aliasgraph)
-            root_container.attrs['bald__contains'].add(ref_node)
-            file_variables[identity] = ref_node
+
             refset.add(ref_node)
             var.attrs['bald__references'] = refset
         except ValueError:
