@@ -553,19 +553,13 @@ class Subject(object):
             if not (isinstance(objs, set) or isinstance(objs, list)):
                 objs = set([objs])
             for obj in objs:
-                if isinstance(obj, Subject):
-                    if obj.identity is None:
-                        node = obj.rdfnode(graph)
-                    else:
-                        obj_ref = rdflib.URIRef(obj.identity)
-                        if (obj_ref, None, None) not in graph:
-                            node = obj.rdfnode(graph)
-                        else:
-                            node = obj_ref
 
                 rdfpred = self.unpack_predicate(attr)
                 if isinstance(obj, Subject):
-                    rdfobj = node #rdflib.URIRef(obj.identity)
+                    if obj.identity is None:
+                        rdfobj = obj.rdfnode(graph)
+                    else:
+                        rdfobj = rdflib.URIRef(obj.identity)
                 else:
                     rdfobj = self.unpack_rdfobject(obj, rdfpred)
                     if is_http_uri(rdfobj):
@@ -587,6 +581,11 @@ class Subject(object):
                         #graph.add((selfnode, rdfpred, rdfobj))
                 elif isinstance(objs, list):
                     list_items.append(rdfobj)
+                # recurse and build the related objects
+                if isinstance(obj, Subject) and obj.identity is not None:
+                    obj_ref = rdflib.URIRef(obj.identity)
+                    if not ((obj_ref, None, None) in graph):
+                        node = obj.rdfnode(graph)
             if list_items:
                 list_name = rdflib.BNode()
                 col = rdflib.collection.Collection(graph, list_name, list_items)
@@ -1006,6 +1005,15 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             var = file_variables[name]
             sattrs = fhandle.variables[name].__dict__.copy()
 
+            # coordinate variables are bald__references too
+            if 'bald__Reference' not in var.rdf__type:
+                for dim in fhandle.variables[name].dimensions:
+                    if file_variables.get(dim) and name != dim:
+                        _make_ref_entities(var, fhandle, dim, name,
+                                           baseuri, root_container,
+                                           file_variables, prefixes,
+                                           aliases, aliasgraph)
+
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
                           root_container.unpack_predicate(sattr) in ref_prefs):
@@ -1034,21 +1042,13 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                             var.attrs[sattr] = set([file_variables.get(pref)
                                                     for pref in potrefs_set])
                             for pref in potrefs_set:
-                                _make_ref_entities(var, fhandle,
-                                                   pref, name, baseuri,
-                                                   root_container,
-                                                   file_variables, prefixes,
-                                                   aliases, aliasgraph)
-
-
-            # coordinate variables are bald__references too
-            if 'bald__Reference' not in var.rdf__type:
-                for dim in fhandle.variables[name].dimensions:
-                    if file_variables.get(dim) and name != dim:
-                        _make_ref_entities(var, fhandle, dim, name,
-                                           baseuri, root_container,
-                                           file_variables, prefixes,
-                                           aliases, aliasgraph)
+                                # coordinate variables already handled
+                                if pref not in fhandle.variables[name].dimensions:
+                                    _make_ref_entities(var, fhandle,
+                                                       pref, name, baseuri,
+                                                       root_container,
+                                                       file_variables, prefixes,
+                                                       aliases, aliasgraph)
 
     return root_container
 
@@ -1062,7 +1062,8 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
         fhandle.variables[pref].shape):
         try:
             refset = var.attrs.get('bald__references', set())
-
+            if not isinstance(refset, set):
+                refset = set((refset,))
             identity = None
             rattrs = {}
 

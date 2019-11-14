@@ -27,7 +27,11 @@ this:votemper a bald:Array ;
             bald:targetReshape ( 4 1 1 1 ) ;
             bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
-            bald:target this:nav_lat ;
+            bald:sourceReshape ( 1 4 4 148 180 ) ;
+            bald:target this:votemper_pdf ;
+            bald:targetShape ( 19 4 4 148 180 ) ],
+        [ a bald:Reference ;
+            bald:target this:nav_lon ;
             bald:targetReshape ( 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
@@ -35,19 +39,7 @@ this:votemper a bald:Array ;
             bald:targetReshape ( 1 4 1 1 ) ;
             bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:sourceReshape ( 1 4 4 148 180 ) ;
-            bald:target this:votemper_pdf ;
-            bald:targetShape ( 19 4 4 148 180 ) ],
-        [ a bald:Reference ;
-            bald:target this:nav_lon ;
+            bald:target this:nav_lat ;
             bald:targetReshape ( 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ] ;
     bald:shape ( 4 4 148 180 ) ;
@@ -69,6 +61,13 @@ this:percentiles a bald:Array ;
     NetCDF:long_name "percentile" ;
     NetCDF:units "1" .
 
+this:deptht_bnds a bald:Array ;
+    bald:references [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 4 1 ) ;
+            bald:targetShape ( 4 ) ] ;
+    bald:shape ( 4 2 ) .
+
 this:nav_lat_bnds a bald:Array ;
     bald:shape ( 148 180 4 ) .
 
@@ -77,33 +76,25 @@ this:nav_lon_bnds a bald:Array ;
 
 this:votemper_pdf a bald:Array ;
     bald:references [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 4 1 1 1 ) ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 1 4 1 1 ) ;
             bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:nav_lon ;
-            bald:targetReshape ( 1 1 1 148 180 ) ;
-            bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
             bald:target this:nav_lat ;
             bald:targetReshape ( 1 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
+            bald:target this:nav_lon ;
+            bald:targetReshape ( 1 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
             bald:target this:percentiles ;
             bald:targetReshape ( 19 1 1 1 1 ) ;
-            bald:targetShape ( 19 ) ] ;
+            bald:targetShape ( 19 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 4 1 1 1 ) ;
+            bald:targetShape ( 4 ) ] ;
     bald:shape ( 19 4 4 148 180 ) ;
     CFTerms:coordinates this:deptht,
         this:nav_lat,
@@ -113,13 +104,6 @@ this:votemper_pdf a bald:Array ;
     NetCDF:FillValue "9.96921e+36" ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" .
-
-this:deptht_bnds a bald:Array ;
-    bald:references [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 4 1 ) ;
-            bald:targetShape ( 4 ) ] ;
-    bald:shape ( 4 2 ) .
 
 this:nav_lat a bald:Array ;
     this:nav_model "Default grid" ;
@@ -162,13 +146,8 @@ this:deptht a bald:Array ;
     bald:references [ a bald:Reference ;
             bald:sourceReshape ( 4 1 ) ;
             bald:target this:deptht_bnds ;
-            bald:targetShape ( 4 2 ) ],
-        [ a bald:Reference ;
-            bald:sourceReshape ( 4 1 ) ;
-            bald:target this:deptht_bnds ;
             bald:targetShape ( 4 2 ) ] ;
-    bald:shape ( 4 ),
-        ( 4 ) ;
+    bald:shape ( 4 ) ;
     CFTerms:bounds this:deptht_bnds ;
     CFTerms:positive "down" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/depth/> ;

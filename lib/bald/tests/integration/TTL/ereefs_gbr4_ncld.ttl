@@ -52,10 +52,6 @@ this:eta a bald:Array ;
             bald:targetReshape ( 5 1 1 ) ;
             bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
@@ -80,25 +76,21 @@ this:salt a bald:Array ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://environment.data.gov.au/water/quality/def/unit/PSU> ;
     bald:references [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
             bald:target this:zc ;
             bald:targetReshape ( 1 47 1 1 ) ;
             bald:targetShape ( 47 ) ],
         [ a bald:Reference ;
-            bald:target this:latitude ;
-            bald:targetReshape ( 1 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ],
+            bald:target this:time ;
+            bald:targetReshape ( 5 1 1 1 ) ;
+            bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -114,25 +106,21 @@ this:temp a bald:Array ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://qudt.org/vocab/unit#DegreeCelsius> ;
     bald:references [ a bald:Reference ;
-            bald:target this:zc ;
-            bald:targetReshape ( 1 47 1 1 ) ;
-            bald:targetShape ( 47 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 5 1 1 1 ) ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ] ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ] ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -151,14 +139,6 @@ this:u a bald:Array ;
     this:vector_components "u v" ;
     this:vector_name "Currents" ;
     bald:references [ a bald:Reference ;
-            bald:target this:zc ;
-            bald:targetReshape ( 1 47 1 1 ) ;
-            bald:targetShape ( 47 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
@@ -166,6 +146,10 @@ this:u a bald:Array ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ],
         [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 1 ) ;
@@ -189,25 +173,21 @@ this:v a bald:Array ;
     this:vector_components "u v" ;
     this:vector_name "Currents" ;
     bald:references [ a bald:Reference ;
-            bald:target this:longitude ;
-            bald:targetReshape ( 1 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
             bald:target this:zc ;
             bald:targetReshape ( 1 47 1 1 ) ;
-            bald:targetShape ( 47 ) ] ;
+            bald:targetShape ( 47 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 5 1 1 1 ) ;
+            bald:targetShape ( 5 ) ] ;
     bald:shape ( 5 47 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -221,7 +201,7 @@ this:v a bald:Array ;
 
 this:wspeed_u a bald:Array ;
     bald:references [ a bald:Reference ;
-            bald:target this:longitude ;
+            bald:target this:latitude ;
             bald:targetReshape ( 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
@@ -229,11 +209,7 @@ this:wspeed_u a bald:Array ;
             bald:targetReshape ( 5 1 1 ) ;
             bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
-            bald:target this:latitude ;
+            bald:target this:longitude ;
             bald:targetReshape ( 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 180 600 ) ;
@@ -251,17 +227,13 @@ this:wspeed_v a bald:Array ;
             bald:targetReshape ( 5 1 1 ) ;
             bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
-            bald:target this:longitude ;
-            bald:targetReshape ( 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ],
-        [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 180 600 ) ;
     CFTerms:coordinates this:latitude,
         this:longitude,
@@ -279,6 +251,13 @@ this:zc a bald:Array ;
     NetCDF:long_name "Z coordinate" ;
     NetCDF:units "m" .
 
+this:time a bald:Array ;
+    this:coordinate_type "time" ;
+    bald:shape ( 5 ) ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
+    NetCDF:long_name "Time" ;
+    NetCDF:units "days since 1990-01-01 00:00:00 +10" .
+
 this:latitude a bald:Array ;
     this:coordinate_type "latitude" ;
     this:projection "geographic" ;
@@ -294,11 +273,4 @@ this:longitude a bald:Array ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     NetCDF:long_name "Longitude" ;
     NetCDF:units "degrees_east" .
-
-this:time a bald:Array ;
-    this:coordinate_type "time" ;
-    bald:shape ( 5 ) ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
-    NetCDF:long_name "Time" ;
-    NetCDF:units "days since 1990-01-01 00:00:00 +10" .
 
