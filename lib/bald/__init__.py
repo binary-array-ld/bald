@@ -283,12 +283,12 @@ class HttpCache(object):
         return result
 
 
-class Subject(object):
-    _rdftype = 'bald__Subject'
+class Resource(object):
+    _rdftype = 'bald__Resource'
     def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
                  aliases=None, alias_graph=None):
         """
-        A subject of metadata statements.
+        A resource of metadata statements.
 
         attrs: an dictionary of key value pair attributes
         """
@@ -491,7 +491,7 @@ class Subject(object):
                     if is_http_uri(vuri):
                         vstr = self.link_template
                         vstr = vstr.format(url=vuri, key=val)
-                    elif isinstance(val, Subject):
+                    elif isinstance(val, Resource):
                         vstr = ''
                     else:
                         vstr = '{key}'.format(key=val)
@@ -519,7 +519,7 @@ class Subject(object):
 
     def viewgraph(self):
         """
-        Return html to render the Subject as a graph diagram, using the JointJS engine.
+        Return html to render the Resource as a graph diagram, using the JointJS engine.
 
         """
 
@@ -555,7 +555,7 @@ class Subject(object):
             for obj in objs:
 
                 rdfpred = self.unpack_predicate(attr)
-                if isinstance(obj, Subject):
+                if isinstance(obj, Resource):
                     if obj.identity is None:
                         rdfobj = obj.rdfnode(graph)
                     else:
@@ -582,7 +582,7 @@ class Subject(object):
                 elif isinstance(objs, list):
                     list_items.append(rdfobj)
                 # recurse and build the related objects
-                if isinstance(obj, Subject) and obj.identity is not None:
+                if isinstance(obj, Resource) and obj.identity is not None:
                     obj_ref = rdflib.URIRef(obj.identity)
                     if not ((obj_ref, None, None) in graph):
                         node = obj.rdfnode(graph)
@@ -595,11 +595,11 @@ class Subject(object):
 
     def rdfgraph(self):
         """
-        Return an rdflib.Graph representing the Subject.
+        Return an rdflib.Graph representing the Resource.
 
         """
         graph = rdflib.Graph()
-        graph.bind('bald', 'http://binary-array-ld.net/latest/')
+        graph.bind('bald', 'http://def.binary-array-ld.net/development/')
         graph.bind('this', self.baseuri + '/')
         for prefix_name in self.prefixes():
             
@@ -623,11 +623,11 @@ class Subject(object):
         return graph
 
 
-class Reference(Subject):
+class Reference(Resource):
     _rdftype = 'bald__Reference'
 
 
-class Array(Subject):
+class Array(Resource):
     _rdftype = 'bald__Array'
 
     @property
@@ -662,7 +662,7 @@ class Array(Subject):
         return instances, links
 
 
-class Container(Subject):
+class Container(Resource):
     _rdftype = 'bald__Container'
 
     def graph_elems(self):
@@ -786,7 +786,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         # check that default set is handled, i.e. bald__ and rdf__
         if 'bald__' not in prefixes:
-            prefixes['bald__'] = "http://binary-array-ld.net/latest/" 
+            prefixes['bald__'] = "http://def.binary-array-ld.net/development/" 
 
         if 'rdf__' not in prefixes:
             prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -934,7 +934,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 var = Array(baseuri, name, sattrs, prefixes=prefixes,
                             aliases=aliases, alias_graph=aliasgraph)
             else:
-                var = Subject(baseuri, name, sattrs, prefixes=prefixes,
+                var = Resource(baseuri, name, sattrs, prefixes=prefixes,
                               aliases=aliases, alias_graph=aliasgraph)
             root_container.attrs['bald__contains'].add(var)
 
@@ -944,7 +944,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         reference_prefixes = dict()
         reference_graph = copy.copy(aliasgraph)
 
-        response = cache['http://binary-array-ld.net/latest']
+        response = cache['http://def.binary-array-ld.net/development']
         reference_graph.parse(data=response.text, format='xml')
 
         # # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
@@ -959,7 +959,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         
         # refs_ = reference_graph.query(qstr)
 
-        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        qstr = ('prefix bald: <http://def.binary-array-ld.net/development/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -969,7 +969,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 'filter(?rtype = owl:Class) '
                 '}')
         
-        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        qstr = ('prefix bald: <http://def.binary-array-ld.net/development/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -982,15 +982,15 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         non_ref_prefs = [str(ref[0]) for ref in list(refs)]
 
-        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        qstr = ('prefix bald: <http://def.binary-array-ld.net/development/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
                 'where { '
-                '   {?s rdfs:range bald:Subject .} '
+                '   {?s rdfs:range bald:Resource .} '
                 '  UNION '
                 '  {?s rdfs:range ?as . '
-                '  ?as rdfs:subClassOf bald:Subject .} '
+                '  ?as rdfs:subClassOf bald:Resource .} '
                 '}')
         
         refs = reference_graph.query(qstr)
@@ -1121,21 +1121,21 @@ def validate(root_container, sval=None, cache=None, uris_resolve=False):
     if sval is None:
         sval = bv.StoredValidation()
 
-    root_val = bv.ContainerValidation(subject=root_container, httpcache=cache,
+    root_val = bv.ContainerValidation(resource=root_container, httpcache=cache,
                                       uris_resolve=uris_resolve)
     sval.stored_exceptions += root_val.exceptions()
-    for subject in root_container.attrs.get('bald__contains', set()):
-        if isinstance(subject, Array):
-            array_val = bv.ArrayValidation(subject, httpcache=cache,
+    for resource in root_container.attrs.get('bald__contains', set()):
+        if isinstance(resource, Array):
+            array_val = bv.ArrayValidation(resource, httpcache=cache,
                                            uris_resolve=uris_resolve)
             sval.stored_exceptions += array_val.exceptions()
-        elif isinstance(subject, Container):
-            sval = validate(subject, sval=sval, cache=cache,
+        elif isinstance(resource, Container):
+            sval = validate(resource, sval=sval, cache=cache,
                             uris_resolve=uris_resolve)
-        elif isinstance(subject, Subject):
-            subject_val = bv.SubjectValidation(subject, httpcache=cache,
+        elif isinstance(resource, Resource):
+            resource_val = bv.ResourceValidation(resource, httpcache=cache,
                                                uris_resolve=uris_resolve)
-            sval.stored_exceptions += subject_val.exceptions()
+            sval.stored_exceptions += resource_val.exceptions()
 
     return sval
 

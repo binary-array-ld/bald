@@ -17,7 +17,7 @@
         this:set_collection ;
     bald:isPrefixedBy "prefix_list" .
 
-this:list_collection a bald:Subject ;
+this:list_collection a bald:Resource ;
     bald:references ( this:data_variable1 this:data_variable2 ) .
 
 this:pdim0 a bald:Array ;
@@ -26,11 +26,11 @@ this:pdim0 a bald:Array ;
 this:pdim1 a bald:Array ;
     bald:shape ( 17 ) .
 
-this:set_collection a bald:Subject ;
+this:set_collection a bald:Resource ;
     bald:references this:data_variable1,
         this:data_variable2 .
 
-this:location_reference_system a bald:Subject ;
+this:location_reference_system a bald:Resource ;
     this:pcode "4897" .
 
 this:data_variable1 a bald:Array ;

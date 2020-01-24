@@ -17,14 +17,14 @@
         this:step2 ;
     bald:isPrefixedBy "prefix_list" .
 
-this:gfsmos_process_chain a bald:Subject ;
+this:gfsmos_process_chain a bald:Resource ;
     this:OM_Process "(step1 step2)" .
 
-this:step1 a bald:Subject ;
+this:step1 a bald:Resource ;
     this:LE_ProcessStep <https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13> ;
     this:LE_Source <https://codes.nws.noaa.gov/DataAssimilation/Methods/GDAS13> .
 
-this:step2 a bald:Subject ;
+this:step2 a bald:Resource ;
     this:LE_ProcessStep <https://codes.nws.noaa.gov/StatisticalPostProcessing/Methods/GFSMOS05> ;
     this:LE_Source <https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13> .
 

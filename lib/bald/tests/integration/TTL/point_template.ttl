@@ -79,7 +79,7 @@
     NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
     NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" .
 
-this:instrument1 a bald:Subject ;
+this:instrument1 a bald:Resource ;
     this:accuracy "" ;
     this:calibration_date "2016-03-25" ;
     this:make_model "SBE-37" ;
@@ -89,7 +89,7 @@ this:instrument1 a bald:Subject ;
     CFTerms:comment "serial number and calibration dates are bogus" ;
     NetCDF:long_name "Seabird 37 Microcat" .
 
-this:platform1 a bald:Subject ;
+this:platform1 a bald:Resource ;
     this:call_sign "" ;
     this:ices_code "" ;
     this:imo_code "" ;
@@ -153,7 +153,7 @@ this:temp a bald:Array ;
     NetCDF:valid_max 100.0 ;
     NetCDF:valid_min 0.0 .
 
-this:crs a bald:Subject ;
+this:crs a bald:Resource ;
     this:epsg_code "EPSG:4326" ;
     this:grid_mapping_name "latitude_longitude" ;
     this:inverse_flattening 298.257223563 ;
