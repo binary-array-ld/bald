@@ -396,7 +396,7 @@ class Resource(object):
             elif len(results) == 1:
                 result = str(results[0][0])
         if result == astring:
-            result = self.baseuri + '/' + result
+            result = self.baseuri + result
         return result
 
     def unpack_rdfobject(self, astring, predicate):
@@ -1164,7 +1164,10 @@ def load_hdf5(afilepath, baseuri=None, alias_dict=None, cache=None):
         # unused?
         cache = {}
         if baseuri is None:
-            baseuri = 'file://{}'.format(afilepath)
+            baseuri = 'file://{}/'.format(afilepath)
+
+        elif type(baseuri) == str and not baseuri.endswith('/'):
+            baseuri = '{}/'.format(baseuri)
 
         root_container, file_variables = _hdf_group(fhandle, baseuri=baseuri,
                                                     alias_dict=alias_dict, cache=cache)

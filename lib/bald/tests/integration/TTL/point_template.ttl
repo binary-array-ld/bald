@@ -1,6 +1,6 @@
 @prefix CFTerms: <http://def.scitools.org.uk/CFTerms/> .
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
-@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -8,7 +8,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<file://CDL/point_template.cdl> a bald:Container ;
+this: a bald:Container ;
     this:acknowledgement "thanks to the NCEI netCDF working group" ;
     this:cdm_data_type "Point" ;
     this:contributor_name "NCEI" ;
@@ -61,6 +61,14 @@
     this:time_coverage_end "2015-03-25T22:20:17Z" ;
     this:time_coverage_start "2015-03-25T22:20:17Z" ;
     this:uuid "ade5a344-d574-4716-b1f6-fda75ff0cfc1" ;
+    CFTerms:comment "This data file is just an example, the data are completely BOGUS!" ;
+    CFTerms:featureType "point" ;
+    CFTerms:institution "NCEI" ;
+    CFTerms:references <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
+    CFTerms:source "Python script generate_NCEI_netCDF_template.py with options: {'template_version': '2.0', 'feature_type': 'point'}" ;
+    NetCDF:Conventions "CF-1.6, ACDD-1.3" ;
+    NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
+    NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" ;
     bald:contains this:crs,
         this:instrument1,
         this:lat,
@@ -69,15 +77,14 @@
         this:sal,
         this:temp,
         this:time,
-        this:z ;
-    CFTerms:comment "This data file is just an example, the data are completely BOGUS!" ;
-    CFTerms:featureType "point" ;
-    CFTerms:institution "NCEI" ;
-    CFTerms:references <https://www.nodc.noaa.gov/data/formats/netcdf/v2.0/> ;
-    CFTerms:source "Python script generate_NCEI_netCDF_template.py with options: {'template_version': '2.0', 'feature_type': 'point'}" ;
-    NetCDF:Conventions "CF-1.6, ACDD-1.3" ;
-    NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
-    NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" .
+        this:z .
+
+this:crs a bald:Resource ;
+    this:epsg_code "EPSG:4326" ;
+    this:grid_mapping_name "latitude_longitude" ;
+    this:inverse_flattening 298.257223563 ;
+    this:longitude_of_prime_meridian 0.0 ;
+    this:semi_major_axis 6378137.0 .
 
 this:instrument1 a bald:Resource ;
     this:accuracy "" ;
@@ -88,6 +95,28 @@ this:instrument1 a bald:Resource ;
     this:serial_number "1859723" ;
     CFTerms:comment "serial number and calibration dates are bogus" ;
     NetCDF:long_name "Seabird 37 Microcat" .
+
+this:lat a bald:Array ;
+    CFTerms:axis "Y" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:long_name "Latitude" ;
+    NetCDF:units "degrees_north" ;
+    NetCDF:valid_max 90.0 ;
+    NetCDF:valid_min -90.0 ;
+    bald:shape ( 1 ) .
+
+this:lon a bald:Array ;
+    CFTerms:axis "X" ;
+    CFTerms:comment "These data are bogus!!!!!" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:FillValue -9999.0 ;
+    NetCDF:long_name "Longitude" ;
+    NetCDF:units "degrees_east" ;
+    NetCDF:valid_max 180.0 ;
+    NetCDF:valid_min -180.0 ;
+    bald:shape ( 1 ) .
 
 this:platform1 a bald:Resource ;
     this:call_sign "" ;
@@ -106,14 +135,10 @@ this:sal a bald:Array ;
     this:instrument "instrument1" ;
     this:ncei_name "SALINITY" ;
     this:platform "platform1" ;
-    bald:shape ( 1 ) ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:comment "These data are bogus!!!!!" ;
-    CFTerms:coordinates this:lat,
-        this:lon,
-        this:time,
-        this:z ;
-    CFTerms:grid_mapping this:crs ;
+    CFTerms:coordinates "time lat lon z" ;
+    CFTerms:grid_mapping "crs" ;
     CFTerms:missing_value -8888.0 ;
     CFTerms:references <http://www.numpy.org/> ;
     CFTerms:source "numpy.random.rand function." ;
@@ -124,7 +149,8 @@ this:sal a bald:Array ;
     NetCDF:scale_factor 1.0 ;
     NetCDF:units "0.001" ;
     NetCDF:valid_max 100.0 ;
-    NetCDF:valid_min 0.0 .
+    NetCDF:valid_min 0.0 ;
+    bald:shape ( 1 ) .
 
 this:temp a bald:Array ;
     this:coverage_content_type "physicalMeasurement" ;
@@ -133,14 +159,10 @@ this:temp a bald:Array ;
     this:instrument "instrument1" ;
     this:ncei_name "WATER TEMPERATURE" ;
     this:platform "platform1" ;
-    bald:shape ( 1 ) ;
     CFTerms:cell_methods "time: point longitude: point latitude: point" ;
     CFTerms:comment "These data are bogus!!!!!" ;
-    CFTerms:coordinates this:lat,
-        this:lon,
-        this:time,
-        this:z ;
-    CFTerms:grid_mapping this:crs ;
+    CFTerms:coordinates "time lat lon z" ;
+    CFTerms:grid_mapping "crs" ;
     CFTerms:missing_value -8888.0 ;
     CFTerms:references <http://www.numpy.org/> ;
     CFTerms:source "numpy.random.rand function." ;
@@ -151,49 +173,20 @@ this:temp a bald:Array ;
     NetCDF:scale_factor 1.0 ;
     NetCDF:units "degree_Celsius" ;
     NetCDF:valid_max 100.0 ;
-    NetCDF:valid_min 0.0 .
-
-this:crs a bald:Resource ;
-    this:epsg_code "EPSG:4326" ;
-    this:grid_mapping_name "latitude_longitude" ;
-    this:inverse_flattening 298.257223563 ;
-    this:longitude_of_prime_meridian 0.0 ;
-    this:semi_major_axis 6378137.0 .
-
-this:lat a bald:Array ;
-    bald:shape ( 1 ) ;
-    CFTerms:axis "Y" ;
-    CFTerms:comment "These data are bogus!!!!!" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
-    NetCDF:FillValue -9999.0 ;
-    NetCDF:long_name "Latitude" ;
-    NetCDF:units "degrees_north" ;
-    NetCDF:valid_max 90.0 ;
-    NetCDF:valid_min -90.0 .
-
-this:lon a bald:Array ;
-    bald:shape ( 1 ) ;
-    CFTerms:axis "X" ;
-    CFTerms:comment "These data are bogus!!!!!" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
-    NetCDF:FillValue -9999.0 ;
-    NetCDF:long_name "Longitude" ;
-    NetCDF:units "degrees_east" ;
-    NetCDF:valid_max 180.0 ;
-    NetCDF:valid_min -180.0 .
+    NetCDF:valid_min 0.0 ;
+    bald:shape ( 1 ) .
 
 this:time a bald:Array ;
-    bald:shape ( 1 ) ;
     CFTerms:axis "T" ;
     CFTerms:calendar "julian" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
     NetCDF:FillValue -9999.0 ;
     NetCDF:long_name "Time" ;
-    NetCDF:units "seconds since 1970-01-01 00:00:00 UTC" .
+    NetCDF:units "seconds since 1970-01-01 00:00:00 UTC" ;
+    bald:shape ( 1 ) .
 
 this:z a bald:Array ;
-    bald:shape ( 1 ) ;
     CFTerms:axis "Z" ;
     CFTerms:comment "These data are bogus!!!!!" ;
     CFTerms:positive "down" ;
@@ -202,5 +195,6 @@ this:z a bald:Array ;
     NetCDF:long_name "depth of sensor" ;
     NetCDF:units "m" ;
     NetCDF:valid_max 10971.0 ;
-    NetCDF:valid_min 0.0 .
+    NetCDF:valid_min 0.0 ;
+    bald:shape ( 1 ) .
 
