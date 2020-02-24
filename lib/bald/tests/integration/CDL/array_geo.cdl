@@ -4,7 +4,7 @@ dimensions:
 	pdim1 = 17 ;
 variables:
 	int prefix_list ;
-  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+  		prefix_list:bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
   		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
 		prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
 		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;

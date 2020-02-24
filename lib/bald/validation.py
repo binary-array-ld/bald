@@ -177,7 +177,15 @@ class ArrayValidation(ResourceValidation):
         parray = None
         if hasattr(self.array, 'bald__shape') and self.array.bald__shape:
             parray = np.zeros(self.array.bald__shape)
+        if type(self.array.array_references) == str:
+            msg = ('{} declares a target but the value is a string:\n'
+                   '{}\n not an list or set as expected.')
+            exceptions.append(msg)
+            # import pdb; pdb.set_trace()
+            # note secondary function exit
+            return exceptions
         for bald_array in self.array.array_references:
+
             broadcast_shape = None
             parraysubj = self.array.identity
             carray = None
@@ -191,10 +199,15 @@ class ArrayValidation(ResourceValidation):
 
                         if hasattr(bald_array, 'bald__childBroadcast'):
                             broadcast_shape = bald_array.bald__childBroadcast
+            # try:
+            #     carraysubj = bald_array.identity
+            # except Exception:
+            #     import pdb; pdb.set_trace()
+            #     carraysubj = bald_array.identity
             carraysubj = bald_array.identity
             if not valid_array_reference(parray, carray, broadcast_shape):
                 #import pdb; pdb.set_trace()
-                msg = ('{} declares a child of {} but the arrays '
+                msg = ('{} declares a target of {} but the arrays '
                        'do not conform to the bald array reference '
                        'rules')
                 msg = msg.format(parraysubj, carraysubj)

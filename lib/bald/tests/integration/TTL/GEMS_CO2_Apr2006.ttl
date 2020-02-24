@@ -1,6 +1,6 @@
 @prefix CFTerms: <http://def.scitools.org.uk/CFTerms/> .
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
-@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -8,21 +8,24 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<file://CDL/GEMS_CO2_Apr2006.cdl> a bald:Container ;
+this: a bald:Container ;
+    NetCDF:Conventions "CF-1.0" ;
     bald:contains this:co2,
         this:latitude,
         this:levelist,
         this:lnsp,
         this:longitude,
-        this:time ;
-    NetCDF:Conventions "CF-1.0" .
+        this:time .
 
 this:co2 a bald:Array ;
+    CFTerms:missing_value "-32767" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
+    NetCDF:FillValue "-32767" ;
+    NetCDF:add_offset 403.192219379918 ;
+    NetCDF:long_name "Carbon Dioxide" ;
+    NetCDF:scale_factor 0.000981685145029486 ;
+    NetCDF:units "kg kg**-1" ;
     bald:references [ a bald:Reference ;
-            bald:target this:latitude ;
-            bald:targetReshape ( 1 1 181 1 ) ;
-            bald:targetShape ( 181 ) ],
-        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 1 1 1 1 ) ;
             bald:targetShape ( 1 ) ],
@@ -33,22 +36,19 @@ this:co2 a bald:Array ;
         [ a bald:Reference ;
             bald:target this:levelist ;
             bald:targetReshape ( 1 60 1 1 ) ;
-            bald:targetShape ( 60 ) ] ;
-    bald:shape ( 1 60 181 360 ) ;
-    CFTerms:missing_value "-32767" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/mass_fraction_of_carbon_dioxide_in_air/> ;
-    NetCDF:FillValue "-32767" ;
-    NetCDF:add_offset 403.192219379918 ;
-    NetCDF:long_name "Carbon Dioxide" ;
-    NetCDF:scale_factor 0.000981685145029486 ;
-    NetCDF:units "kg kg**-1" .
-
-this:lnsp a bald:Array ;
-    bald:references [ a bald:Reference ;
-            bald:target this:levelist ;
-            bald:targetReshape ( 1 60 1 1 ) ;
             bald:targetShape ( 60 ) ],
         [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 181 1 ) ;
+            bald:targetShape ( 181 ) ] ;
+    bald:shape ( 1 60 181 360 ) .
+
+this:lnsp a bald:Array ;
+    CFTerms:missing_value "-32767" ;
+    NetCDF:FillValue "-32767" ;
+    NetCDF:add_offset 11.2087164280841 ;
+    NetCDF:long_name "Logarithm of surface pressure" ;
+    bald:references [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 181 1 ) ;
             bald:targetShape ( 181 ) ],
@@ -57,38 +57,38 @@ this:lnsp a bald:Array ;
             bald:targetReshape ( 1 1 1 1 ) ;
             bald:targetShape ( 1 ) ],
         [ a bald:Reference ;
+            bald:target this:levelist ;
+            bald:targetReshape ( 1 60 1 1 ) ;
+            bald:targetShape ( 60 ) ],
+        [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 1 360 ) ;
             bald:targetShape ( 360 ) ] ;
-    bald:shape ( 1 60 181 360 ) ;
-    CFTerms:missing_value "-32767" ;
-    NetCDF:FillValue "-32767" ;
-    NetCDF:add_offset 11.2087164280841 ;
-    NetCDF:long_name "Logarithm of surface pressure" .
+    bald:shape ( 1 60 181 360 ) .
 
 this:latitude a bald:Array ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degrees_north" ;
     bald:first_value 90.0 ;
     bald:last_value -90.0 ;
-    bald:shape ( 181 ) ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
-    NetCDF:units "degrees_north" .
+    bald:shape ( 181 ) .
 
 this:levelist a bald:Array ;
+    NetCDF:long_name "model_level_number" ;
     bald:first_value 1 ;
     bald:last_value 60 ;
-    bald:shape ( 60 ) ;
-    NetCDF:long_name "model_level_number" .
+    bald:shape ( 60 ) .
 
 this:longitude a bald:Array ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degrees_east" ;
     bald:first_value 0.0 ;
     bald:last_value 359.0 ;
-    bald:shape ( 360 ) ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
-    NetCDF:units "degrees_east" .
+    bald:shape ( 360 ) .
 
 this:time a bald:Array ;
-    bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
-    bald:shape ( 1 ) ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
-    NetCDF:units "hours since 1900-01-01 00:00:0.0" .
+    NetCDF:units "hours since 1900-01-01 00:00:0.0" ;
+    bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
+    bald:shape ( 1 ) .
 

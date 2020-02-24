@@ -8,7 +8,7 @@ import bald
 from bald.tests import BaldTestCase
 
 def _fattrs(f):
-    f.bald__ = 'http://binary-array-ld.net/latest/'
+    f.bald__ = 'https://www.opengis.net/def/binary-array-ld/'
     f.rdf__ = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
     f.rdf__type =  'bald__Container'
     return f
@@ -51,8 +51,8 @@ class Test(BaldTestCase):
                                               uris_resolve=True)
             exns = validation.exceptions()
 
-            expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
+            expected = ['https://www.opengis.net/def/binary-array-ld/turtle is not resolving as a resource (404).',
+                        'https://www.opengis.net/def/binary-array-ld/walnut is not resolving as a resource (404).']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 

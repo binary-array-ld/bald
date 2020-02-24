@@ -8,9 +8,8 @@ variables:
 		parent_variable:bald__references = "child_variable" ;
 	int child_variable(pdim0, pdim1) ;
 		child_variable:rdf__type = "bald__Reference" ;
-		child_variable:bald__array = "child_variable" ;
-	int prefix_list ;
-		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+ 	int prefix_list ;
+		prefix_list:bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
 		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
 
 // global attributes:

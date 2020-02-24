@@ -1,3 +1,4 @@
+import itertools
 import os
 import subprocess
 import unittest
@@ -17,13 +18,21 @@ class Test(BaldTestCase):
         self.maxDiff = None
 
     def check_result(self, result, expected):
+        lbb = ('\n#######inBothResults#######\n')
         lbr = ('\n#######inTestResult#######\n')
         lbe = ('\n#######inExpected#######\n')
+        lb = [lbb, lbr, lbe]
 
         self.assertTrue(rdflib.compare.isomorphic(result, expected),
-                        lbr + lbe.join([g.serialize(format='n3').decode("utf-8") for g in
+                        ''.join(list(itertools.chain(*zip(lb, [g.serialize(format='n3').decode("utf-8") for g in
                                         rdflib.compare.graph_diff(result,
-                                                                  expected)[1:]]))
+                                                                  # expected)[1:]]))
+                                                                  expected)])))))
+                                 
+                        # lbr + lbe.join([g.serialize(format='n3').decode("utf-8") for g in
+                        #                 rdflib.compare.graph_diff(result,
+                        #                                           # expected)[1:]]))
+                        #                                           expected)]))
 
         
     def test_array_reference(self):

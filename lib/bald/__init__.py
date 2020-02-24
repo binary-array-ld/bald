@@ -321,7 +321,7 @@ class Resource(object):
         if self.relative_id is None:
             result = None
         elif self.relative_id:
-            result = '/'.join([self.baseuri, self.relative_id])
+            result = self.baseuri + self.relative_id
         else:
             result = self.baseuri
         return result
@@ -599,8 +599,11 @@ class Resource(object):
 
         """
         graph = rdflib.Graph()
-        graph.bind('bald', 'http://def.binary-array-ld.net/development/')
-        graph.bind('this', self.baseuri + '/')
+        graph.bind('bald', 'https://www.opengis.net/def/binary-array-ld/')
+        # why is a trailing slash added here?
+        # should all identities of root groups include the trailing slash??
+        ## all include trailing slash
+        graph.bind('this', self.baseuri)# + '/')
         for prefix_name in self.prefixes():
             
             #strip the double underscore suffix
@@ -650,13 +653,13 @@ class Array(Resource):
                 alink = alink.format(var=self.identity, target=aref.identity)
                 links.append(alink)
 
-        if hasattr(self, 'bald__array'):
-            for aref in self.bald__array:
-                if isinstance(aref, str):
-                    raise TypeError('unexpected string: {}'.format(aref))
-                alink = "link({var}, {target}, 'bald__array', 'bottom');"
-                alink = alink.format(var=self.identity, target=aref.identity)
-                links.append(alink)
+        # if hasattr(self, 'bald__array'):
+        #     for aref in self.bald__array:
+        #         if isinstance(aref, str):
+        #             raise TypeError('unexpected string: {}'.format(aref))
+        #         alink = "link({var}, {target}, 'bald__array', 'bottom');"
+        #         alink = alink.format(var=self.identity, target=aref.identity)
+        #         links.append(alink)
 
 
         return instances, links
@@ -762,8 +765,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         cache = HttpCache()
 
     with load(afilepath) as fhandle:
+        # ensure that baseuri always temrinates in a '/'
         if baseuri is None:
-            baseuri = 'file://{}'.format(afilepath)
+            baseuri = 'file://{}/'.format(afilepath)
+        elif type(baseuri) == str and not baseuri.endswith('/'):
+            baseuri = '{}/'.format(baseuri)
         identity = baseuri
         prefix_var_name  = None
         if hasattr(fhandle, 'bald__isPrefixedBy'):
@@ -786,7 +792,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         # check that default set is handled, i.e. bald__ and rdf__
         if 'bald__' not in prefixes:
-            prefixes['bald__'] = "http://def.binary-array-ld.net/development/" 
+            prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 
 
         if 'rdf__' not in prefixes:
             prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -832,7 +838,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         #             uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
         #             aliasgraph.parse(uri)
         #             uri = 'http://vocab.nerc.ac.uk/standard_name/'
-        #             aliasgraph.parse(uri, format='xml')
+        #             aliasgraph.parse(uri, format='n3')
             # qstr = ('select ?alias ?uri where '
             #         '{?uri dct:identifier ?alias .}')
             # qres = aliasgraph.query(qstr)
@@ -852,10 +858,10 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 continue
 
             sattrs = fhandle.variables[name].__dict__.copy()
-            # inconsistent use of '/'; fix it
+
             identity = name
             if baseuri is not None:
-                identity = baseuri + "/" + name
+                identity = baseuri + name
 
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
@@ -944,11 +950,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         reference_prefixes = dict()
         reference_graph = copy.copy(aliasgraph)
 
-        response = cache['http://def.binary-array-ld.net/development']
-        reference_graph.parse(data=response.text, format='xml')
+        response = cache['https://www.opengis.net/def/binary-array-ld']
+        reference_graph.parse(data=response.text, format='n3')
 
-        # # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
-        # qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        # # reference_graph.parse('https://www.opengis.net/def/binary-array-ld')
+        # qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
         #         'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
         #         'select ?s '
         #         'where { '
@@ -959,7 +965,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         
         # refs_ = reference_graph.query(qstr)
 
-        qstr = ('prefix bald: <http://def.binary-array-ld.net/development/> '
+        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -969,7 +975,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 'filter(?rtype = owl:Class) '
                 '}')
         
-        qstr = ('prefix bald: <http://def.binary-array-ld.net/development/> '
+        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -982,7 +988,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         non_ref_prefs = [str(ref[0]) for ref in list(refs)]
 
-        qstr = ('prefix bald: <http://def.binary-array-ld.net/development/> '
+        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -1013,7 +1019,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                            baseuri, root_container,
                                            file_variables, prefixes,
                                            aliases, aliasgraph)
-
+            # import pdb; pdb.set_trace()
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
                           root_container.unpack_predicate(sattr) in ref_prefs):
