@@ -1,5 +1,8 @@
+from collections import OrderedDict
 import contextlib
 import copy
+from difflib import SequenceMatcher
+import operator
 import os
 import re
 import time
@@ -280,12 +283,12 @@ class HttpCache(object):
         return result
 
 
-class Subject(object):
-    _rdftype = 'bald__Subject'
+class Resource(object):
+    _rdftype = 'bald__Resource'
     def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
                  aliases=None, alias_graph=None):
         """
-        A subject of metadata statements.
+        A resource of metadata statements.
 
         attrs: an dictionary of key value pair attributes
         """
@@ -315,8 +318,10 @@ class Subject(object):
 
     @property
     def identity(self):
-        if self.relative_id:
-            result = '/'.join([self.baseuri, self.relative_id])
+        if self.relative_id is None:
+            result = None
+        elif self.relative_id:
+            result = self.baseuri + self.relative_id
         else:
             result = self.baseuri
         return result
@@ -391,7 +396,7 @@ class Subject(object):
             elif len(results) == 1:
                 result = str(results[0][0])
         if result == astring:
-            result = self.baseuri + '/' + result
+            result = self.baseuri + result
         return result
 
     def unpack_rdfobject(self, astring, predicate):
@@ -486,7 +491,7 @@ class Subject(object):
                     if is_http_uri(vuri):
                         vstr = self.link_template
                         vstr = vstr.format(url=vuri, key=val)
-                    elif isinstance(val, Subject):
+                    elif isinstance(val, Resource):
                         vstr = ''
                     else:
                         vstr = '{key}'.format(key=val)
@@ -514,7 +519,7 @@ class Subject(object):
 
     def viewgraph(self):
         """
-        Return html to render the Subject as a graph diagram, using the JointJS engine.
+        Return html to render the Resource as a graph diagram, using the JointJS engine.
 
         """
 
@@ -528,7 +533,16 @@ class Subject(object):
         return html
 
     def rdfnode(self, graph):
-        selfnode = rdflib.URIRef(self.identity)
+        """
+        Create an RDF Node,
+        add it to the supplied graph,
+        return the node.
+
+        """
+        if self.identity is None:
+            selfnode = rdflib.BNode()
+        else:
+            selfnode = rdflib.URIRef(self.identity)
         for attr in self.attrs:
             list_items = []
             objs = self.attrs[attr]
@@ -539,9 +553,13 @@ class Subject(object):
             if not (isinstance(objs, set) or isinstance(objs, list)):
                 objs = set([objs])
             for obj in objs:
+
                 rdfpred = self.unpack_predicate(attr)
-                if isinstance(obj, Subject):
-                    rdfobj = rdflib.URIRef(obj.identity)
+                if isinstance(obj, Resource):
+                    if obj.identity is None:
+                        rdfobj = obj.rdfnode(graph)
+                    else:
+                        rdfobj = rdflib.URIRef(obj.identity)
                 else:
                     rdfobj = self.unpack_rdfobject(obj, rdfpred)
                     if is_http_uri(rdfobj):
@@ -563,26 +581,29 @@ class Subject(object):
                         #graph.add((selfnode, rdfpred, rdfobj))
                 elif isinstance(objs, list):
                     list_items.append(rdfobj)
-                if isinstance(obj, Subject):
+                # recurse and build the related objects
+                if isinstance(obj, Resource) and obj.identity is not None:
                     obj_ref = rdflib.URIRef(obj.identity)
-                    if (obj_ref, None, None) not in graph:
-                        graph = obj.rdfnode(graph)
+                    if not ((obj_ref, None, None) in graph):
+                        node = obj.rdfnode(graph)
             if list_items:
                 list_name = rdflib.BNode()
                 col = rdflib.collection.Collection(graph, list_name, list_items)
-                
                 graph.add((selfnode, rdfpred, list_name))
 
-        return graph
+        return selfnode
 
     def rdfgraph(self):
         """
-        Return an rdflib.Graph representing the Subject.
+        Return an rdflib.Graph representing the Resource.
 
         """
         graph = rdflib.Graph()
-        graph.bind('bald', 'http://binary-array-ld.net/latest/')
-        graph.bind('this', self.baseuri + '/')
+        graph.bind('bald', 'https://www.opengis.net/def/binary-array-ld/')
+        # why is a trailing slash added here?
+        # should all identities of root groups include the trailing slash??
+        ## all include trailing slash
+        graph.bind('this', self.baseuri)# + '/')
         for prefix_name in self.prefixes():
             
             #strip the double underscore suffix
@@ -600,12 +621,16 @@ class Subject(object):
                 uri = uri + '/'
             graph.bind(alias_name, uri)
         
-        graph = self.rdfnode(graph)
+        self.rdfnode(graph)
         
         return graph
-        
 
-class Array(Subject):
+
+class Reference(Resource):
+    _rdftype = 'bald__Reference'
+
+
+class Array(Resource):
     _rdftype = 'bald__Array'
 
     @property
@@ -628,19 +653,19 @@ class Array(Subject):
                 alink = alink.format(var=self.identity, target=aref.identity)
                 links.append(alink)
 
-        if hasattr(self, 'bald__array'):
-            for aref in self.bald__array:
-                if isinstance(aref, str):
-                    raise TypeError('unexpected string: {}'.format(aref))
-                alink = "link({var}, {target}, 'bald__array', 'bottom');"
-                alink = alink.format(var=self.identity, target=aref.identity)
-                links.append(alink)
+        # if hasattr(self, 'bald__array'):
+        #     for aref in self.bald__array:
+        #         if isinstance(aref, str):
+        #             raise TypeError('unexpected string: {}'.format(aref))
+        #         alink = "link({var}, {target}, 'bald__array', 'bottom');"
+        #         alink = alink.format(var=self.identity, target=aref.identity)
+        #         links.append(alink)
 
 
         return instances, links
 
 
-class Container(Subject):
+class Container(Resource):
     _rdftype = 'bald__Container'
 
     def graph_elems(self):
@@ -665,6 +690,47 @@ class Container(Subject):
             links.append(alink)
 
         return instances, links
+
+
+def _merge_sequences(seq1,seq2):
+    sm=SequenceMatcher(a=seq1,b=seq2)
+    res = []
+    for (op, start1, end1, start2, end2) in sm.get_opcodes():
+        if op == 'equal' or op=='delete':
+            #This range appears in both sequences, or only in the first one.
+            res += seq1[start1:end1]
+        elif op == 'insert':
+            #This range appears in only the second sequence.
+            res += seq2[start2:end2]
+        elif op == 'replace':
+            #There are different ranges in each sequence - add both.
+            res += seq1[start1:end1]
+            res += seq2[start2:end2]
+    return res
+
+def netcdf_shared_dimensions(source_var, target_var):
+    result = OrderedDict((('sourceReshape', OrderedDict()),
+                          ('targetReshape', OrderedDict())))
+    source_dims = OrderedDict(zip(source_var.dimensions, source_var.shape))
+    target_dims = OrderedDict(zip(target_var.dimensions, target_var.shape))
+    initial = OrderedDict((('sourceReshape', source_dims),
+                           ('targetReshape', target_dims)))
+    combined_dims_unordered = OrderedDict(source_dims.items() | target_dims.items())
+    myorder = _merge_sequences(source_var.dimensions, target_var.dimensions)
+    ordered_dims = OrderedDict((k, combined_dims_unordered[k]) for k in myorder)
+    result = OrderedDict((('sourceReshape', OrderedDict((k, combined_dims_unordered[k]) for k in myorder)),
+                          ('targetReshape', OrderedDict((k, combined_dims_unordered[k]) for k in myorder))))
+    for k in result:
+        for rk in result[k]:
+            if rk not in initial[k]:
+                result[k][rk] = 1
+    # check overall nValues is consistent
+    # is this validation?
+    # or, can this only be a code bug, given nc dims???
+    for k in result:
+        if six.moves.reduce(operator.mul, [i[1] for i in result[k].items()], 1) != six.moves.reduce(operator.mul, [i[1] for i in initial[k].items()], 1):
+            raise ValueError('Reshape lists must have the same count for the multiplication of elements')
+    return result
 
 
 @contextlib.contextmanager
@@ -699,8 +765,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         cache = HttpCache()
 
     with load(afilepath) as fhandle:
+        # ensure that baseuri always temrinates in a '/'
         if baseuri is None:
-            baseuri = 'file://{}'.format(afilepath)
+            baseuri = 'file://{}/'.format(afilepath)
+        elif type(baseuri) == str and not baseuri.endswith('/'):
+            baseuri = '{}/'.format(baseuri)
         identity = baseuri
         prefix_var_name  = None
         if hasattr(fhandle, 'bald__isPrefixedBy'):
@@ -723,7 +792,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         # check that default set is handled, i.e. bald__ and rdf__
         if 'bald__' not in prefixes:
-            prefixes['bald__'] = "http://binary-array-ld.net/latest/" 
+            prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 
 
         if 'rdf__' not in prefixes:
             prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -769,7 +838,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         #             uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
         #             aliasgraph.parse(uri)
         #             uri = 'http://vocab.nerc.ac.uk/standard_name/'
-        #             aliasgraph.parse(uri, format='xml')
+        #             aliasgraph.parse(uri, format='n3')
             # qstr = ('select ?alias ?uri where '
             #         '{?uri dct:identifier ?alias .}')
             # qres = aliasgraph.query(qstr)
@@ -789,17 +858,15 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 continue
 
             sattrs = fhandle.variables[name].__dict__.copy()
-            # inconsistent use of '/'; fix it
+
             identity = name
             if baseuri is not None:
-                identity = baseuri + "/" + name
+                identity = baseuri + name
 
             # netCDF coordinate variable special case
             if (len(fhandle.variables[name].dimensions) == 1 and
                 fhandle.variables[name].dimensions[0] == name and
                 len(fhandle.variables[name]) > 0):
-                sattrs['bald__array'] = name
-                sattrs['rdf__type'] = 'bald__Reference'
 
                 if not isinstance(fhandle.variables[name][0], np.ma.core.MaskedConstant):
                     sattrs['bald__first_value'] = fhandle.variables[name][0]
@@ -831,12 +898,13 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                             dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
                                                   fhandle.variables[name].dtype.itemsize)
                             fv = netCDF4.default_fillvals.get(dtype)
+                            first = None
                             if fhandle.variables[name][0] == fv:
                                 first = np.ma.MaskedArray(fhandle.variables[name][0],
                                                           mask=True)
                             else:
                                 first = fhandle.variables[name][0]
-                            if first:
+                            if first is not None:
                                 try:
                                     first = int(first)
                                 except Exception:
@@ -844,8 +912,8 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                 edate_first = terra.datetime.EpochDateTimes(first,
                                                                             quantity,
                                                                             epoch=tog)
-
-                                sattrs['bald__first_value'] = edate_first
+                                if first is not np.ma.masked:
+                                    sattrs['bald__first_value'] = edate_first
                             if len(fhandle.variables[name]) > 1:
                                 if fhandle.variables[name][0] == fv:
                                     last = np.ma.MaskedArray(fhandle.variables[name][-1],
@@ -872,20 +940,21 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 var = Array(baseuri, name, sattrs, prefixes=prefixes,
                             aliases=aliases, alias_graph=aliasgraph)
             else:
-                var = Subject(baseuri, name, sattrs, prefixes=prefixes,
+                var = Resource(baseuri, name, sattrs, prefixes=prefixes,
                               aliases=aliases, alias_graph=aliasgraph)
             root_container.attrs['bald__contains'].add(var)
+
             file_variables[name] = var
                 
 
         reference_prefixes = dict()
         reference_graph = copy.copy(aliasgraph)
 
-        response = cache['http://binary-array-ld.net/latest']
-        reference_graph.parse(data=response.text, format='xml')
+        response = cache['https://www.opengis.net/def/binary-array-ld']
+        reference_graph.parse(data=response.text, format='n3')
 
-        # # reference_graph.parse('http://binary-array-ld.net/latest?_format=ttl')
-        # qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        # # reference_graph.parse('https://www.opengis.net/def/binary-array-ld')
+        # qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
         #         'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
         #         'select ?s '
         #         'where { '
@@ -896,7 +965,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
         
         # refs_ = reference_graph.query(qstr)
 
-        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -906,7 +975,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                 'filter(?rtype = owl:Class) '
                 '}')
         
-        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
@@ -919,15 +988,15 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
         non_ref_prefs = [str(ref[0]) for ref in list(refs)]
 
-        qstr = ('prefix bald: <http://binary-array-ld.net/latest/> '
+        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
                 'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
                 'prefix owl: <http://www.w3.org/2002/07/owl#> '
                 'select ?s '
                 'where { '
-                '   {?s rdfs:range bald:Subject .} '
+                '   {?s rdfs:range bald:Resource .} '
                 '  UNION '
                 '  {?s rdfs:range ?as . '
-                '  ?as rdfs:subClassOf bald:Subject .} '
+                '  ?as rdfs:subClassOf bald:Resource .} '
                 '}')
         
         refs = reference_graph.query(qstr)
@@ -941,11 +1010,16 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
 
             var = file_variables[name]
             sattrs = fhandle.variables[name].__dict__.copy()
-            # netCDF coordinate variable special case
-            if (len(fhandle.variables[name].dimensions) == 1 and
-                fhandle.variables[name].dimensions[0] == name):
-                sattrs['bald__array'] = name
 
+            # coordinate variables are bald__references too
+            if 'bald__Reference' not in var.rdf__type:
+                for dim in fhandle.variables[name].dimensions:
+                    if file_variables.get(dim) and name != dim:
+                        _make_ref_entities(var, fhandle, dim, name,
+                                           baseuri, root_container,
+                                           file_variables, prefixes,
+                                           aliases, aliasgraph)
+            # import pdb; pdb.set_trace()
             # for sattr in sattrs:
             for sattr in (sattr for sattr in sattrs if
                           root_container.unpack_predicate(sattr) in ref_prefs):
@@ -974,21 +1048,13 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                             var.attrs[sattr] = set([file_variables.get(pref)
                                                     for pref in potrefs_set])
                             for pref in potrefs_set:
-                                _make_ref_entities(var, fhandle,
-                                                   pref, name, baseuri,
-                                                   root_container,
-                                                   file_variables, prefixes,
-                                                   aliases, aliasgraph)
-
-
-            # coordinate variables are bald__references too
-            if 'bald__Reference' not in var.rdf__type:
-                for dim in fhandle.variables[name].dimensions:
-                    if file_variables.get(dim) and name != dim:
-                        _make_ref_entities(var, fhandle, dim, name,
-                                           baseuri, root_container,
-                                           file_variables, prefixes,
-                                           aliases, aliasgraph)
+                                # coordinate variables already handled
+                                if pref not in fhandle.variables[name].dimensions:
+                                    _make_ref_entities(var, fhandle,
+                                                       pref, name, baseuri,
+                                                       root_container,
+                                                       file_variables, prefixes,
+                                                       aliases, aliasgraph)
 
     return root_container
 
@@ -1002,25 +1068,27 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
         fhandle.variables[pref].shape):
         try:
             refset = var.attrs.get('bald__references', set())
-            cv_shape = fhandle.variables[pref].shape
-            var_shape = fhandle.variables[name].shape
-            identity = '{}_{}_ref'.format(name, pref)
+            if not isinstance(refset, set):
+                refset = set((refset,))
+            identity = None
             rattrs = {}
-            rattrs['rdf__type'] = 'bald__Reference'
-            reshape = [1 for adim in var_shape]
 
-            dims = fhandle.variables[pref].dimensions
-            for dim in dims:
-                cvi = fhandle.variables[name].dimensions.index(dim)
-                reshape[cvi] = int(fhandle.dimensions[dim].size)
-            rattrs['bald__childBroadcast'] = reshape
-            rattrs['bald__array'] = set((file_variables.get(pref),))
-            ref_node = Subject(baseuri, identity, rattrs,
+            reshapes = netcdf_shared_dimensions(fhandle.variables[name],
+                                                fhandle.variables[pref])
+
+            rattrs['bald__targetShape'] = list(fhandle.variables[pref].shape)
+            sourceReshape =  [i[1] for i in reshapes['sourceReshape'].items()]
+            if sourceReshape != list(fhandle.variables[name].shape):
+                rattrs['bald__sourceReshape'] = sourceReshape
+            targetReshape = [i[1] for i in reshapes['targetReshape'].items()]
+            if targetReshape != list(fhandle.variables[pref].shape):
+                rattrs['bald__targetReshape'] = targetReshape
+            rattrs['bald__target'] = set((file_variables.get(pref),))
+            ref_node = Reference(baseuri, identity, rattrs,
                                prefixes=prefixes,
                                aliases=aliases,
                                alias_graph=aliasgraph)
-            root_container.attrs['bald__contains'].add(ref_node)
-            file_variables[identity] = ref_node
+
             refset.add(ref_node)
             var.attrs['bald__references'] = refset
         except ValueError:
@@ -1059,21 +1127,21 @@ def validate(root_container, sval=None, cache=None, uris_resolve=False):
     if sval is None:
         sval = bv.StoredValidation()
 
-    root_val = bv.ContainerValidation(subject=root_container, httpcache=cache,
+    root_val = bv.ContainerValidation(resource=root_container, httpcache=cache,
                                       uris_resolve=uris_resolve)
     sval.stored_exceptions += root_val.exceptions()
-    for subject in root_container.attrs.get('bald__contains', set()):
-        if isinstance(subject, Array):
-            array_val = bv.ArrayValidation(subject, httpcache=cache,
+    for resource in root_container.attrs.get('bald__contains', set()):
+        if isinstance(resource, Array):
+            array_val = bv.ArrayValidation(resource, httpcache=cache,
                                            uris_resolve=uris_resolve)
             sval.stored_exceptions += array_val.exceptions()
-        elif isinstance(subject, Container):
-            sval = validate(subject, sval=sval, cache=cache,
+        elif isinstance(resource, Container):
+            sval = validate(resource, sval=sval, cache=cache,
                             uris_resolve=uris_resolve)
-        elif isinstance(subject, Subject):
-            subject_val = bv.SubjectValidation(subject, httpcache=cache,
+        elif isinstance(resource, Resource):
+            resource_val = bv.ResourceValidation(resource, httpcache=cache,
                                                uris_resolve=uris_resolve)
-            sval.stored_exceptions += subject_val.exceptions()
+            sval.stored_exceptions += resource_val.exceptions()
 
     return sval
 
@@ -1096,7 +1164,10 @@ def load_hdf5(afilepath, baseuri=None, alias_dict=None, cache=None):
         # unused?
         cache = {}
         if baseuri is None:
-            baseuri = 'file://{}'.format(afilepath)
+            baseuri = 'file://{}/'.format(afilepath)
+
+        elif type(baseuri) == str and not baseuri.endswith('/'):
+            baseuri = '{}/'.format(baseuri)
 
         root_container, file_variables = _hdf_group(fhandle, baseuri=baseuri,
                                                     alias_dict=alias_dict, cache=cache)

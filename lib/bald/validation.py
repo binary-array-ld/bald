@@ -61,9 +61,9 @@ class StoredValidation(Validation):
 # class ValidationSet(Validation):?
 
 
-class SubjectValidation(Validation):
-    def __init__(self, subject, httpcache=None, uris_resolve=False):
-        self.subject = subject
+class ResourceValidation(Validation):
+    def __init__(self, resource, httpcache=None, uris_resolve=False):
+        self.resource = resource
         if isinstance(httpcache, bald.HttpCache):
             self.cache = httpcache
         else:
@@ -95,26 +95,26 @@ class SubjectValidation(Validation):
             return exceptions
 
         #''' Skip checking prefixes as whole graphs could be big!
-        for pref, uri in self.subject.prefixes().items():
+        for pref, uri in self.resource.prefixes().items():
             exceptions = _check_uri(uri, exceptions)
         #'''
-        for alias, uri in self.subject.aliases.items():
+        for alias, uri in self.resource.aliases.items():
             exceptions = _check_uri(uri, exceptions)
-        for attr, value in self.subject.attrs.items():
+        for attr, value in self.resource.attrs.items():
             att = ''
             if isinstance(attr, six.string_types):
-                att = self.subject.unpack_predicate(attr)
+                att = self.resource.unpack_predicate(attr)
                 if self.cache.is_http_uri(att):
                     exceptions = _check_uri(att, exceptions)
             if isinstance(value, six.string_types):
-                val = self.subject.unpack_rdfobject(value, att)
+                val = self.resource.unpack_rdfobject(value, att)
                 if self.cache.is_http_uri(val):
                     exceptions = _check_uri(val, exceptions)
         return exceptions
 
     def check_attr_domain_range(self, exceptions):
-        for attr, value in self.subject.attrs.items():
-            uri = self.subject.unpack_predicate(attr)
+        for attr, value in self.resource.attrs.items():
+            uri = self.resource.unpack_predicate(attr)
             # if self.cache.is_http_uri(uri) and self.cache.check_uri(uri):
             #     # thus we have a payload
             #     # go rdf
@@ -145,8 +145,8 @@ class SubjectValidation(Validation):
                 # has an rdf:type which is the same as the one required by
                 # the object property constraint
                 # The value may be a URI or it may be a reference to another
-                # subject within the file.
-                # therefore subjects in the file have to be typed?!?
+                # resource within the file.
+                # therefore resources in the file have to be typed?!?
 
                 # import pdb; pdb.set_trace()
                 # if qres.domains != rdflib.term.URIRef(value):
@@ -155,13 +155,13 @@ class SubjectValidation(Validation):
         return exceptions
 
 
-class ContainerValidation(SubjectValidation):
+class ContainerValidation(ResourceValidation):
 
     def __init__(self, **kwargs):
         super(ContainerValidation, self).__init__(**kwargs)
 
 
-class ArrayValidation(SubjectValidation):
+class ArrayValidation(ResourceValidation):
     def __init__(self, array, httpcache=None, uris_resolve=False):
         self.array = array
         super(ArrayValidation, self).__init__(array, httpcache, uris_resolve)
@@ -177,7 +177,15 @@ class ArrayValidation(SubjectValidation):
         parray = None
         if hasattr(self.array, 'bald__shape') and self.array.bald__shape:
             parray = np.zeros(self.array.bald__shape)
+        if type(self.array.array_references) == str:
+            msg = ('{} declares a target but the value is a string:\n'
+                   '{}\n not an list or set as expected.')
+            exceptions.append(msg)
+            # import pdb; pdb.set_trace()
+            # note secondary function exit
+            return exceptions
         for bald_array in self.array.array_references:
+
             broadcast_shape = None
             parraysubj = self.array.identity
             carray = None
@@ -191,10 +199,15 @@ class ArrayValidation(SubjectValidation):
 
                         if hasattr(bald_array, 'bald__childBroadcast'):
                             broadcast_shape = bald_array.bald__childBroadcast
+            # try:
+            #     carraysubj = bald_array.identity
+            # except Exception:
+            #     import pdb; pdb.set_trace()
+            #     carraysubj = bald_array.identity
             carraysubj = bald_array.identity
             if not valid_array_reference(parray, carray, broadcast_shape):
                 #import pdb; pdb.set_trace()
-                msg = ('{} declares a child of {} but the arrays '
+                msg = ('{} declares a target of {} but the arrays '
                        'do not conform to the bald array reference '
                        'rules')
                 msg = msg.format(parraysubj, carraysubj)

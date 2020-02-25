@@ -4,7 +4,7 @@ dimensions:
 	pdim1 = 17 ;
 variables:
         int prefix_list ;
-  		prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+  		prefix_list:bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
 		prefix_list:metce__ = "http://codes.wmo.int/common/observation-type/METCE/2013/" ;
   		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
 		

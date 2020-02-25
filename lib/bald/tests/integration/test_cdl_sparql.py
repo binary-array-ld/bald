@@ -39,7 +39,7 @@ class Test(BaldTestCase):
         qres = self.graph.query(
                     """ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                        PREFIX bald:  <http://binary-array-ld.net/latest/>
+                        PREFIX bald:  <https://www.opengis.net/def/binary-array-ld/>
                         SELECT ?name  (COUNT(?name) as ?NELEMENTS)
                         WHERE {
                            ?contained a bald:Array .  
@@ -61,7 +61,7 @@ class Test(BaldTestCase):
                  """
                     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    PREFIX bald:  <http://binary-array-ld.net/latest/>
+                    PREFIX bald:  <https://www.opengis.net/def/binary-array-ld/>
                     PREFIX cf: <http://def.scitools.org.uk/CFTerms/>
                     SELECT ?container ?contained ?containerName ?containedlabel 
                     WHERE { 
@@ -87,7 +87,7 @@ class Test(BaldTestCase):
                  """
                     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    PREFIX bald:  <http://binary-array-ld.net/latest/>
+                    PREFIX bald:  <https://www.opengis.net/def/binary-array-ld/>
                     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
                     SELECT ?contained ?geoWKT 
                     WHERE 

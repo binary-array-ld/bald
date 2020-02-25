@@ -25,7 +25,6 @@ variables:
 		co2:long_name = "Carbon Dioxide" ;
 		co2:standard_name = "mass_fraction_of_carbon_dioxide_in_air" ;
 	short lnsp(time, levelist, latitude, longitude) ;
-		lnsp:scale_factor = 1.03952457840347e-05 ;
 		lnsp:add_offset = 11.2087164280841 ;
 		lnsp:_FillValue = -32767s ;
 		lnsp:missing_value = -32767s ;

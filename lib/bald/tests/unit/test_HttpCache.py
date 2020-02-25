@@ -11,11 +11,11 @@ class TestHttpCache(unittest.TestCase):
         self.cache = bald.HttpCache()
 
     def test_check_uri_200(self):
-        auri = 'http://binary-array-ld.net/experimental'
+        auri = 'https://www.opengis.net/def/binary-array-ld'
         self.assertTrue(self.cache.check_uri(auri))
 
     def test_check_uri_404(self):
-        notauri = 'http://binary-array-ld.net/experimentalish'
+        notauri = 'https://www.opengis.net/def/not-binary-array-ld'
         self.assertFalse(self.cache.check_uri(notauri))
 
 

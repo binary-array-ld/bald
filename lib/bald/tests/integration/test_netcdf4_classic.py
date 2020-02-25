@@ -8,7 +8,7 @@ import bald
 from bald.tests import BaldTestCase
 
 def _fattrs(f):
-    f.bald__ = 'http://binary-array-ld.net/latest/'
+    f.bald__ = 'https://www.opengis.net/def/binary-array-ld/'
     f.rdf__ = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
     f.rdf__type =  'bald__Container'
     return f
@@ -18,13 +18,12 @@ def _create_parent_child(f, pshape, cshape):
         f.createDimension("pdim{}".format(str(i)), pdimsize)
     for i, cdimsize in enumerate(cshape):
         f.createDimension("cdim{}".format(str(i)), cdimsize)
-    varp = f.createVariable("parent_variable", 'i4', tuple(["pdim{}".format(str(i)) for i, _ in enumerate(pshape)]))
-    varc = f.createVariable("child_variable", 'i4', tuple(["cdim{}".format(str(i)) for i, _ in enumerate(cshape)]))
+    varp = f.createVariable("source_variable", 'i4', tuple(["pdim{}".format(str(i)) for i, _ in enumerate(pshape)]))
+    varc = f.createVariable("target_variable", 'i4', tuple(["cdim{}".format(str(i)) for i, _ in enumerate(cshape)]))
     varp.rdf__type = 'bald__Array'
-    varp.bald__references = "child_variable"
+    varp.bald__references = "target_variable"
     varc.rdf__type = 'bald__Array'
     varc.rdf__type = 'bald__Reference'
-    varc.bald__array = "child_variable"
     return f
 
 
@@ -51,8 +50,8 @@ class Test(BaldTestCase):
                                               uris_resolve=True)
             exns = validation.exceptions()
 
-            expected = ['http://binary-array-ld.net/latest/turtle is not resolving as a resource (404).',
-                        'http://binary-array-ld.net/latest/walnut is not resolving as a resource (404).']
+            expected = ['https://www.opengis.net/def/binary-array-ld/turtle is not resolving as a resource (404).',
+                        'https://www.opengis.net/def/binary-array-ld/walnut is not resolving as a resource (404).']
             self.assertTrue((not validation.is_valid()) and exns == expected,
                              msg='{}  != {}'.format(exns, expected))
 
@@ -76,8 +75,8 @@ class TestArrayReference(BaldTestCase):
             f.close()
             validation = bald.validate_netcdf(tfile, cache=self.acache)
             exns = validation.exceptions()
-            expected = [('file://{t}/parent_variable declares a child of '
-                         'file://{t}/child_variable but the arrays do not '
+            expected = [('file://{t}/source_variable declares a target of '
+                         'file://{t}/target_variable but the arrays do not '
                          'conform to the bald array reference rules'
                          '').format(t=tfile)]
             self.assertTrue((not validation.is_valid()) and exns == expected,

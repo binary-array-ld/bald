@@ -1,4 +1,4 @@
-@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix metce: <http://codes.wmo.int/common/observation-type/METCE/2013/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -6,92 +6,46 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<file://CDL/multi_array_reference.cdl> a bald:Container ;
+this: a bald:Container ;
     bald:contains this:data_variable1,
-        this:data_variable1_pdim0_ref,
-        this:data_variable1_pdim1_ref,
         this:data_variable2,
-        this:data_variable2_pdim0_ref,
-        this:data_variable2_pdim1_ref,
         this:list_collection,
         this:location_reference_system,
         this:location_variable,
-        this:location_variable_pdim0_ref,
-        this:location_variable_pdim1_ref,
         this:pdim0,
         this:pdim1,
         this:set_collection ;
     bald:isPrefixedBy "prefix_list" .
 
-this:list_collection a bald:Subject ;
+this:list_collection a bald:Resource ;
     bald:references ( this:data_variable1 this:data_variable2 ) .
 
-this:set_collection a bald:Subject ;
+this:pdim0 a bald:Array ;
+    bald:shape ( 11 ) .
+
+this:pdim1 a bald:Array ;
+    bald:shape ( 17 ) .
+
+this:set_collection a bald:Resource ;
     bald:references this:data_variable1,
         this:data_variable2 .
 
-this:data_variable1_pdim0_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim0 ;
-    bald:childBroadcast ( 11 1 ) .
-
-this:data_variable1_pdim1_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim1 ;
-    bald:childBroadcast ( 1 17 ) .
-
-this:data_variable2_pdim0_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim0 ;
-    bald:childBroadcast ( 11 1 ) .
-
-this:data_variable2_pdim1_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim1 ;
-    bald:childBroadcast ( 1 17 ) .
-
-this:location_reference_system a bald:Subject ;
+this:location_reference_system a bald:Resource ;
     this:pcode "4897" .
-
-this:location_variable_pdim0_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim0 ;
-    bald:childBroadcast ( 11 1 ) .
-
-this:location_variable_pdim1_ref a bald:Reference,
-        bald:Subject ;
-    bald:array this:pdim1 ;
-    bald:childBroadcast ( 1 17 ) .
 
 this:data_variable1 a bald:Array ;
     this:long_name "Gerald" ;
     this:obtype metce:SamplingObservation ;
-    bald:references this:data_variable1_pdim0_ref,
-        this:data_variable1_pdim1_ref,
-        this:location_variable ;
+    bald:references this:location_variable ;
     bald:shape ( 11 17 ) .
 
 this:data_variable2 a bald:Array ;
     this:long_name "Imelda" ;
     this:obtype metce:SamplingObservation ;
-    bald:references this:data_variable2_pdim0_ref,
-        this:data_variable2_pdim1_ref,
-        this:location_variable ;
+    bald:references this:location_variable ;
     bald:shape ( 11 17 ) .
 
 this:location_variable a bald:Array ;
-    bald:references this:location_reference_system,
-        this:location_variable_pdim0_ref,
-        this:location_variable_pdim1_ref ;
+    bald:references this:location_reference_system ;
     bald:shape ( 11 17 ) .
-
-this:pdim0 a bald:Array,
-        bald:Reference ;
-    bald:array this:pdim0 ;
-    bald:shape ( 11 ) .
-
-this:pdim1 a bald:Array,
-        bald:Reference ;
-    bald:array this:pdim1 ;
-    bald:shape ( 17 ) .
 

@@ -1,11 +1,11 @@
-@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <http://example.org/base/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://example.org/base> a bald:Container ;
+this: a bald:Container ;
     bald:contains this:child_variable,
         this:parent_variable ;
     bald:isPrefixedBy "prefix_list" .
@@ -16,6 +16,5 @@ this:parent_variable a bald:Array ;
 
 this:child_variable a bald:Array,
         bald:Reference ;
-    bald:array this:child_variable ;
     bald:shape ( 11 17 ) .
 

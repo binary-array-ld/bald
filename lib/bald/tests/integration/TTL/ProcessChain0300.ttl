@@ -2,7 +2,8 @@
 @prefix DA: <https://codes.nws.noaa.gov/DataAssimilation> .
 @prefix NWP: <https://codes.nws.noaa.gov/NumericalWeatherPrediction> .
 @prefix StatPP: <https://codes.nws.noaa.gov/StatisticalPostProcessing> .
-@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
+@prefix bald1: <https://www.opengis.net/def/binary-array-ld/x> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -10,21 +11,21 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<file://CDL/ProcessChain0300.cdl> a bald:Container ;
+this: a bald:Container ;
     this:process_chain "gfsmos_process_chain" ;
     bald:contains this:gfsmos_process_chain,
         this:step1,
         this:step2 ;
     bald:isPrefixedBy "prefix_list" .
 
-this:gfsmos_process_chain a bald:Subject ;
+this:gfsmos_process_chain a bald:Resource ;
     this:OM_Process "(step1 step2)" .
 
-this:step1 a bald:Subject ;
+this:step1 a bald:Resource ;
     this:LE_ProcessStep <https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13> ;
     this:LE_Source <https://codes.nws.noaa.gov/DataAssimilation/Methods/GDAS13> .
 
-this:step2 a bald:Subject ;
+this:step2 a bald:Resource ;
     this:LE_ProcessStep <https://codes.nws.noaa.gov/StatisticalPostProcessing/Methods/GFSMOS05> ;
     this:LE_Source <https://codes.nws.noaa.gov/NumericalWeatherPrediction/Models/GFS13> .
 
