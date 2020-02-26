@@ -21,7 +21,7 @@ For netCDF files, no variable to variable reference definitions are provided by 
 
 For a variable to variable reference to be interpreted, an externally provided alias or predicate graph must explicitly state that a particular attribute has an rdfs:range of http://binary-array-ld.net/latest/Subject or a subclass of that class.
 
-netCDF parsing is working to support the emerging draft Open Geospaatial Consortium approach to netCDF-Linked-Data: https://github.com/opengeospatial/netCDF-Classic-LD/
+netCDF parsing is working to support the emerging draft Open Geospaatial Consortium approach to netCDF-Linked-Data: https://github.com/opengeospatial/netCDF-LD/
 
 ### HDF
 
