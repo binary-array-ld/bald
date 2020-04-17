@@ -85,22 +85,35 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
           schema_g.add( (container, predUri, lit) )
     return schema_g
 
-def nc2schemaorg(ncfilename, outformat, baseuri=None):
+def nc2schemaorg(ncfilename, outformat, outputfile=None, baseuri=None):
     root_container = bald.load_netcdf(ncfilename, baseuri=baseuri)
     graph = root_container.rdfgraph()
     schema_g = baldgraph2schemaorg(graph, path=ncfilename, baseuri=baseuri)
-    
-    if(outformat == 'json-ld'):
+    destination = None
+    if outputfile is not None:
+       destination = outputfile
+    if(outformat == 'json-ld') and destination is not None:
        context = "http://schema.org/"
-       s = schema_g.serialize(format=outformat, context=context, indent=4).decode("utf-8")
+       #s = schema_g.serialize(destination=destination, format=outformat, context=context, indent=4).decode("utf-8")
+       s = schema_g.serialize(destination=destination, format=outformat, context=context, indent=4)
+    elif outformat == 'json-ld' and destination is None:
+       context = "http://schema.org/"
+       s = schema_g.serialize(destination=destination, format=outformat, context=context, indent=4).decode("utf-8")
+       print(s)
     else:
-       s = schema_g.serialize(format=outformat).decode("utf-8")
-    print(s)
+       #s = schema_g.serialize(destination=destination, format=outformat).decode("utf-8")
+       s = schema_g.serialize(destination=destination, format=outformat)
 
-def nc2rdf(ncfilename, outformat, baseuri=None):  
+def nc2rdf(ncfilename, outformat, outputfile=None, baseuri=None):  
     root_container = bald.load_netcdf(ncfilename, baseuri=baseuri)
-    ttl = root_container.rdfgraph().serialize(format=outformat).decode("utf-8")
-    print(ttl)
+    if(outputfile is None):
+       #ttl = root_container.rdfgraph().serialize(format=outformat).decode("utf-8")
+       ttl = root_container.rdfgraph().serialize(format=outformat)
+       print(ttl)
+    else:
+       #ttl = root_container.rdfgraph().serialize(destination=outputfile, format=outformat).decode("utf-8")
+       ttl = root_container.rdfgraph().serialize(destination=outputfile, format=outformat)
+
 
 def cdl2schemaorg(cdl_file, outformat, baseuri=None): 
     tfile, tfilename = tempfile.mkstemp('.nc')

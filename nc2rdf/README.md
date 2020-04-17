@@ -47,3 +47,16 @@ $ python nc2rdf.py -o json-ld --schema-org ../lib/bald/tests/integration/CDL/tra
 
 
 Note: This command-line tool is experimental and is subject to changes, however serves as a prototype for accessing bald functions for netCDF related files to RDF.
+
+
+# thredds2rdf
+
+This tool allows users to input a THREDDS endpoint or THREDDS catalog.xml and get a set of RDF graphs returned for every nc file found.
+
+Example:
+```
+$ python thredds2rdf.py http://example.org/thredds
+$ python thredds2rdf.py http://example.org/thredds/catalog.xml
+```
+
+Output will be emitted to the `rdf` directory
