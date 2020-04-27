@@ -2,6 +2,8 @@
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <file://CDL/votemper.cdl/> .
@@ -10,6 +12,11 @@
 
 this: a bald:Container ;
     NetCDF:Conventions "CF-1.5" ;
+    dct:format [ a dct:MediaType ;
+            dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/> ] ;
+    dcat:distribution [ a dcat:Distribution ;
+            dcat:mediaType [ a dcat:MediaType ;
+                    dct:identifier "application/x-netcdf" ] ] ;
     bald:contains this:deptht,
         this:deptht_bnds,
         this:nav_lat,
@@ -59,12 +66,12 @@ this:votemper a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 4 1 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 4 1 1 ) ;
             bald:targetShape ( 4 ) ] ;
     bald:shape ( 4 4 148 180 ) .
 
@@ -75,16 +82,16 @@ this:votemper_pdf a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:percentiles ;
             bald:targetReshape ( 19 1 1 1 1 ) ;
             bald:targetShape ( 19 ) ],
         [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 1 4 1 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 1 4 1 1 ) ;
             bald:targetShape ( 4 ) ] ;
     bald:shape ( 19 4 4 148 180 ) .
 

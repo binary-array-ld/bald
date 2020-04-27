@@ -2,6 +2,8 @@
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <file://CDL/ereefs_gbr4_ncld.cdl/> .
@@ -17,6 +19,11 @@ this: a bald:Container ;
     this:shoc_version "v1.1 rev(5249)" ;
     NetCDF:Conventions "CF-1.0" ;
     NetCDF:title "GBR4 Hydro" ;
+    dct:format [ a dct:MediaType ;
+            dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/> ] ;
+    dcat:distribution [ a dcat:Distribution ;
+            dcat:mediaType [ a dcat:MediaType ;
+                    dct:identifier "application/x-netcdf" ] ] ;
     bald:contains this:botz,
         this:eta,
         this:latitude,
