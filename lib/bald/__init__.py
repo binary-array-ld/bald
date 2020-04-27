@@ -17,12 +17,15 @@ import rdflib.collection
 import requests
 import six
 
-try:
-    import terra.datetime
-    terra_imp = True
-except ImportError:
-    terra_imp = False
+# try:
+#     #import terra.datetime
+#     from terra import datetime
+#     terra_imp = True
+# except ImportError:
+#     terra_imp = False
 
+from bald import datetime
+terra_imp = True
 import bald.validation as bv
 
 __version__ = '0.3'
@@ -565,7 +568,7 @@ class Resource(object):
                     if is_http_uri(rdfobj):
 
                         rdfobj = rdflib.URIRef(rdfobj)
-                    elif terra_imp and isinstance(rdfobj, terra.datetime.EpochDateTimes):
+                    elif terra_imp and isinstance(rdfobj, datetime.EpochDateTimes):
                         rdfobj = rdflib.Literal(str(rdfobj), datatype=rdflib.XSD.dateTime)
                     elif isinstance(rdfobj, float):
                         rdfobj = rdflib.Literal(rdfobj, datatype=rdflib.XSD.decimal)
@@ -891,8 +894,8 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                     if amatch:
                         quantity = amatch.group(1)
                         origin = amatch.group(2)
-                        ig = terra.datetime.ISOGregorian()
-                        tog = terra.datetime.parse_datetime(origin,
+                        ig = datetime.ISOGregorian()
+                        tog = datetime.parse_datetime(origin,
                                                             calendar=ig)
                         if tog is not None:
                             dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
@@ -909,9 +912,9 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                     first = int(first)
                                 except Exception:
                                     pass
-                                edate_first = terra.datetime.EpochDateTimes(first,
-                                                                            quantity,
-                                                                            epoch=tog)
+                                edate_first = datetime.EpochDateTimes(first,
+                                                                      quantity,
+                                                                      epoch=tog)
                                 if first is not np.ma.masked:
                                     sattrs['bald__first_value'] = edate_first
                             if len(fhandle.variables[name]) > 1:
@@ -925,9 +928,9 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                                         last = round(last)
                                     except Exception:
                                         pass
-                                    edate_last = terra.datetime.EpochDateTimes(last,
-                                                                               quantity,
-                                                                               epoch=tog)
+                                    edate_last = datetime.EpochDateTimes(last,
+                                                                         quantity,
+                                                                         epoch=tog)
 
                                     sattrs['bald__last_value'] = edate_last
 
