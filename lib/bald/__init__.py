@@ -804,6 +804,26 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             #         if k.endswith('__'):
             #             prefixes[k] = getattr(fhandle, k)
 
+        prefix_graph = rdflib.Graph()
+        for prefix_url in prefix_urls:
+            res = cache[prefix_url]
+            try:
+                prefix_graph.parse(data=res.text, format='xml')
+            except Exception:
+                print('Failed to parse: {} for prefixes.'.format(prefix_url))
+
+        qres = prefix_graph.query("select ?prefix ?uri where \n"
+                                  "{\n"
+                                  "?s <http://purl.org/vocab/vann/preferredNamespacePrefix> ?prefix ;\n"
+                                  "<http://purl.org/vocab/vann/preferredNamespaceUri> ?uri . \n"
+                                  "}")
+        for res in qres:
+            key, value = (str(res[0]), str(res[1]))
+            if key in prefixes and value !=prefixes[key]:
+                prefixes.pop(key)
+            else:
+                prefixes[key] = value
+
         # check that default set is handled, i.e. bald__ and rdf__
         if 'bald__' not in prefixes:
             prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 

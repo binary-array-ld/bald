@@ -1,0 +1,16 @@
+netcdf tmpMwXy8U {
+dimensions:
+	pdim0 = 11 ;
+	pdim1 = 17 ;
+variables:
+	int parent_variable(pdim0, pdim1) ;
+		parent_variable:rdf__type = "bald__Array" ;
+		parent_variable:bald__references = "child_variable" ;
+	int child_variable(pdim0, pdim1) ;
+		child_variable:rdf__type = "bald__Reference" ;
+
+// global attributes:
+		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
+		:rdf__type = "bald__Container" ;
+		:bald__isPrefixedBy = "http://def.binary-array-ld.net/prefixes" ;
+}
