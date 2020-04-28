@@ -86,12 +86,12 @@ this:votemper_pdf a bald:Array ;
             bald:targetReshape ( 19 1 1 1 1 ) ;
             bald:targetShape ( 19 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:deptht ;
             bald:targetReshape ( 1 1 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 4 1 1 1 ) ;
             bald:targetShape ( 4 ) ] ;
     bald:shape ( 19 4 4 148 180 ) .
 

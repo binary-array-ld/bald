@@ -610,7 +610,7 @@ class Resource(object):
                     elif terra_imp and isinstance(rdfobj, datetime.EpochDateTimes):
                         rdfobj = rdflib.Literal(str(rdfobj), datatype=rdflib.XSD.dateTime)
                     elif isinstance(rdfobj, float):
-                        rdfobj = rdflib.Literal(rdfobj, datatype=rdflib.XSD.decimal)
+                        rdfobj = rdflib.Literal(float(rdfobj), datatype=rdflib.XSD.decimal)
                     else:
                         rdfobj = rdflib.Literal(rdfobj)
                 rdfpred = rdflib.URIRef(rdfpred)
