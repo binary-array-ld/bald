@@ -18,15 +18,7 @@ import rdflib.namespace
 import requests
 import six
 
-# try:
-#     #import terra.datetime
-#     from terra import datetime
-#     terra_imp = True
-# except ImportError:
-#     terra_imp = False
-
 from bald import datetime
-terra_imp = True
 import bald.validation as bv
 
 __version__ = '0.3'
@@ -607,7 +599,7 @@ class Resource(object):
                     if is_http_uri(rdfobj):
 
                         rdfobj = rdflib.URIRef(rdfobj)
-                    elif terra_imp and isinstance(rdfobj, datetime.EpochDateTimes):
+                    elif isinstance(rdfobj, datetime.EpochDateTimes):
                         rdfobj = rdflib.Literal(str(rdfobj), datatype=rdflib.XSD.dateTime)
                     elif isinstance(rdfobj, float):
                         rdfobj = rdflib.Literal(float(rdfobj), datatype=rdflib.XSD.decimal)
@@ -930,7 +922,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
                             sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
 
                 # datetime special case
-                if 'units' in fhandle.variables[name].ncattrs() and terra_imp:
+                if 'units' in fhandle.variables[name].ncattrs():
                     ustr = fhandle.variables[name].getncattr('units')
                     pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
 
