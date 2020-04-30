@@ -272,7 +272,7 @@ class HttpCache(object):
                 try:
                     # print('retrying: {}'.format(item))
                     headers = {'Accept': 'text/html'}
-                    self.cache[item] = requests.get(item, headers=headers, timeout=11)
+                    self.cache[item] = requests.get(item, headers=headers, timeout=64)
                 except Exception:
                     pass
 
