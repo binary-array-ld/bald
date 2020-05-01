@@ -14,11 +14,16 @@ variables:
 	        pressure:nc__long_name = "Air pressure at UCAR Centre Green" ;
 	        pressure:rdfs__label = "Air pressure at UCAR Centre Green" ;
 		pressure:geo__asWKT = "POINT(-105.24584700000003 40.0315278)" ;
+// global attributes:
+		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
+		:rdf__type = "bald__Container" ;
+		:bald__isPrefixedBy = "prefix_list" ;
+data:
+
 // prefix group
 group: prefix_list {
     :bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
     :rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
-
     :bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
     :rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
     :rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
@@ -27,10 +32,5 @@ group: prefix_list {
     :geo__ = "http://www.opengis.net/ont/geosparql#" ;
     :nc__ = "http://def.scitools.org.uk/NetCDF/" ;
 }
-// global attributes:
-		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
-		:rdf__type = "bald__Container" ;
-		:bald__isPrefixedBy = "prefix_list" ;
-data:
 
 }
