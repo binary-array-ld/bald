@@ -14,18 +14,11 @@ import numpy as np
 import pyparsing
 import rdflib
 import rdflib.collection
+import rdflib.namespace
 import requests
 import six
 
-# try:
-#     #import terra.datetime
-#     from terra import datetime
-#     terra_imp = True
-# except ImportError:
-#     terra_imp = False
-
 from bald import datetime
-terra_imp = True
 import bald.validation as bv
 
 __version__ = '0.3'
@@ -288,14 +281,19 @@ class HttpCache(object):
 
 class Resource(object):
     _rdftype = 'bald__Resource'
+    # def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
+    #              aliases=None, alias_graph=None):
     def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
-                 aliases=None, alias_graph=None):
+                 aliases=None, alias_graph=None, file_resource=False, file_locator=None):
+
         """
         A resource of metadata statements.
 
         attrs: an dictionary of key value pair attributes
         """
         self.baseuri = baseuri
+        self.file_locator = file_locator
+        self.is_file = file_resource
         self.relative_id = relative_id
 
         if attrs is None:
@@ -339,7 +337,8 @@ class Resource(object):
     def __setattr__(self, attr, value):
         reserved_attrs = ['baseuri', 'relative_id', 'prefixes', '_prefixes',
                           '_prefix_suffix', '_http_uri_prefix', '_http_uri',
-                          'aliases', 'alias_graph', 'attrs', '_rdftype']
+                          'aliases', 'alias_graph', 'attrs', '_rdftype', 'file_locator',
+                          'is_file']
         if attr in reserved_attrs:
             object.__setattr__(self, attr, value)
         else:
@@ -535,6 +534,38 @@ class Resource(object):
 
         return html
 
+    def _dcat_location(self, graph, selfnode):
+        graph.bind('dcat', 'http://www.w3.org/ns/dcat#')
+        graph.bind('dct', 'http://purl.org/dc/terms/')
+        # template = ('dcat:distribution [
+	# 	a dcat:Distribution;
+	# 	dcat:downloadURL <{}>;
+	# 	dcat:mediaType [
+	# 		a dct:MediaType;
+	# 		dct:identifier "application/x-netcdf"
+	# 	];
+	# 	dct:format [
+	# 		a dct:MediaType;
+	# 		dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/>
+	# 	]
+	#                 ].')
+        dcatnode = rdflib.BNode()
+        dcfnode = rdflib.BNode()
+        graph.add((selfnode, rdflib.URIRef('http://www.w3.org/ns/dcat#distribution'), dcatnode))
+        graph.add((dcatnode, rdflib.namespace.RDF.type, rdflib.URIRef('http://www.w3.org/ns/dcat#Distribution')))
+        if self.file_locator is not None:
+            graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#downloadURL'),  rdflib.URIRef(self.file_locator)))
+        dcatmednode = rdflib.BNode()
+        graph.add((dcatmednode, rdflib.namespace.RDF.type, rdflib.URIRef('http://www.w3.org/ns/dcat#MediaType')))
+        graph.add((dcatmednode, rdflib.URIRef('http://purl.org/dc/terms/identifier'), rdflib.Literal('application/x-netcdf')))
+        graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#mediaType'), dcatmednode))
+
+        graph.add((dcfnode, rdflib.namespace.RDF.type, rdflib.URIRef('http://purl.org/dc/terms/MediaType')))
+        graph.add((dcfnode, rdflib.URIRef('http://purl.org/dc/terms/identifier'),
+                   rdflib.URIRef('http://vocab.nerc.ac.uk/collection/M01/current/NC/')))
+        graph.add((selfnode, rdflib.URIRef('http://purl.org/dc/terms/format'), dcfnode))
+
+
     def rdfnode(self, graph):
         """
         Create an RDF Node,
@@ -568,10 +599,10 @@ class Resource(object):
                     if is_http_uri(rdfobj):
 
                         rdfobj = rdflib.URIRef(rdfobj)
-                    elif terra_imp and isinstance(rdfobj, datetime.EpochDateTimes):
+                    elif isinstance(rdfobj, datetime.EpochDateTimes):
                         rdfobj = rdflib.Literal(str(rdfobj), datatype=rdflib.XSD.dateTime)
                     elif isinstance(rdfobj, float):
-                        rdfobj = rdflib.Literal(rdfobj, datatype=rdflib.XSD.decimal)
+                        rdfobj = rdflib.Literal(float(rdfobj), datatype=rdflib.XSD.decimal)
                     else:
                         rdfobj = rdflib.Literal(rdfobj)
                 rdfpred = rdflib.URIRef(rdfpred)
@@ -593,6 +624,9 @@ class Resource(object):
                 list_name = rdflib.BNode()
                 col = rdflib.collection.Collection(graph, list_name, list_items)
                 graph.add((selfnode, rdfpred, list_name))
+
+        if self.is_file:
+            self._dcat_location(graph, selfnode)
 
         return selfnode
 
@@ -757,7 +791,7 @@ def load(afilepath):
         except NameError:
             pass
 
-def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
+def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locator=None):
     """
     Load a file with respect to binary-array-linked-data.
     Returns a :class:`bald.Collection`
@@ -773,6 +807,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             baseuri = 'file://{}/'.format(afilepath)
         elif type(baseuri) == str and not baseuri.endswith('/'):
             baseuri = '{}/'.format(baseuri)
+
         identity = baseuri
         prefix_var_name  = None
         if hasattr(fhandle, 'bald__isPrefixedBy'):
@@ -852,7 +887,8 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
             #     raise ValueError('duplicate aliases')
             # aliases = careful_update(aliases, dict(new_aliases))
         root_container = Container(baseuri, '', attrs, prefixes=prefixes,
-                                   aliases=aliases, alias_graph=aliasgraph)
+                                   aliases=aliases, alias_graph=aliasgraph,
+                                   file_resource=True, file_locator=file_locator)
 
         root_container.attrs['bald__contains'] = set()
         file_variables = {}
@@ -886,7 +922,7 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None):
                             sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
 
                 # datetime special case
-                if 'units' in fhandle.variables[name].ncattrs() and terra_imp:
+                if 'units' in fhandle.variables[name].ncattrs():
                     ustr = fhandle.variables[name].getncattr('units')
                     pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
 

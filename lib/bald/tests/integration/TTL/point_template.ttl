@@ -2,6 +2,8 @@
 @prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <file://CDL/point_template.cdl/> .
@@ -69,6 +71,11 @@ this: a bald:Container ;
     NetCDF:Conventions "CF-1.6, ACDD-1.3" ;
     NetCDF:history "This file was created on 2016-09-22T18:16:06.590413Z" ;
     NetCDF:title "Oceanographic and surface meteorological data collected from the cordell bank monitoring station by the National Centers for Environmental Information (NCEI) in the Cordell Bank National Marine Sanctuary from 2015-03-25 to 2015-03-25" ;
+    dct:format [ a dct:MediaType ;
+            dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/> ] ;
+    dcat:distribution [ a dcat:Distribution ;
+            dcat:mediaType [ a dcat:MediaType ;
+                    dct:identifier "application/x-netcdf" ] ] ;
     bald:contains this:crs,
         this:instrument1,
         this:lat,
