@@ -802,31 +802,62 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
         cache = HttpCache()
 
     with load(afilepath) as fhandle:
-        # ensure that baseuri always temrinates in a '/'
+        # ensure that baseuri always terminates in a '/'
         if baseuri is None:
             baseuri = 'file://{}/'.format(afilepath)
         elif type(baseuri) == str and not baseuri.endswith('/'):
             baseuri = '{}/'.format(baseuri)
 
         identity = baseuri
+
+        # prefixes are defined as group attributes in a dedicated group, and/or
+        # by external resources
         prefix_var_name  = None
         if hasattr(fhandle, 'bald__isPrefixedBy'):
            prefix_var_name  = fhandle.bald__isPrefixedBy
 
-        prefix_var = (fhandle[fhandle.bald__isPrefixedBy] if
-                        hasattr(fhandle, 'bald__isPrefixedBy') else {})
+        prefix_ids = (fhandle.bald__isPrefixedBy if
+                      hasattr(fhandle, 'bald__isPrefixedBy') else '')
+        prefix_urls = []
+        prefix_groups = []
+        for pid in prefix_ids.split(' '):
+            if pid in fhandle.groups:
+                prefix_groups.append(fhandle.groups[pid])
+            elif pid.startswith('http://') or pid.startswith('https://'):
+                prefix_urls.append(pid)
         prefixes = {}
 
         skipped_variables = []
-        if prefix_var != {}:
-            prefixes = (dict([(prefix, getattr(prefix_var, prefix)) for
-                              prefix in prefix_var.ncattrs()]))
-            if isinstance(prefix_var, netCDF4._netCDF4.Variable):
-                skipped_variables.append(prefix_var.name)
-        else:
-            for k in fhandle.ncattrs():
-                if k.endswith('__'):
-                    prefixes[k] = getattr(fhandle, k)
+        for prefix_group in prefix_groups:
+            if prefix_group != {}:
+                prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
+                                  prefix in prefix_group.ncattrs() if prefix.endswith('__')]))
+                if isinstance(prefix_group, netCDF4._netCDF4.Variable):
+                    skipped_variables.append(prefix_var.name)
+            # else:
+            #     for k in fhandle.ncattrs():
+            #         if k.endswith('__'):
+            #             prefixes[k] = getattr(fhandle, k)
+
+        prefix_graph = rdflib.Graph()
+        for prefix_url in prefix_urls:
+            res = cache[prefix_url]
+            try:
+                prefix_graph.parse(data=res.text, format='xml')
+            except Exception:
+                print('Failed to parse: {} for prefixes.'.format(prefix_url))
+
+        qres = prefix_graph.query("select ?prefix ?uri where \n"
+                                  "{\n"
+                                  "?s <http://purl.org/vocab/vann/preferredNamespacePrefix> ?prefix ;\n"
+                                  "<http://purl.org/vocab/vann/preferredNamespaceUri> ?uri . \n"
+                                  "}")
+        for res in qres:
+            key, value = (str(res[0]), str(res[1]))
+            if key in prefixes and value !=prefixes[key]:
+                prefixes.pop(key)
+            else:
+                prefixes[key] = value
 
         # check that default set is handled, i.e. bald__ and rdf__
         if 'bald__' not in prefixes:

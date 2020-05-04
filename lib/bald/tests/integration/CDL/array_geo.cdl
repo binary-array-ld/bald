@@ -3,15 +3,6 @@ dimensions:
 	pdim0 = 11 ;
 	pdim1 = 17 ;
 variables:
-	int prefix_list ;
-  		prefix_list:bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
-  		prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
-		prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
-		prefix_list:cf__ = "http://def.scitools.org.uk/CFTerms/" ;
-		prefix_list:nc__ = "http://def.scitools.org.uk/NetCDF/" ;
-		prefix_list:geo__ = "http://www.opengis.net/ont/geosparql#" ;
-		prefix_list:nc__ = "http://def.scitools.org.uk/NetCDF/" ;
-
 	int temp(pdim0, pdim1) ;
 	        temp:cf__standard_name = "air_temperature" ;
 	        temp:nc__long_name = "Air temperature obs example at point" ;
@@ -23,11 +14,23 @@ variables:
 	        pressure:nc__long_name = "Air pressure at UCAR Centre Green" ;
 	        pressure:rdfs__label = "Air pressure at UCAR Centre Green" ;
 		pressure:geo__asWKT = "POINT(-105.24584700000003 40.0315278)" ;
-
 // global attributes:
 		:_NCProperties = "version=1|netcdflibversion=4.4.1|hdf5libversion=1.8.17" ;
 		:rdf__type = "bald__Container" ;
 		:bald__isPrefixedBy = "prefix_list" ;
 data:
+
+// prefix group
+group: prefix_list {
+    :bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
+    :rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+    :bald__ = "https://www.opengis.net/def/binary-array-ld/" ;
+    :rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+    :rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
+    :cf__ = "http://def.scitools.org.uk/CFTerms/" ;
+    :nc__ = "http://def.scitools.org.uk/NetCDF/" ;
+    :geo__ = "http://www.opengis.net/ont/geosparql#" ;
+    :nc__ = "http://def.scitools.org.uk/NetCDF/" ;
+}
 
 }
