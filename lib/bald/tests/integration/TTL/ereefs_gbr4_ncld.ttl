@@ -40,7 +40,8 @@ this: a bald:Container ;
 
 this:botz a bald:Array ;
     this:outside "9999" ;
-    CFTerms:coordinates "latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude ;
     CFTerms:missing_value -99.0 ;
     CFTerms:positive "down" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/depth/> ;
@@ -53,7 +54,9 @@ this:eta a bald:Array ;
     this:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_surface_elevation> ;
     this:substanceOrTaxon_id <http://environment.data.gov.au/def/feature/ocean_near_surface> ;
     this:unit_id <http://qudt.org/vocab/unit#Meter> ;
-    CFTerms:coordinates "time latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time ;
     CFTerms:missing_value "1e+35" ;
     CFTerms:positive "up" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_surface_height_above_sea_level/> ;
@@ -63,38 +66,45 @@ this:eta a bald:Array ;
     bald:references [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 180 600 ) .
-
-this:latitude a bald:Array ;
-    this:coordinate_type "latitude" ;
-    this:projection "geographic" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
-    NetCDF:long_name "Latitude" ;
-    NetCDF:units "degrees_north" ;
-    bald:shape ( 180 600 ) .
-
-this:longitude a bald:Array ;
-    this:coordinate_type "longitude" ;
-    this:projection "geographic" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
-    NetCDF:long_name "Longitude" ;
-    NetCDF:units "degrees_east" ;
-    bald:shape ( 180 600 ) .
 
 this:salt a bald:Array ;
     this:medium_id <http://environment.data.gov.au/def/feature/ocean> ;
     this:scaledQuantityKind_id <http://environment.data.gov.au/def/property/practical_salinity> ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://environment.data.gov.au/water/quality/def/unit/PSU> ;
-    CFTerms:coordinates "time zc latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time,
+        this:zc ;
     CFTerms:missing_value "1e+35" ;
     NetCDF:long_name "Salinity" ;
     NetCDF:units "PSU" ;
     bald:references [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) .
 
 this:temp a bald:Array ;
@@ -102,15 +112,30 @@ this:temp a bald:Array ;
     this:scaledQuantityKind_id <http://environment.data.gov.au/def/property/sea_water_temperature> ;
     this:substanceOrTaxon_id <http://sweet.jpl.nasa.gov/2.2/matrWater.owl#SaltWater> ;
     this:unit_id <http://qudt.org/vocab/unit#DegreeCelsius> ;
-    CFTerms:coordinates "time zc latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time,
+        this:zc ;
     CFTerms:missing_value "1e+35" ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degrees C" ;
     NetCDF:valid_range ( -3.0 40.0 ) ;
     bald:references [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ],
+        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) .
 
 this:u a bald:Array ;
@@ -120,16 +145,31 @@ this:u a bald:Array ;
     this:unit_id <http://qudt.org/vocab/unit#MeterPerSecond> ;
     this:vector_components "u v" ;
     this:vector_name "Currents" ;
-    CFTerms:coordinates "time zc latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time,
+        this:zc ;
     CFTerms:missing_value "1e+35" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/eastward_sea_water_velocity/> ;
     NetCDF:long_name "Eastward current" ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -100.0 100.0 ) ;
     bald:references [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) .
 
 this:v a bald:Array ;
@@ -139,20 +179,37 @@ this:v a bald:Array ;
     this:unit_id <http://qudt.org/vocab/unit#MeterPerSecond> ;
     this:vector_components "u v" ;
     this:vector_name "Currents" ;
-    CFTerms:coordinates "time zc latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time,
+        this:zc ;
     CFTerms:missing_value "1e+35" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/northward_sea_water_velocity/> ;
     NetCDF:long_name "Northward current" ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -100.0 100.0 ) ;
     bald:references [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) .
 
 this:wspeed_u a bald:Array ;
-    CFTerms:coordinates "time latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time ;
     CFTerms:missing_value "1e+35" ;
     NetCDF:long_name "eastward_wind" ;
     NetCDF:units "ms-1" ;
@@ -160,16 +217,34 @@ this:wspeed_u a bald:Array ;
     bald:references [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 180 600 ) .
 
 this:wspeed_v a bald:Array ;
-    CFTerms:coordinates "time latitude longitude" ;
+    CFTerms:coordinates this:latitude,
+        this:longitude,
+        this:time ;
     CFTerms:missing_value "1e+35" ;
     NetCDF:long_name "northward_wind" ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -1000.0 1000.0 ) ;
     bald:references [ a bald:Reference ;
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 ) ;
             bald:targetShape ( 5 ) ] ;
@@ -189,4 +264,20 @@ this:time a bald:Array ;
     NetCDF:long_name "Time" ;
     NetCDF:units "days since 1990-01-01 00:00:00 +10" ;
     bald:shape ( 5 ) .
+
+this:latitude a bald:Array ;
+    this:coordinate_type "latitude" ;
+    this:projection "geographic" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:long_name "Latitude" ;
+    NetCDF:units "degrees_north" ;
+    bald:shape ( 180 600 ) .
+
+this:longitude a bald:Array ;
+    this:coordinate_type "longitude" ;
+    this:projection "geographic" ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:long_name "Longitude" ;
+    NetCDF:units "degrees_east" ;
+    bald:shape ( 180 600 ) .
 

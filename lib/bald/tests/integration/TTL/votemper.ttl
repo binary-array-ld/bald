@@ -28,72 +28,38 @@ this: a bald:Container ;
         this:votemper,
         this:votemper_pdf .
 
-this:deptht_bnds a bald:Array ;
-    bald:references [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 4 1 ) ;
-            bald:targetShape ( 4 ) ] ;
-    bald:shape ( 4 2 ) .
-
-this:nav_lat a bald:Array ;
-    this:nav_model "Default grid" ;
-    CFTerms:bounds "nav_lat_bnds" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
-    NetCDF:long_name "Latitude" ;
-    NetCDF:units "degrees" ;
-    bald:shape ( 148 180 ) .
-
-this:nav_lat_bnds a bald:Array ;
-    bald:shape ( 148 180 4 ) .
-
-this:nav_lon a bald:Array ;
-    this:nav_model "Default grid" ;
-    CFTerms:bounds "nav_lon_bnds" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
-    NetCDF:long_name "Longitude" ;
-    NetCDF:units "degrees" ;
-    bald:shape ( 148 180 ) .
-
-this:nav_lon_bnds a bald:Array ;
-    bald:shape ( 148 180 4 ) .
-
 this:votemper a bald:Array ;
-    CFTerms:ancillary_variables "votemper_pdf" ;
+    CFTerms:ancillary_variables this:votemper_pdf ;
     CFTerms:cell_methods "time: mean" ;
-    CFTerms:coordinates "deptht nav_lat nav_lon time" ;
+    CFTerms:coordinates this:deptht,
+        this:nav_lat,
+        this:nav_lon,
+        this:time ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_potential_temperature/> ;
     NetCDF:FillValue "9.96921e+36" ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
+            bald:target this:nav_lon ;
+            bald:targetReshape ( 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ],
+        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 4 1 1 1 ) ;
             bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:sourceReshape ( 1 4 4 148 180 ) ;
+            bald:target this:votemper_pdf ;
+            bald:targetShape ( 19 4 4 148 180 ) ],
+        [ a bald:Reference ;
+            bald:target this:nav_lat ;
+            bald:targetReshape ( 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
             bald:target this:deptht ;
             bald:targetReshape ( 1 4 1 1 ) ;
             bald:targetShape ( 4 ) ] ;
     bald:shape ( 4 4 148 180 ) .
-
-this:votemper_pdf a bald:Array ;
-    CFTerms:coordinates "deptht nav_lat nav_lon time" ;
-    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_potential_temperature/> ;
-    NetCDF:FillValue "9.96921e+36" ;
-    NetCDF:long_name "Temperature" ;
-    NetCDF:units "degC" ;
-    bald:references [ a bald:Reference ;
-            bald:target this:percentiles ;
-            bald:targetReshape ( 19 1 1 1 1 ) ;
-            bald:targetShape ( 19 ) ],
-        [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ] ;
-    bald:shape ( 19 4 4 148 180 ) .
 
 this:percentiles a bald:Array ;
     NetCDF:long_name "percentile" ;
@@ -101,6 +67,74 @@ this:percentiles a bald:Array ;
     bald:first_value 5.0 ;
     bald:last_value 95.0 ;
     bald:shape ( 19 ) .
+
+this:deptht_bnds a bald:Array ;
+    bald:references [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 4 1 ) ;
+            bald:targetShape ( 4 ) ] ;
+    bald:shape ( 4 2 ) .
+
+this:nav_lat_bnds a bald:Array ;
+    bald:shape ( 148 180 4 ) .
+
+this:nav_lon_bnds a bald:Array ;
+    bald:shape ( 148 180 4 ) .
+
+this:votemper_pdf a bald:Array ;
+    CFTerms:coordinates this:deptht,
+        this:nav_lat,
+        this:nav_lon,
+        this:time ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/sea_water_potential_temperature/> ;
+    NetCDF:FillValue "9.96921e+36" ;
+    NetCDF:long_name "Temperature" ;
+    NetCDF:units "degC" ;
+    bald:references [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 1 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:nav_lon ;
+            bald:targetReshape ( 1 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ],
+        [ a bald:Reference ;
+            bald:target this:percentiles ;
+            bald:targetReshape ( 19 1 1 1 1 ) ;
+            bald:targetShape ( 19 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 4 1 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:nav_lat ;
+            bald:targetReshape ( 1 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ] ;
+    bald:shape ( 19 4 4 148 180 ) .
+
+this:nav_lat a bald:Array ;
+    this:nav_model "Default grid" ;
+    CFTerms:bounds this:nav_lat_bnds ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:long_name "Latitude" ;
+    NetCDF:units "degrees" ;
+    bald:references [ a bald:Reference ;
+            bald:sourceReshape ( 148 180 1 ) ;
+            bald:target this:nav_lat_bnds ;
+            bald:targetShape ( 148 180 4 ) ] ;
+    bald:shape ( 148 180 ) .
+
+this:nav_lon a bald:Array ;
+    this:nav_model "Default grid" ;
+    CFTerms:bounds this:nav_lon_bnds ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:long_name "Longitude" ;
+    NetCDF:units "degrees" ;
+    bald:references [ a bald:Reference ;
+            bald:sourceReshape ( 148 180 1 ) ;
+            bald:target this:nav_lon_bnds ;
+            bald:targetShape ( 148 180 4 ) ] ;
+    bald:shape ( 148 180 ) .
 
 this:time a bald:Array ;
     this:time_origin "2001-JAN-01 00:00:00" ;
@@ -114,7 +148,7 @@ this:time a bald:Array ;
     bald:shape ( 4 ) .
 
 this:deptht a bald:Array ;
-    CFTerms:bounds "deptht_bnds" ;
+    CFTerms:bounds this:deptht_bnds ;
     CFTerms:positive "down" ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/depth/> ;
     NetCDF:long_name "Vertical T levels" ;
@@ -122,5 +156,9 @@ this:deptht a bald:Array ;
     NetCDF:units "m" ;
     bald:first_value 0.0 ;
     bald:last_value 1000.0 ;
+    bald:references [ a bald:Reference ;
+            bald:sourceReshape ( 4 1 ) ;
+            bald:target this:deptht_bnds ;
+            bald:targetShape ( 4 2 ) ] ;
     bald:shape ( 4 ) .
 

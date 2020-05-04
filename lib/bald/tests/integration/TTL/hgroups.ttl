@@ -4,6 +4,13 @@
 @prefix cf_sname: <http://vocab.nerc.ac.uk/standard_name/> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix dct: <http://purl.org/dc/terms/> .
+@prefix ns1: <file://CDL/hgroups.cdl/mozaic_flight_2012030319051051_descent/> .
+@prefix ns2: <file://CDL/hgroups.cdl/mozaic_flight_2012030421382353_ascent/> .
+@prefix ns3: <file://CDL/hgroups.cdl/mozaic_flight_2012030412545335_ascent/> .
+@prefix ns4: <file://CDL/hgroups.cdl/mozaic_flight_2012030419144751_ascent/> .
+@prefix ns5: <file://CDL/hgroups.cdl/mozaic_flight_2012030403540535_ascent/> .
+@prefix ns6: <file://CDL/hgroups.cdl/mozaic_flight_2012030321335035_descent/> .
+@prefix ns7: <file://CDL/hgroups.cdl/mozaic_flight_2012030403540535_descent/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <file://CDL/hgroups.cdl/> .
@@ -17,10 +24,375 @@ this: a bald:Container ;
             dcat:downloadURL <https://www.unidata.ucar.edu/software/netcdf/examples/test_hgroups.cdl> ;
             dcat:mediaType [ a dcat:MediaType ;
                     dct:identifier "application/x-netcdf" ] ] ;
-    bald:contains this:UTC_time .
+    bald:contains this:UTC_time,
+        ns1:,
+        ns6:,
+        ns5:,
+        ns7:,
+        ns3:,
+        ns4:,
+        ns2: .
 
 this:UTC_time a bald:Array ;
     this:name "time" ;
     this:unit "none" ;
     bald:shape ( 74 ) .
+
+ns1: a bald:Container ;
+    ns1:aircraft "2" ;
+    ns1:airport_arr "FRA" ;
+    ns1:airport_dep "WDH" ;
+    ns1:flight "2012030319051051" ;
+    ns1:level "calibrated" ;
+    ns1:link <http://www.iagos.fr/extract> ;
+    ns1:mission "mozaic" ;
+    ns1:phase "descent" ;
+    ns1:time_arr "2012-03-04 04:46:40" ;
+    ns1:time_dep "2012-03-03 07:05:10" ;
+    bald:contains ns1:CO,
+        ns1:O3,
+        ns1:UTC_time,
+        ns1:air_press,
+        ns1:altitude,
+        ns1:lat,
+        ns1:lon .
+
+ns1:CO a bald:Array ;
+    ns1:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns1:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+ns1:O3 a bald:Array ;
+    ns1:name "mole_fraction_of_ozone_in_air" ;
+    ns1:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+ns1:UTC_time a bald:Array ;
+    ns1:name "time" ;
+    ns1:unit "none" ;
+    bald:shape ( 78 ) .
+
+ns1:air_press a bald:Array ;
+    ns1:name "air_pressure" ;
+    ns1:unit "Pa" ;
+    bald:shape ( 78 ) .
+
+ns1:altitude a bald:Array ;
+    ns1:name "barometric_altitude" ;
+    ns1:unit "m" ;
+    bald:shape ( 78 ) .
+
+ns1:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns1:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+ns6: a bald:Container ;
+    ns6:aircraft "3" ;
+    ns6:airport_arr "TLV" ;
+    ns6:airport_dep "FRA" ;
+    ns6:flight "2012030321335035" ;
+    ns6:level "calibrated" ;
+    ns6:link <http://www.iagos.fr/extract> ;
+    ns6:mission "mozaic" ;
+    ns6:phase "descent" ;
+    ns6:time_arr "2012-03-04 01:05:08" ;
+    ns6:time_dep "2012-03-03 09:33:50" ;
+    bald:contains ns6:CO,
+        ns6:O3,
+        ns6:UTC_time,
+        ns6:air_press,
+        ns6:altitude,
+        ns6:lat,
+        ns6:lon .
+
+ns6:CO a bald:Array ;
+    ns6:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns6:unit "ppb" ;
+    bald:shape ( 76 ) .
+
+ns6:O3 a bald:Array ;
+    ns6:name "mole_fraction_of_ozone_in_air" ;
+    ns6:unit "ppb" ;
+    bald:shape ( 76 ) .
+
+ns6:UTC_time a bald:Array ;
+    ns6:name "time" ;
+    ns6:unit "none" ;
+    bald:shape ( 76 ) .
+
+ns6:air_press a bald:Array ;
+    ns6:name "air_pressure" ;
+    ns6:unit "Pa" ;
+    bald:shape ( 76 ) .
+
+ns6:altitude a bald:Array ;
+    ns6:name "barometric_altitude" ;
+    ns6:unit "m" ;
+    bald:shape ( 76 ) .
+
+ns6:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns6:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+ns5: a bald:Container ;
+    ns5:aircraft "3" ;
+    ns5:airport_arr "FRA" ;
+    ns5:airport_dep "TLV" ;
+    ns5:flight "2012030403540535" ;
+    ns5:level "calibrated" ;
+    ns5:link <http://www.iagos.fr/extract> ;
+    ns5:mission "mozaic" ;
+    ns5:phase "ascent" ;
+    ns5:time_arr "2012-03-04 08:01:44" ;
+    ns5:time_dep "2012-03-04 03:54:05" ;
+    bald:contains ns5:CO,
+        ns5:O3,
+        ns5:air_press,
+        ns5:altitude,
+        ns5:lat,
+        ns5:lon .
+
+ns5:CO a bald:Array ;
+    ns5:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns5:unit "ppb" ;
+    bald:shape ( 74 ) .
+
+ns5:O3 a bald:Array ;
+    ns5:name "mole_fraction_of_ozone_in_air" ;
+    ns5:unit "ppb" ;
+    bald:shape ( 74 ) .
+
+ns5:air_press a bald:Array ;
+    ns5:name "air_pressure" ;
+    ns5:unit "Pa" ;
+    bald:shape ( 74 ) .
+
+ns5:altitude a bald:Array ;
+    ns5:name "barometric_altitude" ;
+    ns5:unit "m" ;
+    bald:shape ( 74 ) .
+
+ns5:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns5:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+ns7: a bald:Container ;
+    ns7:aircraft "3" ;
+    ns7:airport_arr "FRA" ;
+    ns7:airport_dep "TLV" ;
+    ns7:flight "2012030403540535" ;
+    ns7:level "calibrated" ;
+    ns7:link <http://www.iagos.fr/extract> ;
+    ns7:mission "mozaic" ;
+    ns7:phase "descent" ;
+    ns7:time_arr "2012-03-04 08:01:44" ;
+    ns7:time_dep "2012-03-04 03:54:05" ;
+    bald:contains ns7:CO,
+        ns7:O3,
+        ns7:UTC_time,
+        ns7:air_press,
+        ns7:altitude,
+        ns7:lat,
+        ns7:lon .
+
+ns7:CO a bald:Array ;
+    ns7:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns7:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+ns7:O3 a bald:Array ;
+    ns7:name "mole_fraction_of_ozone_in_air" ;
+    ns7:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+ns7:UTC_time a bald:Array ;
+    ns7:name "time" ;
+    ns7:unit "none" ;
+    bald:shape ( 78 ) .
+
+ns7:air_press a bald:Array ;
+    ns7:name "air_pressure" ;
+    ns7:unit "Pa" ;
+    bald:shape ( 78 ) .
+
+ns7:altitude a bald:Array ;
+    ns7:name "barometric_altitude" ;
+    ns7:unit "m" ;
+    bald:shape ( 78 ) .
+
+ns7:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns7:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+ns3: a bald:Container ;
+    ns3:aircraft "3" ;
+    ns3:airport_arr "NGO" ;
+    ns3:airport_dep "FRA" ;
+    ns3:flight "2012030412545335" ;
+    ns3:level "calibrated" ;
+    ns3:link <http://www.iagos.fr/extract> ;
+    ns3:mission "mozaic" ;
+    ns3:phase "ascent" ;
+    ns3:time_arr "2012-03-05 12:21:37" ;
+    ns3:time_dep "2012-03-04 12:54:53" ;
+    bald:contains ns3:CO,
+        ns3:O3,
+        ns3:UTC_time,
+        ns3:air_press,
+        ns3:altitude,
+        ns3:lat,
+        ns3:lon .
+
+ns3:CO a bald:Array ;
+    ns3:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns3:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+ns3:O3 a bald:Array ;
+    ns3:name "mole_fraction_of_ozone_in_air" ;
+    ns3:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+ns3:UTC_time a bald:Array ;
+    ns3:name "time" ;
+    ns3:unit "none" ;
+    bald:shape ( 60 ) .
+
+ns3:air_press a bald:Array ;
+    ns3:name "air_pressure" ;
+    ns3:unit "Pa" ;
+    bald:shape ( 60 ) .
+
+ns3:altitude a bald:Array ;
+    ns3:name "barometric_altitude" ;
+    ns3:unit "m" ;
+    bald:shape ( 60 ) .
+
+ns3:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns3:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+ns4: a bald:Container ;
+    ns4:aircraft "2" ;
+    ns4:airport_arr "WDH" ;
+    ns4:airport_dep "FRA" ;
+    ns4:flight "2012030419144751" ;
+    ns4:level "calibrated" ;
+    ns4:link <http://www.iagos.fr/extract> ;
+    ns4:mission "mozaic" ;
+    ns4:phase "ascent" ;
+    ns4:time_arr "2012-03-05 04:49:45" ;
+    ns4:time_dep "2012-03-04 07:14:47" ;
+    bald:contains ns4:CO,
+        ns4:O3,
+        ns4:UTC_time,
+        ns4:air_press,
+        ns4:altitude,
+        ns4:lat,
+        ns4:lon .
+
+ns4:CO a bald:Array ;
+    ns4:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns4:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+ns4:O3 a bald:Array ;
+    ns4:name "mole_fraction_of_ozone_in_air" ;
+    ns4:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+ns4:UTC_time a bald:Array ;
+    ns4:name "time" ;
+    ns4:unit "none" ;
+    bald:shape ( 60 ) .
+
+ns4:air_press a bald:Array ;
+    ns4:name "air_pressure" ;
+    ns4:unit "Pa" ;
+    bald:shape ( 60 ) .
+
+ns4:altitude a bald:Array ;
+    ns4:name "barometric_altitude" ;
+    ns4:unit "m" ;
+    bald:shape ( 60 ) .
+
+ns4:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns4:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+ns2: a bald:Container ;
+    ns2:aircraft "4" ;
+    ns2:airport_arr "TLV" ;
+    ns2:airport_dep "FRA" ;
+    ns2:flight "2012030421382353" ;
+    ns2:level "calibrated" ;
+    ns2:link <http://www.iagos.fr/extract> ;
+    ns2:mission "mozaic" ;
+    ns2:phase "ascent" ;
+    ns2:time_arr "2012-03-05 01:13:34" ;
+    ns2:time_dep "2012-03-04 09:38:23" ;
+    bald:contains ns2:CO,
+        ns2:O3,
+        ns2:UTC_time,
+        ns2:air_press,
+        ns2:altitude,
+        ns2:lat,
+        ns2:lon .
+
+ns2:CO a bald:Array ;
+    ns2:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    ns2:unit "ppb" ;
+    bald:shape ( 75 ) .
+
+ns2:O3 a bald:Array ;
+    ns2:name "mole_fraction_of_ozone_in_air" ;
+    ns2:unit "ppb" ;
+    bald:shape ( 75 ) .
+
+ns2:UTC_time a bald:Array ;
+    ns2:name "time" ;
+    ns2:unit "none" ;
+    bald:shape ( 75 ) .
+
+ns2:air_press a bald:Array ;
+    ns2:name "air_pressure" ;
+    ns2:unit "Pa" ;
+    bald:shape ( 75 ) .
+
+ns2:altitude a bald:Array ;
+    ns2:name "barometric_altitude" ;
+    ns2:unit "m" ;
+    bald:shape ( 75 ) .
+
+ns2:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+ns2:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
 
