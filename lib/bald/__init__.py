@@ -900,8 +900,28 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, cache):
     return prefixes, aliases, aliasgraph, prefix_var_name
 
 
-def _load_netcdf_group():
-    pass
+def _load_netcdf_group(agroup, baseuri, gk, root_container, prefixes, prefix_group_name, aliases, aliasgraph, cache):
+    gattrs = {}
+    for k in agroup.ncattrs():
+        gattrs[k] = getattr(agroup, k)
+
+    gidentity = baseuri + gk + '/'
+
+    gcontainer = Container(gidentity, '', gattrs, prefixes=prefixes,
+                           aliases=aliases, alias_graph=aliasgraph)
+
+    gcontainer.attrs['bald__contains'] = set()
+
+    _load_netcdf_group_vars(agroup, gcontainer, gidentity, gattrs, prefixes, prefix_group_name, aliases, aliasgraph, cache)
+    if 'bald__contains' not in root_container.attrs:
+        root_container.attrs['bald__contains'] = set()
+    root_container.attrs['bald__contains'].add(gcontainer)
+    for gk in agroup.groups:
+
+        _load_netcdf_group(agroup.groups[gk], baseuri, gk, gcontainer,
+                           prefixes, prefix_group_name, aliases, aliasgraph, cache)
+
+
 
 def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                             prefix_var_name, aliases, aliasgraph, cache):
@@ -923,14 +943,19 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
 
             if not isinstance(fhandle.variables[name][0], np.ma.core.MaskedConstant):
                 sattrs['bald__first_value'] = fhandle.variables[name][0]
-                if np.issubdtype(sattrs['bald__first_value'], np.integer):
+                if isinstance(sattrs['bald__first_value'], str):
+                    pass
+                    
+                elif np.issubdtype(sattrs['bald__first_value'], np.integer):
                     sattrs['bald__first_value'] = int(sattrs['bald__first_value'])
                 elif np.issubdtype(sattrs['bald__first_value'], np.floating):
                     sattrs['bald__first_value'] = float(sattrs['bald__first_value'])
                 if (len(fhandle.variables[name]) > 1 and
                     not isinstance(fhandle.variables[name][-1], np.ma.core.MaskedConstant)):
                     sattrs['bald__last_value'] = fhandle.variables[name][-1]
-                    if np.issubdtype(sattrs['bald__last_value'], np.integer):
+                    if isinstance(sattrs['bald__last_value'], str):
+                        pass
+                    elif np.issubdtype(sattrs['bald__last_value'], np.integer):
                         sattrs['bald__last_value'] = int(sattrs['bald__last_value'])
                     elif np.issubdtype(sattrs['bald__last_value'], np.floating):
                         sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
@@ -998,7 +1023,6 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
         root_container.attrs['bald__contains'].add(var)
 
         file_variables[name] = var
-
 
     reference_prefixes = dict()
     reference_graph = copy.copy(aliasgraph)
@@ -1149,23 +1173,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
         for gk in fhandle.groups:
             if gk == prefix_group_name:
                 continue
-            gattrs = {}
-            for k in fhandle.groups[gk].ncattrs():
-                gattrs[k] = getattr(fhandle.groups[gk], k)
 
-            gidentity = baseuri + gk + '/'
-
-            gcontainer = Container(gidentity, '', gattrs, prefixes=prefixes,
-                                   aliases=aliases, alias_graph=aliasgraph)
-
-            gcontainer.attrs['bald__contains'] = set()
-
-            _load_netcdf_group_vars(fhandle.groups[gk], gcontainer, gidentity, attrs, prefixes, prefix_group_name, aliases, aliasgraph, cache)
-            
-            root_container.attrs['bald__contains'].add(gcontainer)
-
-
-        _load_netcdf_group()
+            _load_netcdf_group(fhandle.groups[gk], baseuri, gk, root_container,
+                               prefixes, prefix_group_name, aliases, aliasgraph, cache)
+    # _create_references(root_container,
+    #                    prefixes, prefix_group_name, aliases, aliasgraph, cache)
 
     return root_container
 

@@ -241,3 +241,32 @@ class Test(BaldTestCase):
                 expected_rdfgraph.parse(sf, format='n3')
             self.check_result(rdfgraph, expected_rdfgraph)
             
+    def test_group_array_geo(self):
+        with self.temp_filename('.nc') as tfile:
+            name = 'group_array_geo'
+            # hgurl = 'https://www.unidata.ucar.edu/software/netcdf/examples/test_hgroups.cdl'
+            # res = requests.get(hgurl)
+            # if res.status_code != 200:
+            #     raise ValueError('{} failed to download: {}'.format(hgurl, res.status_code))
+            # with self.temp_filename('.cdl.') as cdlfile:
+            #     with open(cdlfile, 'w') as fh:
+            #         fh.write(res.text)
+            cdl_file = os.path.join(self.cdl_path, '{}.cdl'.format(name))
+            subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
+            cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
+            alias_dict = {# 'NetCDF': 'http://def.scitools.org.uk/NetCDF',
+                          # 'CFTerms': 'http://def.scitools.org.uk/CFTerms',
+                          # 'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                         }
+            root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
+                                              alias_dict=alias_dict, cache=self.acache)
+            rdfgraph = root_container.rdfgraph()
+            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            if os.environ.get('bald_update_results') is not None:
+                with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
+                    sf.write(ttl)
+            with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
+                expected_rdfgraph = rdflib.Graph()
+                expected_rdfgraph.parse(sf, format='n3')
+            self.check_result(rdfgraph, expected_rdfgraph)
+            
