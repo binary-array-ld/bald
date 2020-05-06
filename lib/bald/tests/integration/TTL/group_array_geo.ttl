@@ -6,11 +6,12 @@
 @prefix geo: <http://www.opengis.net/ont/geosparql#> .
 @prefix georef: <http://def.scitools.org.uk/referencing-by-coordinates/> .
 @prefix nc: <http://def.scitools.org.uk/NetCDF/> .
-@prefix ns1: <file://CDL/group_array_geo.cdl/wind/> .
-@prefix ns2: <file://CDL/group_array_geo.cdl/vector_quantities/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <file://CDL/group_array_geo.cdl/> .
+@prefix this__scalar_quantities: <file://CDL/group_array_geo.cdl/scalar_quantities/> .
+@prefix this__vector_quantities: <file://CDL/group_array_geo.cdl/vector_quantities/> .
+@prefix this__vector_quantities__wind: <file://CDL/group_array_geo.cdl/vector_quantities/wind/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -20,57 +21,51 @@ this: a bald:Container ;
     dcat:distribution [ a dcat:Distribution ;
             dcat:mediaType [ a dcat:MediaType ;
                     dct:identifier "application/x-netcdf" ] ] ;
-    bald:contains <file://CDL/group_array_geo.cdl/scalar_quantities/>,
+    bald:contains this__scalar_quantities:,
         this:theta_points,
         this:time,
         this:u_points,
         this:v_points,
-        ns2:,
+        this__vector_quantities:,
         this:x_q,
         this:x_t,
         this:y_q,
         this:y_t ;
     bald:isPrefixedBy "prefix_list" .
 
-<file://CDL/group_array_geo.cdl/scalar_quantities/> a bald:Container ;
-    bald:contains <file://CDL/group_array_geo.cdl/scalar_quantities/air_pressure> .
+this__scalar_quantities: a bald:Container ;
+    bald:contains this__scalar_quantities:air_pressure .
 
-<file://CDL/group_array_geo.cdl/scalar_quantities/air_pressure> a bald:Array ;
+this__scalar_quantities:air_pressure a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/air_pressure/> ;
     nc:units "Pa" ;
-    geo:domain "theta_points" ;
+    georef:domain this:theta_points ;
     bald:references [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
             bald:target this:y_t ;
             bald:targetReshape ( 1 91 1 ) ;
             bald:targetShape ( 91 ) ],
         [ a bald:Reference ;
             bald:target this:x_t ;
             bald:targetReshape ( 1 1 144 ) ;
-            bald:targetShape ( 144 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 ) ;
-            bald:targetShape ( 4 ) ] ;
+            bald:targetShape ( 144 ) ] ;
     bald:shape ( 4 91 144 ) .
 
-this:theta_points a bald:Resource ;
-    rdfs:label "Theta Points" ;
-    georef:coord_tuple "(y_t, x_t)" ;
-    georef:wkt_crs <http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326> ;
-    dct:description "Arakawa C Theta points defined with respect to a 2D WGS84 geodetic surface." .
+this__vector_quantities: a bald:Container ;
+    this:vq__vector_quantities "wind" ;
+    bald:contains this__vector_quantities__wind: .
 
-ns2: a bald:Container ;
-    ns2:vq__vector_quantities "wind" ;
-    bald:contains ns1: .
-
-ns1: a bald:Container ;
+this__vector_quantities__wind: a bald:Container ;
     rdfs:label "Wind Vector" ;
-    ns1:vq__i_component "x_wind" ;
-    ns1:vq__j_component "y_wind" ;
-    bald:contains ns1:u_wind,
-        ns1:v_wind .
+    this:vq__i_component "x_wind" ;
+    this:vq__j_component "y_wind" ;
+    bald:contains this__vector_quantities__wind:u_wind,
+        this__vector_quantities__wind:v_wind .
 
-ns1:u_wind a bald:Array ;
+this__vector_quantities__wind:u_wind a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/x_wind/> ;
     nc:units "m s-1" ;
     georef:domain this:u_points ;
@@ -79,16 +74,16 @@ ns1:u_wind a bald:Array ;
             bald:targetReshape ( 1 1 144 ) ;
             bald:targetShape ( 144 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:y_t ;
             bald:targetReshape ( 1 91 1 ) ;
-            bald:targetShape ( 91 ) ] ;
+            bald:targetShape ( 91 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 4 1 1 ) ;
+            bald:targetShape ( 4 ) ] ;
     bald:shape ( 4 91 144 ) .
 
-ns1:v_wind a bald:Array ;
+this__vector_quantities__wind:v_wind a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/y_wind/> ;
     nc:units "m s-1" ;
     georef:domain this:v_points ;
@@ -97,24 +92,30 @@ ns1:v_wind a bald:Array ;
             bald:targetReshape ( 1 1 144 ) ;
             bald:targetShape ( 144 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:y_q ;
             bald:targetReshape ( 1 90 1 ) ;
-            bald:targetShape ( 90 ) ] ;
+            bald:targetShape ( 90 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 4 1 1 ) ;
+            bald:targetShape ( 4 ) ] ;
     bald:shape ( 4 90 144 ) .
+
+this:theta_points a bald:Resource ;
+    rdfs:label "Theta Points" ;
+    georef:coord_tuple ( this:y_t this:x_t ) ;
+    georef:wkt_crs <http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326> ;
+    dct:description "Arakawa C Theta points defined with respect to a 2D WGS84 geodetic surface." .
 
 this:u_points a bald:Resource ;
     rdfs:label "U Points" ;
     cf:wkt_crs <http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326> ;
-    georef:coord_tuple "(y_t, x_q)" ;
+    georef:coord_tuple ( this:y_t this:x_q ) ;
     dct:description "Arakawa C U points defined with respect to a 2D WGS84 geodetic surface." .
 
 this:v_points a bald:Resource ;
     rdfs:label "V Points" ;
-    georef:coord_tuple "(y_q, x_t)" ;
+    georef:coord_tuple ( this:y_q this:x_t ) ;
     georef:wkt_crs <http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326> ;
     dct:description "Arakawa C V points defined with respect to a 2D WGS84 geodetic surface." .
 
@@ -132,6 +133,12 @@ this:y_q a bald:Array ;
     bald:last_value 89.0 ;
     bald:shape ( 90 ) .
 
+this:time a bald:Array ;
+    rdfs:label "Time" ;
+    bald:first_value "2020-05-05T00:00Z" ;
+    bald:last_value "2020-05-05T18:00Z" ;
+    bald:shape ( 4 ) .
+
 this:x_t a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     nc:units "degrees" ;
@@ -145,10 +152,4 @@ this:y_t a bald:Array ;
     bald:first_value -90.0 ;
     bald:last_value 90.0 ;
     bald:shape ( 91 ) .
-
-this:time a bald:Array ;
-    rdfs:label "Time" ;
-    bald:first_value "2020-05-05T00:00Z" ;
-    bald:last_value "2020-05-05T18:00Z" ;
-    bald:shape ( 4 ) .
 

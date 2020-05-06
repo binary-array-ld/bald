@@ -283,7 +283,7 @@ class Resource(object):
     _rdftype = 'bald__Resource'
     # def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
     #              aliases=None, alias_graph=None):
-    def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
+    def __init__(self, baseuri, identity_pref, relative_id, attrs=None, prefixes=None,
                  aliases=None, alias_graph=None, file_resource=False, file_locator=None):
 
         """
@@ -292,6 +292,7 @@ class Resource(object):
         attrs: an dictionary of key value pair attributes
         """
         self.baseuri = baseuri
+        self.identity_pref = identity_pref
         self.file_locator = file_locator
         self.is_file = file_resource
         self.relative_id = relative_id
@@ -322,9 +323,9 @@ class Resource(object):
         if self.relative_id is None:
             result = None
         elif self.relative_id:
-            result = self.baseuri + self.relative_id
+            result = self.identity_pref + self.relative_id
         else:
-            result = self.baseuri
+            result = self.identity_pref
         return result
         # return '/'.join([self.baseuri, self.relative_id])
 
@@ -335,7 +336,7 @@ class Resource(object):
         return str(self)
 
     def __setattr__(self, attr, value):
-        reserved_attrs = ['baseuri', 'relative_id', 'prefixes', '_prefixes',
+        reserved_attrs = ['baseuri', 'identity_pref', 'relative_id', 'prefixes', '_prefixes',
                           '_prefix_suffix', '_http_uri_prefix', '_http_uri',
                           'aliases', 'alias_graph', 'attrs', '_rdftype', 'file_locator',
                           'is_file']
@@ -402,8 +403,6 @@ class Resource(object):
         return result
 
     def unpack_rdfobject(self, astring, predicate):
-        # if astring == 'x_wind':
-        #     import pdb; pdb.set_trace()
         result = astring
         if isinstance(astring, six.string_types) and self._prefix_suffix.match(astring):
             prefix, suffix = self._prefix_suffix.match(astring).groups()
@@ -581,6 +580,15 @@ class Resource(object):
             selfnode = rdflib.BNode()
         else:
             selfnode = rdflib.URIRef(self.identity)
+            # if group, bind to namespace
+            if self.identity.endswith('/'):
+                if not (rdflib.URIRef(self.identity) in
+                        [n[1] for n in graph.namespace_manager.namespaces()]):
+                    this = dict(graph.namespace_manager.namespaces())['this']
+                    nkey = self.identity.replace(this, 'this__')
+                    nkey = nkey[:-1].replace('/', '__')
+                    graph.bind(nkey, self.identity)
+
         for attr in self.attrs:
             list_items = []
             objs = self.attrs[attr]
@@ -904,32 +912,32 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, cache):
     return prefixes, aliases, aliasgraph, prefix_var_name
 
 
-def _load_netcdf_group(fhandle, agroup, baseuri, gk, root_container, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache):
+def _load_netcdf_group(fhandle, agroup, baseuri, identity_pref, gk, root_container, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache):
     file_variables = file_variables.copy()
     
     gattrs = {}
     for k in agroup.ncattrs():
         gattrs[k] = getattr(agroup, k)
 
-    gidentity = baseuri + gk + '/'
+    gidentity = identity_pref + gk + '/'
 
-    gcontainer = Container(gidentity, '', gattrs, prefixes=prefixes,
+    gcontainer = Container(baseuri, gidentity, '', gattrs, prefixes=prefixes,
                            aliases=aliases, alias_graph=aliasgraph)
 
     gcontainer.attrs['bald__contains'] = set()
 
-    _load_netcdf_group_vars(fhandle, agroup, gcontainer, gidentity, gattrs, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache)
+    _load_netcdf_group_vars(fhandle, agroup, gcontainer, baseuri, gidentity, gattrs, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache)
     if 'bald__contains' not in root_container.attrs:
         root_container.attrs['bald__contains'] = set()
     root_container.attrs['bald__contains'].add(gcontainer)
     for gk in agroup.groups:
 
-        _load_netcdf_group(fhandle, agroup.groups[gk], baseuri, gk, gcontainer, file_variables,
+        _load_netcdf_group(fhandle, agroup.groups[gk], baseuri, gidentity, gk, gcontainer, file_variables,
                            prefixes, prefix_group_name, aliases, aliasgraph, cache)
 
 
 
-def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, attrs, file_variables, prefixes,
+def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_pref, attrs, file_variables, prefixes,
                             prefix_var_name, aliases, aliasgraph, cache):
 
     for name in agroup.variables:
@@ -1021,10 +1029,10 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, attrs, fil
 
         if agroup.variables[name].shape:
             sattrs['bald__shape'] = list(agroup.variables[name].shape)
-            var = Array(baseuri, name, sattrs, prefixes=prefixes,
+            var = Array(baseuri, identity_pref, name, sattrs, prefixes=prefixes,
                         aliases=aliases, alias_graph=aliasgraph)
         else:
-            var = Resource(baseuri, name, sattrs, prefixes=prefixes,
+            var = Resource(baseuri, identity_pref, name, sattrs, prefixes=prefixes,
                           aliases=aliases, alias_graph=aliasgraph)
         root_container.attrs['bald__contains'].add(var)
 
@@ -1114,14 +1122,13 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, attrs, fil
             for dim in agroup.variables[name].dimensions:
                 if file_variables.get(dim) and name != dim:
                     _make_ref_entities(var, fhandle, agroup, dim, name,
-                                       baseuri, root_container,
+                                       baseuri, identity_pref, root_container,
                                        file_variables, prefixes,
                                        aliases, aliasgraph)
         # import pdb; pdb.set_trace()
         # for sattr in sattrs:
         for sattr in (sattr for sattr in sattrs if
                       root_container.unpack_predicate(sattr) in ref_prefs):
-
             if isinstance(sattrs[sattr], six.string_types):
 
                 if sattrs[sattr].startswith('(') and sattrs[sattr].endswith(')'):
@@ -1133,7 +1140,7 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, attrs, fil
                                             for pref in potrefs_list]
                         for pref in potrefs_list:
                             _make_ref_entities(var, fhandle, agroup, 
-                                               pref, name, baseuri,
+                                               pref, name, baseuri, identity_pref,
                                                root_container,
                                                file_variables, prefixes,
                                                aliases, aliasgraph)
@@ -1149,7 +1156,7 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, attrs, fil
                             # coordinate variables already handled
                             if pref not in agroup.variables[name].dimensions:
                                 _make_ref_entities(var, fhandle, agroup, 
-                                                   pref, name, baseuri,
+                                                   pref, name, baseuri, identity_pref,
                                                    root_container,
                                                    file_variables, prefixes,
                                                    aliases, aliasgraph)
@@ -1182,28 +1189,28 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
 
-        root_container = Container(baseuri, '', attrs, prefixes=prefixes,
+        root_container = Container(baseuri, baseuri, '', attrs, prefixes=prefixes,
                                    aliases=aliases, alias_graph=aliasgraph,
                                    file_resource=True, file_locator=file_locator)
 
         root_container.attrs['bald__contains'] = set()
         
         file_variables = {}
-        _load_netcdf_group_vars(fhandle, fhandle, root_container, baseuri, attrs, file_variables, prefixes,
+        _load_netcdf_group_vars(fhandle, fhandle, root_container, baseuri, baseuri, attrs, file_variables, prefixes,
                                 prefix_group_name, aliases, aliasgraph, cache)
 
         for gk in fhandle.groups:
             if gk == prefix_group_name:
                 continue
 
-            _load_netcdf_group(fhandle, fhandle.groups[gk], baseuri, gk, root_container, file_variables,
+            _load_netcdf_group(fhandle, fhandle.groups[gk], baseuri, identity, gk, root_container, file_variables,
                                prefixes, prefix_group_name, aliases, aliasgraph, cache)
     # _create_references(root_container,
     #                    prefixes, prefix_group_name, aliases, aliasgraph, cache)
 
     return root_container
 
-def _make_ref_entities(var, fhandle, variables, pref, name, baseuri,
+def _make_ref_entities(var, fhandle, variables, pref, name, baseuri, identity_pref,
                        root_container, file_variables,
                        prefixes, aliases, aliasgraph):
     namevar = None
@@ -1256,7 +1263,7 @@ def _make_ref_entities(var, fhandle, variables, pref, name, baseuri,
             if targetReshape != list(prefvar.shape):
                 rattrs['bald__targetReshape'] = targetReshape
             rattrs['bald__target'] = set((file_variables.get(pref),))
-            ref_node = Reference(baseuri, identity, rattrs,
+            ref_node = Reference(baseuri, identity_pref, identity, rattrs,
                                prefixes=prefixes,
                                aliases=aliases,
                                alias_graph=aliasgraph)
@@ -1366,7 +1373,7 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
         aliases = careful_update(aliases, dict(fhandle[alias_group].attrs))
     attrs = dict(fhandle.attrs)
     aliasgraph = rdflib.Graph()
-    root_container = Container(baseuri, identity, attrs, prefixes=prefixes,
+    root_container = Container(baseuri, baseuri, identity, attrs, prefixes=prefixes,
                                aliases=aliases, alias_graph=aliasgraph)
 
     root_container.attrs['bald__contains'] = set()
@@ -1386,7 +1393,7 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
             elif isinstance(dataset, h5py._hl.dataset.Dataset):
                 sattrs = dict(dataset.attrs)
                 sattrs['bald__shape'] = list(dataset.shape)
-                dset = Array(baseuri, name, sattrs, prefixes, aliases, aliasgraph)
+                dset = Array(baseuri, baseuri, name, sattrs, prefixes, aliases, aliasgraph)
                 root_container.attrs['bald__contains'].add(dset)
                 file_variables[dataset.name] = dset
     return root_container, file_variables

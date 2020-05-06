@@ -27,19 +27,19 @@ variables:
 
         int theta_points ;
 	    theta_points:georef__wkt_crs = "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326" ;
-	    theta_points:georef__coord_tuple = "(y_t, x_t)" ;
+	    theta_points:georef__coord_tuple = "(y_t x_t)" ;
 	    theta_points:rdfs__label = "Theta Points" ;
 	    theta_points:dct__description = "Arakawa C Theta points defined with respect to a 2D WGS84 geodetic surface." ;
 
         int u_points ;
 	    u_points:cf__wkt_crs = "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326" ;
-	    u_points:georef__coord_tuple = "(y_t, x_q)" ;
+	    u_points:georef__coord_tuple = "(y_t x_q)" ;
 	    u_points:rdfs__label = "U Points" ;
 	    u_points:dct__description = "Arakawa C U points defined with respect to a 2D WGS84 geodetic surface." ;
 
         int v_points ;
 	    v_points:georef__wkt_crs = "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326" ;
-	    v_points:georef__coord_tuple = "(y_q, x_t)" ;
+	    v_points:georef__coord_tuple = "(y_q x_t)" ;
 	    v_points:rdfs__label = "V Points" ;
 	    v_points:dct__description = "Arakawa C V points defined with respect to a 2D WGS84 geodetic surface." ;
 
@@ -106,7 +106,7 @@ variables:
     float air_pressure(time, y_t, x_t) ;
         air_pressure:cf__standard_name = "air_pressure" ;
 	air_pressure:nc__units = "Pa" ;
-	air_pressure:geo__domain = "theta_points" ;
+	air_pressure:georef__domain = "theta_points" ;
 
 }
 
