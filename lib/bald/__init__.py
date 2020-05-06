@@ -402,6 +402,8 @@ class Resource(object):
         return result
 
     def unpack_rdfobject(self, astring, predicate):
+        # if astring == 'x_wind':
+        #     import pdb; pdb.set_trace()
         result = astring
         if isinstance(astring, six.string_types) and self._prefix_suffix.match(astring):
             prefix, suffix = self._prefix_suffix.match(astring).groups()
@@ -430,6 +432,8 @@ class Resource(object):
                 elif len(results) == 1:
                     result = str(results[0][0])
             except pyparsing.ParseException:
+                pass
+            except ValueError:
                 pass
         return result
 
@@ -900,7 +904,9 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, cache):
     return prefixes, aliases, aliasgraph, prefix_var_name
 
 
-def _load_netcdf_group(agroup, baseuri, gk, root_container, prefixes, prefix_group_name, aliases, aliasgraph, cache):
+def _load_netcdf_group(fhandle, agroup, baseuri, gk, root_container, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache):
+    file_variables = file_variables.copy()
+    
     gattrs = {}
     for k in agroup.ncattrs():
         gattrs[k] = getattr(agroup, k)
@@ -912,37 +918,37 @@ def _load_netcdf_group(agroup, baseuri, gk, root_container, prefixes, prefix_gro
 
     gcontainer.attrs['bald__contains'] = set()
 
-    _load_netcdf_group_vars(agroup, gcontainer, gidentity, gattrs, prefixes, prefix_group_name, aliases, aliasgraph, cache)
+    _load_netcdf_group_vars(fhandle, agroup, gcontainer, gidentity, gattrs, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache)
     if 'bald__contains' not in root_container.attrs:
         root_container.attrs['bald__contains'] = set()
     root_container.attrs['bald__contains'].add(gcontainer)
     for gk in agroup.groups:
 
-        _load_netcdf_group(agroup.groups[gk], baseuri, gk, gcontainer,
+        _load_netcdf_group(fhandle, agroup.groups[gk], baseuri, gk, gcontainer, file_variables,
                            prefixes, prefix_group_name, aliases, aliasgraph, cache)
 
 
 
-def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
+def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, attrs, file_variables, prefixes,
                             prefix_var_name, aliases, aliasgraph, cache):
-    file_variables = {}
-    for name in fhandle.variables:
+
+    for name in agroup.variables:
         if name ==  prefix_var_name:
             continue
 
-        sattrs = fhandle.variables[name].__dict__.copy()
+        sattrs = agroup.variables[name].__dict__.copy()
 
         identity = name
         if baseuri is not None:
             identity = baseuri + name
 
         # netCDF coordinate variable special case
-        if (len(fhandle.variables[name].dimensions) == 1 and
-            fhandle.variables[name].dimensions[0] == name and
-            len(fhandle.variables[name]) > 0):
+        if (len(agroup.variables[name].dimensions) == 1 and
+            agroup.variables[name].dimensions[0] == name and
+            len(agroup.variables[name]) > 0):
 
-            if not isinstance(fhandle.variables[name][0], np.ma.core.MaskedConstant):
-                sattrs['bald__first_value'] = fhandle.variables[name][0]
+            if not isinstance(agroup.variables[name][0], np.ma.core.MaskedConstant):
+                sattrs['bald__first_value'] = agroup.variables[name][0]
                 if isinstance(sattrs['bald__first_value'], str):
                     pass
                     
@@ -950,9 +956,9 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                     sattrs['bald__first_value'] = int(sattrs['bald__first_value'])
                 elif np.issubdtype(sattrs['bald__first_value'], np.floating):
                     sattrs['bald__first_value'] = float(sattrs['bald__first_value'])
-                if (len(fhandle.variables[name]) > 1 and
-                    not isinstance(fhandle.variables[name][-1], np.ma.core.MaskedConstant)):
-                    sattrs['bald__last_value'] = fhandle.variables[name][-1]
+                if (len(agroup.variables[name]) > 1 and
+                    not isinstance(agroup.variables[name][-1], np.ma.core.MaskedConstant)):
+                    sattrs['bald__last_value'] = agroup.variables[name][-1]
                     if isinstance(sattrs['bald__last_value'], str):
                         pass
                     elif np.issubdtype(sattrs['bald__last_value'], np.integer):
@@ -961,8 +967,8 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                         sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
 
             # datetime special case
-            if 'units' in fhandle.variables[name].ncattrs():
-                ustr = fhandle.variables[name].getncattr('units')
+            if 'units' in agroup.variables[name].ncattrs():
+                ustr = agroup.variables[name].getncattr('units')
                 pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
 
                 amatch = re.match(pattern, ustr)
@@ -973,15 +979,15 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                     tog = datetime.parse_datetime(origin,
                                                         calendar=ig)
                     if tog is not None:
-                        dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
-                                              fhandle.variables[name].dtype.itemsize)
+                        dtype = '{}{}'.format(agroup.variables[name].dtype.kind,
+                                              agroup.variables[name].dtype.itemsize)
                         fv = netCDF4.default_fillvals.get(dtype)
                         first = None
-                        if fhandle.variables[name][0] == fv:
-                            first = np.ma.MaskedArray(fhandle.variables[name][0],
+                        if agroup.variables[name][0] == fv:
+                            first = np.ma.MaskedArray(agroup.variables[name][0],
                                                       mask=True)
                         else:
-                            first = fhandle.variables[name][0]
+                            first = agroup.variables[name][0]
                         if first is not None:
                             try:
                                 first = int(first)
@@ -992,12 +998,12 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                                                                   epoch=tog)
                             if first is not np.ma.masked:
                                 sattrs['bald__first_value'] = edate_first
-                        if len(fhandle.variables[name]) > 1:
-                            if fhandle.variables[name][0] == fv:
-                                last = np.ma.MaskedArray(fhandle.variables[name][-1],
+                        if len(agroup.variables[name]) > 1:
+                            if agroup.variables[name][0] == fv:
+                                last = np.ma.MaskedArray(agroup.variables[name][-1],
                                                          mask=True)
                             else:
-                                last = fhandle.variables[name][-1]
+                                last = agroup.variables[name][-1]
                             if last:
                                 try:
                                     last = round(last)
@@ -1013,8 +1019,8 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
 
 
 
-        if fhandle.variables[name].shape:
-            sattrs['bald__shape'] = list(fhandle.variables[name].shape)
+        if agroup.variables[name].shape:
+            sattrs['bald__shape'] = list(agroup.variables[name].shape)
             var = Array(baseuri, name, sattrs, prefixes=prefixes,
                         aliases=aliases, alias_graph=aliasgraph)
         else:
@@ -1024,8 +1030,22 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
 
         file_variables[name] = var
 
+    for prefix in prefixes:
+        if prefixes[prefix].startswith('http'):
+            # print('parsing: {}'.format(prefixes[prefix][:-1]))
+            try:
+                aliasgraph.parse(data=cache[prefixes[prefix][:-1]].text, format='xml')
+                # print('parsed: {}'.format(prefixes[prefix][:-1]))
+            except Exception:
+                try:
+                    aliasgraph.parse(data=cache[prefixes[prefix][:-1]].text, format='n3')
+                    # print('parsed: {} (n3)'.format(prefixes[prefix][:-1]))
+                except Exception:
+                    pass
+
     reference_prefixes = dict()
-    reference_graph = copy.copy(aliasgraph)
+    # reference_graph = copy.copy(aliasgraph)
+    reference_graph = aliasgraph
 
     response = cache['https://www.opengis.net/def/binary-array-ld']
     reference_graph.parse(data=response.text, format='n3')
@@ -1081,18 +1101,19 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
     ref_prefs = [str(ref[0]) for ref in list(refs)]
 
     # cycle again and find references
-    for name in fhandle.variables:
+    for name in agroup.variables:
+
         if name ==  prefix_var_name:
             continue
 
         var = file_variables[name]
-        sattrs = fhandle.variables[name].__dict__.copy()
+        sattrs = agroup.variables[name].__dict__.copy()
 
         # coordinate variables are bald__references too
         if 'bald__Reference' not in var.rdf__type:
-            for dim in fhandle.variables[name].dimensions:
+            for dim in agroup.variables[name].dimensions:
                 if file_variables.get(dim) and name != dim:
-                    _make_ref_entities(var, fhandle, dim, name,
+                    _make_ref_entities(var, fhandle, agroup, dim, name,
                                        baseuri, root_container,
                                        file_variables, prefixes,
                                        aliases, aliasgraph)
@@ -1111,7 +1132,7 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                         var.attrs[sattr] = [file_variables.get(pref)
                                             for pref in potrefs_list]
                         for pref in potrefs_list:
-                            _make_ref_entities(var, fhandle,
+                            _make_ref_entities(var, fhandle, agroup, 
                                                pref, name, baseuri,
                                                root_container,
                                                file_variables, prefixes,
@@ -1126,8 +1147,8 @@ def _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
                                                 for pref in potrefs_set])
                         for pref in potrefs_set:
                             # coordinate variables already handled
-                            if pref not in fhandle.variables[name].dimensions:
-                                _make_ref_entities(var, fhandle,
+                            if pref not in agroup.variables[name].dimensions:
+                                _make_ref_entities(var, fhandle, agroup, 
                                                    pref, name, baseuri,
                                                    root_container,
                                                    file_variables, prefixes,
@@ -1166,29 +1187,58 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
                                    file_resource=True, file_locator=file_locator)
 
         root_container.attrs['bald__contains'] = set()
-
-        _load_netcdf_group_vars(fhandle, root_container, baseuri, attrs, prefixes,
+        
+        file_variables = {}
+        _load_netcdf_group_vars(fhandle, fhandle, root_container, baseuri, attrs, file_variables, prefixes,
                                 prefix_group_name, aliases, aliasgraph, cache)
 
         for gk in fhandle.groups:
             if gk == prefix_group_name:
                 continue
 
-            _load_netcdf_group(fhandle.groups[gk], baseuri, gk, root_container,
+            _load_netcdf_group(fhandle, fhandle.groups[gk], baseuri, gk, root_container, file_variables,
                                prefixes, prefix_group_name, aliases, aliasgraph, cache)
     # _create_references(root_container,
     #                    prefixes, prefix_group_name, aliases, aliasgraph, cache)
 
     return root_container
 
-def _make_ref_entities(var, fhandle, pref, name, baseuri,
+def _make_ref_entities(var, fhandle, variables, pref, name, baseuri,
                        root_container, file_variables,
                        prefixes, aliases, aliasgraph):
-    shapematch = (fhandle.variables[name].shape ==
-                  fhandle.variables[pref].shape)
+    namevar = None
+    prefvar = None
+    try:
+        prefvar = variables[pref]
+    except IndexError:
+        try:
+            if not pref.startswith('/'):
+                ppref = '/' + pref
+            prefvar = fhandle[ppref]
+        except IndexError:
+            pass
+    try:
+        namevar = variables[name]
+    except IndexError:
+        try:
+            if not name.startswith('/'):
+                nname = '/' + name
+            namevar = fhandle[nname]
+        except IndexError:
+            pass
 
-    if (fhandle.variables[name].shape and not shapematch and
-        fhandle.variables[pref].shape):
+    # if pref in variables:
+    #     prefvar = variables[pref]
+    # elif pref in fhandle:
+    #     prefvar = fhandle[pref]
+    # if name in variables:
+    #     namevar = variables[name]
+    # elif name in fhandle:
+    #     namevar = fhandle[name]
+    shapematch = (namevar.shape == prefvar.shape)
+
+    if (namevar is not None and prefvar is not None and namevar.shape and not shapematch and
+        prefvar.shape):
         try:
             refset = var.attrs.get('bald__references', set())
             if not isinstance(refset, set):
@@ -1196,15 +1246,14 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
             identity = None
             rattrs = {}
 
-            reshapes = netcdf_shared_dimensions(fhandle.variables[name],
-                                                fhandle.variables[pref])
+            reshapes = netcdf_shared_dimensions(namevar, prefvar)
 
-            rattrs['bald__targetShape'] = list(fhandle.variables[pref].shape)
+            rattrs['bald__targetShape'] = list(prefvar.shape)
             sourceReshape =  [i[1] for i in reshapes['sourceReshape'].items()]
-            if sourceReshape != list(fhandle.variables[name].shape):
+            if sourceReshape != list(namevar.shape):
                 rattrs['bald__sourceReshape'] = sourceReshape
             targetReshape = [i[1] for i in reshapes['targetReshape'].items()]
-            if targetReshape != list(fhandle.variables[pref].shape):
+            if targetReshape != list(prefvar.shape):
                 rattrs['bald__targetReshape'] = targetReshape
             rattrs['bald__target'] = set((file_variables.get(pref),))
             ref_node = Reference(baseuri, identity, rattrs,
@@ -1214,13 +1263,14 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
 
             refset.add(ref_node)
             var.attrs['bald__references'] = refset
+        # Indexing and dimension identification can fail, especially
+        # with unexpectedy formated files.  Fail silently on load, to
+        # that a partial graph may be returned.  Issues like this are
+        # deferred to validation.
         except ValueError:
-            # Indexing and dimension identification can fail, especially
-            # with unexpectedy formated files.  Fail silently on load, to
-            # that a partial graph may be returned.  Issues like this are
-            # deferred to validation.
             pass
-
+        # except IndexError:
+        #     pass
 
 def validate_netcdf(afilepath, baseuri=None, cache=None, uris_resolve=False):
     """

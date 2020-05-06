@@ -256,7 +256,7 @@ class Test(BaldTestCase):
             cdl_file_uri = 'file://CDL/{}.cdl'.format(name)
             alias_dict = {# 'NetCDF': 'http://def.scitools.org.uk/NetCDF',
                           # 'CFTerms': 'http://def.scitools.org.uk/CFTerms',
-                          # 'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
+                          'cf_sname': 'http://vocab.nerc.ac.uk/standard_name/'
                          }
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
