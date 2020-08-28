@@ -35,6 +35,10 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
     # HACK: The following mappings ignore prefixes as well as prefixes in nc file
     # TODO: Fix references to prefixes/aliases proper
 
+    #encoding formats to use - one as Text, one as URL
+    encodingFormats = ["application/x-netcdf",
+                       "http://vocab.nerc.ac.uk/collection/M01/current/NC/"]
+
     #load mappings
     mapping_idx = {}
     mapping_data = []
@@ -83,6 +87,19 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
           #print('schemaorg:' + mapping_idx[currField], "\t", row[1])
           lit = Literal(row[1])
           schema_g.add( (container, predUri, lit) )
+    #
+    # Add some distrbution details
+    #
+    distributionNode = BNode()
+    schema_g.add( (container, so.distribution, distributionNode) )
+    schema_g.add( (distributionNode, RDF.type, so.DataDownload) )
+    for encForm in encodingFormats:
+        if isUrl(encForm.find):
+            schema_g.add( (distributionNode, so.encodingFormat, URIRef(encForm)) )
+        else:
+            schema_g.add( (distributionNode, so.encodingFormat, Literal(encForm)) )
+    if baseuri is not None:
+        schema_g.add( (distributionNode, so.contentUrl, URIRef(baseuri)) )
     return schema_g
 
 def nc2schemaorg(ncfilename, outformat, baseuri=None):
