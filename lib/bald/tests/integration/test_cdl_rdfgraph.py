@@ -69,23 +69,6 @@ class Test(BaldTestCase):
                 expected_rdfgraph.parse(sf, format='n3')
             self.check_result(rdfgraph, expected_rdfgraph)
 
-    # def test_array_reference_external_prefix(self):
-    #     with self.temp_filename('.nc') as tfile:
-    #         cdlname = 'array_reference_external_prefix.cdl'
-    #         cdl_file = os.path.join(self.cdl_path, cdlname)
-    #         subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
-    #         cdl_file_uri = 'file://CDL/{}'.format(cdlname)
-    #         root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
-    #         rdfgraph = root_container.rdfgraph()
-    #         ttl = rdfgraph.serialize(format='n3').decode("utf-8")
-    #         if os.environ.get('bald_update_results') is not None:
-    #             with open(os.path.join(self.ttl_path, 'array_reference_external_prefix.ttl'), 'w') as sf:
-    #                 sf.write(ttl)
-    #         with open(os.path.join(self.ttl_path, 'array_reference_external_prefix.ttl'), 'r') as sf:
-    #             expected_rdfgraph = rdflib.Graph()
-    #             expected_rdfgraph.parse(sf, format='n3')
-    #         self.check_result(rdfgraph, expected_rdfgraph)
-
     def test_array_reference_external_prefix_context(self):
         with self.temp_filename('.nc') as tfile:
             cdlname = 'array_reference_external_prefix_context.cdl'
@@ -102,8 +85,6 @@ class Test(BaldTestCase):
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'array_reference_external_prefix_context.ttl'), 'w') as sf:
                     sf.write(ttl)
-            with open(os.path.join(self.ttl_path, 'out_array_reference_external_prefix_context.ttl'), 'w') as sf:
-                sf.write(ttl)
             with open(os.path.join(self.ttl_path, 'array_reference_external_prefix_context.ttl'), 'r') as sf:
                 expected_rdfgraph = rdflib.Graph()
                 expected_rdfgraph.parse(sf, format='n3')
