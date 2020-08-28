@@ -90,11 +90,7 @@ this:salt a bald:Array ;
     NetCDF:long_name "Salinity" ;
     NetCDF:units "PSU" ;
     bald:references [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
-            bald:target this:longitude ;
+            bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
@@ -102,7 +98,11 @@ this:salt a bald:Array ;
             bald:targetReshape ( 1 47 1 1 ) ;
             bald:targetShape ( 47 ) ],
         [ a bald:Reference ;
-            bald:target this:latitude ;
+            bald:target this:time ;
+            bald:targetReshape ( 5 1 1 1 ) ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) .
@@ -121,19 +121,19 @@ this:temp a bald:Array ;
     NetCDF:units "degrees C" ;
     NetCDF:valid_range ( -3.0 40.0 ) ;
     bald:references [ a bald:Reference ;
-            bald:target this:zc ;
-            bald:targetReshape ( 1 47 1 1 ) ;
-            bald:targetShape ( 47 ) ],
-        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 5 1 1 1 ) ;
             bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
-            bald:target this:latitude ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ],
+        [ a bald:Reference ;
+            bald:target this:longitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
-            bald:target this:longitude ;
+            bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 47 180 600 ) .
@@ -155,9 +155,9 @@ this:u a bald:Array ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -100.0 100.0 ) ;
     bald:references [ a bald:Reference ;
-            bald:target this:zc ;
-            bald:targetReshape ( 1 47 1 1 ) ;
-            bald:targetShape ( 47 ) ],
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 180 600 ) ;
+            bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
@@ -167,9 +167,9 @@ this:u a bald:Array ;
             bald:targetReshape ( 5 1 1 1 ) ;
             bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
-            bald:target this:longitude ;
-            bald:targetReshape ( 1 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ] ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ] ;
     bald:shape ( 5 47 180 600 ) .
 
 this:v a bald:Array ;
@@ -189,21 +189,21 @@ this:v a bald:Array ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -100.0 100.0 ) ;
     bald:references [ a bald:Reference ;
-            bald:target this:zc ;
-            bald:targetReshape ( 1 47 1 1 ) ;
-            bald:targetShape ( 47 ) ],
+            bald:target this:time ;
+            bald:targetReshape ( 5 1 1 1 ) ;
+            bald:targetShape ( 5 ) ],
         [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 1 ) ;
-            bald:targetShape ( 5 ) ],
-        [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ] ;
+            bald:targetShape ( 180 600 ) ],
+        [ a bald:Reference ;
+            bald:target this:zc ;
+            bald:targetReshape ( 1 47 1 1 ) ;
+            bald:targetShape ( 47 ) ] ;
     bald:shape ( 5 47 180 600 ) .
 
 this:wspeed_u a bald:Array ;
@@ -237,17 +237,17 @@ this:wspeed_v a bald:Array ;
     NetCDF:units "ms-1" ;
     NetCDF:valid_range ( -1000.0 1000.0 ) ;
     bald:references [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 5 1 1 ) ;
+            bald:targetShape ( 5 ) ],
+        [ a bald:Reference ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 180 600 ) ;
             bald:targetShape ( 180 600 ) ],
         [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 180 600 ) ;
-            bald:targetShape ( 180 600 ) ],
-        [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 5 1 1 ) ;
-            bald:targetShape ( 5 ) ] ;
+            bald:targetShape ( 180 600 ) ] ;
     bald:shape ( 5 180 600 ) .
 
 this:zc a bald:Array ;

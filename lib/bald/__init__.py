@@ -2,6 +2,7 @@ from collections import OrderedDict
 import contextlib
 import copy
 from difflib import SequenceMatcher
+import json
 import operator
 import os
 import re
@@ -803,7 +804,7 @@ def load(afilepath):
         except NameError:
             pass
 
-def _prefixes_and_aliases(fhandle, identity, alias_dict, cache):
+def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache):
     # prefixes are defined as group attributes in a dedicated group, and/or
     # by external resources
     prefix_var_name  = None
@@ -833,25 +834,52 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, cache):
         #         if k.endswith('__'):
         #             prefixes[k] = getattr(fhandle, k)
 
-    prefix_graph = rdflib.Graph()
-    for prefix_url in prefix_urls:
-        res = cache[prefix_url]
-        try:
-            prefix_graph.parse(data=res.text, format='xml')
-        except Exception:
-            print('Failed to parse: {} for prefixes.'.format(prefix_url))
+    # prefix_graph = rdflib.Graph()
+    # for prefix_url in prefix_urls:
+    #     res = cache[prefix_url]
+    #     try:
+    #         prefix_graph.parse(data=res.text, format='xml')
+    #     except Exception:
+    #         print('Failed to parse: {} for prefixes.'.format(prefix_url))
 
-    qres = prefix_graph.query("select ?prefix ?uri where \n"
-                              "{\n"
-                              "?s <http://purl.org/vocab/vann/preferredNamespacePrefix> ?prefix ;\n"
-                              "<http://purl.org/vocab/vann/preferredNamespaceUri> ?uri . \n"
-                              "}")
-    for res in qres:
-        key, value = (str(res[0]), str(res[1]))
-        if key in prefixes and value !=prefixes[key]:
-            prefixes.pop(key)
+    # qres = prefix_graph.query("select ?prefix ?uri where \n"
+    #                           "{\n"
+    #                           "?s <http://purl.org/vocab/vann/preferredNamespacePrefix> ?prefix ;\n"
+    #                           "<http://purl.org/vocab/vann/preferredNamespaceUri> ?uri . \n"
+    #                           "}")
+    # for res in qres:
+    #     key, value = (str(res[0]), str(res[1]))
+    #     if key in prefixes and value !=prefixes[key]:
+    #         prefixes.pop(key)
+    #     else:
+    #         prefixes[key] = value
+
+    # # check that default set is handled, i.e. bald__ and rdf__
+    # if 'bald__' not in prefixes:
+    #     prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 
+
+    # if 'rdf__' not in prefixes:
+    #     prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+    ## query keep above
+    context_prefixes = {}
+    for prefix_context in prefix_contexts:
+        if prefix_context.startswith('http://') or prefix_context.startswith('https://'):
+            prefcon = json.loads(cache[prefix_context].text)
         else:
-            prefixes[key] = value
+            prefcon = json.loads(prefix_context)
+        if '@context' in prefcon:
+            for key in prefcon['@context']:
+                pref = '{}__'.format(key)
+                if pref in context_prefixes and context_prefixes[pref] != prefcon['@context'][key]:
+                    context_prefixes[pref] = None
+                else:
+                    context_prefixes[pref] = prefcon['@context'][key]
+    for akey in context_prefixes:
+        if context_prefixes[akey] is None:
+            context_prefixes.pop(akey)
+
+    precedence_update(prefixes, context_prefixes)
 
     # check that default set is handled, i.e. bald__ and rdf__
     if 'bald__' not in prefixes:
@@ -960,18 +988,18 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
                 if isinstance(sattrs['bald__first_value'], str):
                     pass
                     
-                elif np.issubdtype(sattrs['bald__first_value'], np.integer):
+                elif np.issubdtype(sattrs['bald__first_value'].dtype, np.integer):
                     sattrs['bald__first_value'] = int(sattrs['bald__first_value'])
-                elif np.issubdtype(sattrs['bald__first_value'], np.floating):
+                elif np.issubdtype(sattrs['bald__first_value'].dtype, np.floating):
                     sattrs['bald__first_value'] = float(sattrs['bald__first_value'])
                 if (len(agroup.variables[name]) > 1 and
                     not isinstance(agroup.variables[name][-1], np.ma.core.MaskedConstant)):
                     sattrs['bald__last_value'] = agroup.variables[name][-1]
                     if isinstance(sattrs['bald__last_value'], str):
                         pass
-                    elif np.issubdtype(sattrs['bald__last_value'], np.integer):
+                    elif np.issubdtype(sattrs['bald__last_value'].dtype, np.integer):
                         sattrs['bald__last_value'] = int(sattrs['bald__last_value'])
-                    elif np.issubdtype(sattrs['bald__last_value'], np.floating):
+                    elif np.issubdtype(sattrs['bald__last_value'].dtype, np.floating):
                         sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
 
             # datetime special case
@@ -1162,14 +1190,18 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
                                                    aliases, aliasgraph)
 
 
-def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locator=None):
+def load_netcdf(afilepath, baseuri=None, alias_dict=None, prefix_contexts=None, cache=None, file_locator=None):
     """
     Load a file with respect to binary-array-linked-data.
     Returns a :class:`bald.Collection`
     """
 
-    if alias_dict == None:
+    if alias_dict is None:
         alias_dict = {}
+    if isinstance(prefix_contexts, str):
+        prefix_contexts = [prefix_contexts]
+    elif prefix_contexts is None:
+        prefix_contexts = []
     if cache is None:
         cache = HttpCache()
 
@@ -1183,7 +1215,8 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
 
         identity = baseuri
 
-        prefixes, aliases, aliasgraph, prefix_group_name = _prefixes_and_aliases(fhandle, identity, alias_dict, cache)
+        prefixes, aliases, aliasgraph, prefix_group_name = _prefixes_and_aliases(fhandle, identity, alias_dict,
+                                                                                 prefix_contexts, cache)
 
         attrs = {}
         for k in fhandle.ncattrs():
@@ -1336,6 +1369,16 @@ def careful_update(adict, bdict):
     else:
         adict.update(bdict)
         return adict
+
+def precedence_update(maindict, updatingdict):
+    """
+    Carefully updates a main dictionary with an updating dictionary,
+    only inputting new values, and never overwriting values.
+    
+    """
+    for akey in updatingdict:
+        if akey not in maindict:
+            maindict[akey] = updatingdict[akey]
 
 def load_hdf5(afilepath, baseuri=None, alias_dict=None, cache=None):
     if cache is None:

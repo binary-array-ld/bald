@@ -3,7 +3,7 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix this: <file://CDL/array_reference_external_prefix.cdl/> .
+@prefix this: <file://CDL/array_reference_external_prefix_context.cdl/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -14,8 +14,7 @@ this: a bald:Container ;
             dcat:mediaType [ a dcat:MediaType ;
                     dct:identifier "application/x-netcdf" ] ] ;
     bald:contains this:child_variable,
-        this:parent_variable ;
-    bald:isPrefixedBy <http://def.binary-array-ld.net/prefixes> .
+        this:parent_variable .
 
 this:parent_variable a bald:Array ;
     bald:references this:child_variable ;

@@ -33,9 +33,9 @@ this:co2 a bald:Array ;
     NetCDF:scale_factor 0.000981685145029486 ;
     NetCDF:units "kg kg**-1" ;
     bald:references [ a bald:Reference ;
-            bald:target this:longitude ;
-            bald:targetReshape ( 1 1 1 360 ) ;
-            bald:targetShape ( 360 ) ],
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 181 1 ) ;
+            bald:targetShape ( 181 ) ],
         [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 1 1 1 1 ) ;
@@ -45,9 +45,9 @@ this:co2 a bald:Array ;
             bald:targetReshape ( 1 60 1 1 ) ;
             bald:targetShape ( 60 ) ],
         [ a bald:Reference ;
-            bald:target this:latitude ;
-            bald:targetReshape ( 1 1 181 1 ) ;
-            bald:targetShape ( 181 ) ] ;
+            bald:target this:longitude ;
+            bald:targetReshape ( 1 1 1 360 ) ;
+            bald:targetShape ( 360 ) ] ;
     bald:shape ( 1 60 181 360 ) .
 
 this:lnsp a bald:Array ;
@@ -56,9 +56,9 @@ this:lnsp a bald:Array ;
     NetCDF:add_offset 11.2087164280841 ;
     NetCDF:long_name "Logarithm of surface pressure" ;
     bald:references [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 1 1 1 ) ;
-            bald:targetShape ( 1 ) ],
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 181 1 ) ;
+            bald:targetShape ( 181 ) ],
         [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 1 360 ) ;
@@ -68,9 +68,9 @@ this:lnsp a bald:Array ;
             bald:targetReshape ( 1 60 1 1 ) ;
             bald:targetShape ( 60 ) ],
         [ a bald:Reference ;
-            bald:target this:latitude ;
-            bald:targetReshape ( 1 1 181 1 ) ;
-            bald:targetShape ( 181 ) ] ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 1 1 1 ) ;
+            bald:targetShape ( 1 ) ] ;
     bald:shape ( 1 60 181 360 ) .
 
 this:latitude a bald:Array ;

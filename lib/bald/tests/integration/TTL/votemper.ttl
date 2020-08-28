@@ -40,25 +40,25 @@ this:votemper a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
-            bald:target this:nav_lon ;
-            bald:targetReshape ( 1 1 148 180 ) ;
-            bald:targetShape ( 148 180 ) ],
+            bald:sourceReshape ( 1 4 4 148 180 ) ;
+            bald:target this:votemper_pdf ;
+            bald:targetShape ( 19 4 4 148 180 ) ],
         [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 4 1 1 1 ) ;
             bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
-            bald:sourceReshape ( 1 4 4 148 180 ) ;
-            bald:target this:votemper_pdf ;
-            bald:targetShape ( 19 4 4 148 180 ) ],
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
             bald:target this:nav_lat ;
             bald:targetReshape ( 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ] ;
+            bald:target this:nav_lon ;
+            bald:targetReshape ( 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ] ;
     bald:shape ( 4 4 148 180 ) .
 
 this:percentiles a bald:Array ;
@@ -91,25 +91,25 @@ this:votemper_pdf a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:nav_lon ;
             bald:targetReshape ( 1 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ],
+        [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 1 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
             bald:target this:percentiles ;
             bald:targetReshape ( 19 1 1 1 1 ) ;
             bald:targetShape ( 19 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
             bald:target this:nav_lat ;
             bald:targetReshape ( 1 1 1 148 180 ) ;
-            bald:targetShape ( 148 180 ) ] ;
+            bald:targetShape ( 148 180 ) ],
+        [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 4 1 1 1 ) ;
+            bald:targetShape ( 4 ) ] ;
     bald:shape ( 19 4 4 148 180 ) .
 
 this:nav_lat a bald:Array ;
