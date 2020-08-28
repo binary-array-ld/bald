@@ -40,13 +40,17 @@ this:votemper a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
+            bald:target this:time ;
+            bald:targetReshape ( 4 1 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
             bald:sourceReshape ( 1 4 4 148 180 ) ;
             bald:target this:votemper_pdf ;
             bald:targetShape ( 19 4 4 148 180 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ],
+            bald:target this:nav_lon ;
+            bald:targetReshape ( 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
             bald:target this:deptht ;
             bald:targetReshape ( 1 4 1 1 ) ;
@@ -54,18 +58,14 @@ this:votemper a bald:Array ;
         [ a bald:Reference ;
             bald:target this:nav_lat ;
             bald:targetReshape ( 1 1 148 180 ) ;
-            bald:targetShape ( 148 180 ) ],
-        [ a bald:Reference ;
-            bald:target this:nav_lon ;
-            bald:targetReshape ( 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ] ;
     bald:shape ( 4 4 148 180 ) .
 
 this:percentiles a bald:Array ;
     NetCDF:long_name "percentile" ;
     NetCDF:units "1" ;
-    bald:first_value 5.0 ;
-    bald:last_value 95.0 ;
+    bald:firstValue 5.0 ;
+    bald:lastValue 95.0 ;
     bald:shape ( 19 ) .
 
 this:deptht_bnds a bald:Array ;
@@ -91,25 +91,25 @@ this:votemper_pdf a bald:Array ;
     NetCDF:long_name "Temperature" ;
     NetCDF:units "degC" ;
     bald:references [ a bald:Reference ;
-            bald:target this:nav_lon ;
-            bald:targetReshape ( 1 1 1 148 180 ) ;
-            bald:targetShape ( 148 180 ) ],
-        [ a bald:Reference ;
-            bald:target this:deptht ;
-            bald:targetReshape ( 1 1 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:percentiles ;
-            bald:targetReshape ( 19 1 1 1 1 ) ;
-            bald:targetShape ( 19 ) ],
-        [ a bald:Reference ;
             bald:target this:nav_lat ;
             bald:targetReshape ( 1 1 1 148 180 ) ;
             bald:targetShape ( 148 180 ) ],
         [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 1 4 1 1 1 ) ;
-            bald:targetShape ( 4 ) ] ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:deptht ;
+            bald:targetReshape ( 1 1 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
+        [ a bald:Reference ;
+            bald:target this:nav_lon ;
+            bald:targetReshape ( 1 1 1 148 180 ) ;
+            bald:targetShape ( 148 180 ) ],
+        [ a bald:Reference ;
+            bald:target this:percentiles ;
+            bald:targetReshape ( 19 1 1 1 1 ) ;
+            bald:targetShape ( 19 ) ] ;
     bald:shape ( 19 4 4 148 180 ) .
 
 this:nav_lat a bald:Array ;
@@ -143,8 +143,8 @@ this:time a bald:Array ;
     NetCDF:long_name "Time axis" ;
     NetCDF:title "Time" ;
     NetCDF:units "hours since 2001-01-01 00:00:00" ;
-    bald:first_value "2001-01-01T00:00:00"^^xsd:dateTime ;
-    bald:last_value "2001-01-04T00:00:00"^^xsd:dateTime ;
+    bald:firstValue "2001-01-01T00:00:00"^^xsd:dateTime ;
+    bald:lastValue "2001-01-04T00:00:00"^^xsd:dateTime ;
     bald:shape ( 4 ) .
 
 this:deptht a bald:Array ;
@@ -154,8 +154,8 @@ this:deptht a bald:Array ;
     NetCDF:long_name "Vertical T levels" ;
     NetCDF:title "deptht" ;
     NetCDF:units "m" ;
-    bald:first_value 0.0 ;
-    bald:last_value 1000.0 ;
+    bald:firstValue 0.0 ;
+    bald:lastValue 1000.0 ;
     bald:references [ a bald:Reference ;
             bald:sourceReshape ( 4 1 ) ;
             bald:target this:deptht_bnds ;
