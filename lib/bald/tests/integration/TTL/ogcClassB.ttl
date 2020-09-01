@@ -1,0 +1,18 @@
+@prefix bald: <http://binary-array-ld.net/latest/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix this: <http://secret.binary-array-ld.net/prefix.nc/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://secret.binary-array-ld.net/prefix.nc> a bald:Container ;
+    bald:contains this:var0,
+        this:var1 ;
+    bald:isPrefixedBy "prefix_list" .
+
+this:var0 a bald:Subject ;
+    rdfs:label rdfs:label .
+
+this:var1 a bald:Subject ;
+    rdfs:label rdfs:label .
+
