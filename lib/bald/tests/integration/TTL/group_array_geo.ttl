@@ -41,17 +41,17 @@ this__scalar_quantities:air_pressure a bald:Array ;
     nc:units "Pa" ;
     georef:domain this:theta_points ;
     bald:references [ a bald:Reference ;
-            bald:target this:x_t ;
-            bald:targetReshape ( 1 1 144 ) ;
-            bald:targetShape ( 144 ) ],
+            bald:target this:time ;
+            bald:targetReshape ( 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
             bald:target this:y_t ;
             bald:targetReshape ( 1 91 1 ) ;
             bald:targetShape ( 91 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 ) ;
-            bald:targetShape ( 4 ) ] ;
+            bald:target this:x_t ;
+            bald:targetReshape ( 1 1 144 ) ;
+            bald:targetShape ( 144 ) ] ;
     bald:shape ( 4 91 144 ) .
 
 this__vector_quantities: a bald:Container ;
@@ -70,17 +70,17 @@ this__vector_quantities__wind:u_wind a bald:Array ;
     nc:units "m s-1" ;
     georef:domain this:u_points ;
     bald:references [ a bald:Reference ;
-            bald:target this:y_t ;
-            bald:targetReshape ( 1 91 1 ) ;
-            bald:targetShape ( 91 ) ],
+            bald:target this:time ;
+            bald:targetReshape ( 4 1 1 ) ;
+            bald:targetShape ( 4 ) ],
         [ a bald:Reference ;
             bald:target this:x_q ;
             bald:targetReshape ( 1 1 144 ) ;
             bald:targetShape ( 144 ) ],
         [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 4 1 1 ) ;
-            bald:targetShape ( 4 ) ] ;
+            bald:target this:y_t ;
+            bald:targetReshape ( 1 91 1 ) ;
+            bald:targetShape ( 91 ) ] ;
     bald:shape ( 4 91 144 ) .
 
 this__vector_quantities__wind:v_wind a bald:Array ;
@@ -88,17 +88,17 @@ this__vector_quantities__wind:v_wind a bald:Array ;
     nc:units "m s-1" ;
     georef:domain this:v_points ;
     bald:references [ a bald:Reference ;
+            bald:target this:x_t ;
+            bald:targetReshape ( 1 1 144 ) ;
+            bald:targetShape ( 144 ) ],
+        [ a bald:Reference ;
             bald:target this:y_q ;
             bald:targetReshape ( 1 90 1 ) ;
             bald:targetShape ( 90 ) ],
         [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 4 1 1 ) ;
-            bald:targetShape ( 4 ) ],
-        [ a bald:Reference ;
-            bald:target this:x_t ;
-            bald:targetReshape ( 1 1 144 ) ;
-            bald:targetShape ( 144 ) ] ;
+            bald:targetShape ( 4 ) ] ;
     bald:shape ( 4 90 144 ) .
 
 this:theta_points a bald:Resource ;
@@ -122,34 +122,34 @@ this:v_points a bald:Resource ;
 this:x_q a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     nc:units "degrees" ;
-    bald:firstValue 1.25 ;
-    bald:lastValue 358.75 ;
+    bald:arrayFirstValue 1.25 ;
+    bald:arrayLastValue 358.75 ;
     bald:shape ( 144 ) .
 
 this:y_q a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     nc:units "degrees" ;
-    bald:firstValue -89.0 ;
-    bald:lastValue 89.0 ;
+    bald:arrayFirstValue -89.0 ;
+    bald:arrayLastValue 89.0 ;
     bald:shape ( 90 ) .
 
 this:time a bald:Array ;
     rdfs:label "Time" ;
-    bald:firstValue "2020-05-05T00:00Z" ;
-    bald:lastValue "2020-05-05T18:00Z" ;
+    bald:arrayFirstValue "2020-05-05T00:00Z" ;
+    bald:arrayLastValue "2020-05-05T18:00Z" ;
     bald:shape ( 4 ) .
 
 this:x_t a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     nc:units "degrees" ;
-    bald:firstValue 0.0 ;
-    bald:lastValue 357.5 ;
+    bald:arrayFirstValue 0.0 ;
+    bald:arrayLastValue 357.5 ;
     bald:shape ( 144 ) .
 
 this:y_t a bald:Array ;
     cf:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     nc:units "degrees" ;
-    bald:firstValue -90.0 ;
-    bald:lastValue 90.0 ;
+    bald:arrayFirstValue -90.0 ;
+    bald:arrayLastValue 90.0 ;
     bald:shape ( 91 ) .
 

@@ -984,23 +984,23 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
             len(agroup.variables[name]) > 0):
 
             if not isinstance(agroup.variables[name][0], np.ma.core.MaskedConstant):
-                sattrs['bald__firstValue'] = agroup.variables[name][0]
-                if isinstance(sattrs['bald__firstValue'], str):
+                sattrs['bald__arrayFirstValue'] = agroup.variables[name][0]
+                if isinstance(sattrs['bald__arrayFirstValue'], str):
                     pass
                     
-                elif np.issubdtype(sattrs['bald__firstValue'].dtype, np.integer):
-                    sattrs['bald__firstValue'] = int(sattrs['bald__firstValue'])
-                elif np.issubdtype(sattrs['bald__firstValue'].dtype, np.floating):
-                    sattrs['bald__firstValue'] = float(sattrs['bald__firstValue'])
+                elif np.issubdtype(sattrs['bald__arrayFirstValue'].dtype, np.integer):
+                    sattrs['bald__arrayFirstValue'] = int(sattrs['bald__arrayFirstValue'])
+                elif np.issubdtype(sattrs['bald__arrayFirstValue'].dtype, np.floating):
+                    sattrs['bald__arrayFirstValue'] = float(sattrs['bald__arrayFirstValue'])
                 if (len(agroup.variables[name]) > 1 and
                     not isinstance(agroup.variables[name][-1], np.ma.core.MaskedConstant)):
-                    sattrs['bald__lastValue'] = agroup.variables[name][-1]
-                    if isinstance(sattrs['bald__lastValue'], str):
+                    sattrs['bald__arrayLastValue'] = agroup.variables[name][-1]
+                    if isinstance(sattrs['bald__arrayLastValue'], str):
                         pass
-                    elif np.issubdtype(sattrs['bald__lastValue'].dtype, np.integer):
-                        sattrs['bald__lastValue'] = int(sattrs['bald__lastValue'])
-                    elif np.issubdtype(sattrs['bald__lastValue'].dtype, np.floating):
-                        sattrs['bald__lastValue'] = float(sattrs['bald__lastValue'])
+                    elif np.issubdtype(sattrs['bald__arrayLastValue'].dtype, np.integer):
+                        sattrs['bald__arrayLastValue'] = int(sattrs['bald__arrayLastValue'])
+                    elif np.issubdtype(sattrs['bald__arrayLastValue'].dtype, np.floating):
+                        sattrs['bald__arrayLastValue'] = float(sattrs['bald__arrayLastValue'])
 
             # datetime special case
             if 'units' in agroup.variables[name].ncattrs():
@@ -1033,7 +1033,7 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
                                                                   quantity,
                                                                   epoch=tog)
                             if first is not np.ma.masked:
-                                sattrs['bald__firstValue'] = edate_first
+                                sattrs['bald__arrayFirstValue'] = edate_first
                         if len(agroup.variables[name]) > 1:
                             if agroup.variables[name][0] == fv:
                                 last = np.ma.MaskedArray(agroup.variables[name][-1],
@@ -1049,7 +1049,7 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
                                                                      quantity,
                                                                      epoch=tog)
 
-                                sattrs['bald__lastValue'] = edate_last
+                                sattrs['bald__arrayLastValue'] = edate_last
 
 
 
