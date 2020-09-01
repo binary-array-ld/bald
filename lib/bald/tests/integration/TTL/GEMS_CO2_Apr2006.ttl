@@ -33,10 +33,6 @@ this:co2 a bald:Array ;
     NetCDF:scale_factor 0.000981685145029486 ;
     NetCDF:units "kg kg**-1" ;
     bald:references [ a bald:Reference ;
-            bald:target this:levelist ;
-            bald:targetReshape ( 1 60 1 1 ) ;
-            bald:targetShape ( 60 ) ],
-        [ a bald:Reference ;
             bald:target this:time ;
             bald:targetReshape ( 1 1 1 1 ) ;
             bald:targetShape ( 1 ) ],
@@ -44,6 +40,10 @@ this:co2 a bald:Array ;
             bald:target this:latitude ;
             bald:targetReshape ( 1 1 181 1 ) ;
             bald:targetShape ( 181 ) ],
+        [ a bald:Reference ;
+            bald:target this:levelist ;
+            bald:targetReshape ( 1 60 1 1 ) ;
+            bald:targetShape ( 60 ) ],
         [ a bald:Reference ;
             bald:target this:longitude ;
             bald:targetReshape ( 1 1 1 360 ) ;
@@ -56,9 +56,9 @@ this:lnsp a bald:Array ;
     NetCDF:add_offset 11.2087164280841 ;
     NetCDF:long_name "Logarithm of surface pressure" ;
     bald:references [ a bald:Reference ;
-            bald:target this:time ;
-            bald:targetReshape ( 1 1 1 1 ) ;
-            bald:targetShape ( 1 ) ],
+            bald:target this:latitude ;
+            bald:targetReshape ( 1 1 181 1 ) ;
+            bald:targetShape ( 181 ) ],
         [ a bald:Reference ;
             bald:target this:levelist ;
             bald:targetReshape ( 1 60 1 1 ) ;
@@ -68,34 +68,34 @@ this:lnsp a bald:Array ;
             bald:targetReshape ( 1 1 1 360 ) ;
             bald:targetShape ( 360 ) ],
         [ a bald:Reference ;
-            bald:target this:latitude ;
-            bald:targetReshape ( 1 1 181 1 ) ;
-            bald:targetShape ( 181 ) ] ;
+            bald:target this:time ;
+            bald:targetReshape ( 1 1 1 1 ) ;
+            bald:targetShape ( 1 ) ] ;
     bald:shape ( 1 60 181 360 ) .
 
 this:latitude a bald:Array ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
     NetCDF:units "degrees_north" ;
-    bald:first_value 90.0 ;
-    bald:last_value -90.0 ;
+    bald:arrayFirstValue 90.0 ;
+    bald:arrayLastValue -90.0 ;
     bald:shape ( 181 ) .
 
 this:levelist a bald:Array ;
     NetCDF:long_name "model_level_number" ;
-    bald:first_value 1 ;
-    bald:last_value 60 ;
+    bald:arrayFirstValue 1 ;
+    bald:arrayLastValue 60 ;
     bald:shape ( 60 ) .
 
 this:longitude a bald:Array ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
     NetCDF:units "degrees_east" ;
-    bald:first_value 0.0 ;
-    bald:last_value 359.0 ;
+    bald:arrayFirstValue 0.0 ;
+    bald:arrayLastValue 359.0 ;
     bald:shape ( 360 ) .
 
 this:time a bald:Array ;
     CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/time/> ;
     NetCDF:units "hours since 1900-01-01 00:00:0.0" ;
-    bald:first_value "2006-04-01T00:00:00"^^xsd:dateTime ;
+    bald:arrayFirstValue "2006-04-01T00:00:00"^^xsd:dateTime ;
     bald:shape ( 1 ) .
 

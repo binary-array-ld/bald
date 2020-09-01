@@ -1,27 +1,24 @@
+@prefix NetCDF: <http://def.scitools.org.uk/NetCDF/> .
 @prefix bald: <https://www.opengis.net/def/binary-array-ld/> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix this: <file://CDL/array_reference_external_prefix.cdl/> .
+@prefix this: <http://secret.binary-array-ld.net/alias.nc/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 this: a bald:Container ;
+    NetCDF:title "Sample netCDF file definition with alias terms from the netCDF user guide" ;
     dct:format [ a dct:MediaType ;
             dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/> ] ;
     dcat:distribution [ a dcat:Distribution ;
             dcat:mediaType [ a dcat:MediaType ;
                     dct:identifier "application/x-netcdf" ] ] ;
-    bald:contains this:child_variable,
-        this:parent_variable ;
-    bald:isPrefixedBy <http://def.binary-array-ld.net/prefixes> .
+    bald:contains this:var0,
+        this:var1 .
 
-this:parent_variable a bald:Array ;
-    bald:references this:child_variable ;
-    bald:shape ( 11 17 ) .
+this:var0 a bald:Resource .
 
-this:child_variable a bald:Array,
-        bald:Reference ;
-    bald:shape ( 11 17 ) .
+this:var1 a bald:Resource .
 

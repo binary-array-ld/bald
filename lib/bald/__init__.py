@@ -2,6 +2,7 @@ from collections import OrderedDict
 import contextlib
 import copy
 from difflib import SequenceMatcher
+import json
 import operator
 import os
 import re
@@ -283,7 +284,7 @@ class Resource(object):
     _rdftype = 'bald__Resource'
     # def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
     #              aliases=None, alias_graph=None):
-    def __init__(self, baseuri, relative_id, attrs=None, prefixes=None,
+    def __init__(self, baseuri, identity_pref, relative_id, attrs=None, prefixes=None,
                  aliases=None, alias_graph=None, file_resource=False, file_locator=None):
 
         """
@@ -292,6 +293,7 @@ class Resource(object):
         attrs: an dictionary of key value pair attributes
         """
         self.baseuri = baseuri
+        self.identity_pref = identity_pref
         self.file_locator = file_locator
         self.is_file = file_resource
         self.relative_id = relative_id
@@ -322,9 +324,9 @@ class Resource(object):
         if self.relative_id is None:
             result = None
         elif self.relative_id:
-            result = self.baseuri + self.relative_id
+            result = self.identity_pref + self.relative_id
         else:
-            result = self.baseuri
+            result = self.identity_pref
         return result
         # return '/'.join([self.baseuri, self.relative_id])
 
@@ -335,7 +337,7 @@ class Resource(object):
         return str(self)
 
     def __setattr__(self, attr, value):
-        reserved_attrs = ['baseuri', 'relative_id', 'prefixes', '_prefixes',
+        reserved_attrs = ['baseuri', 'identity_pref', 'relative_id', 'prefixes', '_prefixes',
                           '_prefix_suffix', '_http_uri_prefix', '_http_uri',
                           'aliases', 'alias_graph', 'attrs', '_rdftype', 'file_locator',
                           'is_file']
@@ -430,6 +432,8 @@ class Resource(object):
                 elif len(results) == 1:
                     result = str(results[0][0])
             except pyparsing.ParseException:
+                pass
+            except ValueError:
                 pass
         return result
 
@@ -577,6 +581,15 @@ class Resource(object):
             selfnode = rdflib.BNode()
         else:
             selfnode = rdflib.URIRef(self.identity)
+            # if group, bind to namespace
+            if self.identity.endswith('/'):
+                if not (rdflib.URIRef(self.identity) in
+                        [n[1] for n in graph.namespace_manager.namespaces()]):
+                    this = dict(graph.namespace_manager.namespaces())['this']
+                    nkey = self.identity.replace(this, 'this__')
+                    nkey = nkey[:-1].replace('/', '__')
+                    graph.bind(nkey, self.identity)
+
         for attr in self.attrs:
             list_items = []
             objs = self.attrs[attr]
@@ -791,17 +804,409 @@ def load(afilepath):
         except NameError:
             pass
 
-def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locator=None):
+def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache):
+    # prefixes are defined as group attributes in a dedicated group, and/or
+    # by external resources
+    prefix_var_name  = None
+    if hasattr(fhandle, 'bald__isPrefixedBy'):
+       prefix_var_name  = fhandle.bald__isPrefixedBy
+
+    prefix_ids = (fhandle.bald__isPrefixedBy if
+                  hasattr(fhandle, 'bald__isPrefixedBy') else '')
+    prefix_urls = []
+    prefix_groups = []
+    for pid in prefix_ids.split(' '):
+        if pid in fhandle.groups:
+            prefix_groups.append(fhandle.groups[pid])
+        elif pid.startswith('http://') or pid.startswith('https://'):
+            prefix_urls.append(pid)
+    prefixes = {}
+
+    skipped_variables = []
+    for prefix_group in prefix_groups:
+        if prefix_group != {}:
+            prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
+                              prefix in prefix_group.ncattrs() if prefix.endswith('__')]))
+            if isinstance(prefix_group, netCDF4._netCDF4.Variable):
+                skipped_variables.append(prefix_var.name)
+        # else:
+        #     for k in fhandle.ncattrs():
+        #         if k.endswith('__'):
+        #             prefixes[k] = getattr(fhandle, k)
+
+    # prefix_graph = rdflib.Graph()
+    # for prefix_url in prefix_urls:
+    #     res = cache[prefix_url]
+    #     try:
+    #         prefix_graph.parse(data=res.text, format='xml')
+    #     except Exception:
+    #         print('Failed to parse: {} for prefixes.'.format(prefix_url))
+
+    # qres = prefix_graph.query("select ?prefix ?uri where \n"
+    #                           "{\n"
+    #                           "?s <http://purl.org/vocab/vann/preferredNamespacePrefix> ?prefix ;\n"
+    #                           "<http://purl.org/vocab/vann/preferredNamespaceUri> ?uri . \n"
+    #                           "}")
+    # for res in qres:
+    #     key, value = (str(res[0]), str(res[1]))
+    #     if key in prefixes and value !=prefixes[key]:
+    #         prefixes.pop(key)
+    #     else:
+    #         prefixes[key] = value
+
+    # # check that default set is handled, i.e. bald__ and rdf__
+    # if 'bald__' not in prefixes:
+    #     prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 
+
+    # if 'rdf__' not in prefixes:
+    #     prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+    ## query keep above
+    context_prefixes = {}
+    for prefix_context in prefix_contexts:
+        if prefix_context.startswith('http://') or prefix_context.startswith('https://'):
+            prefcon = json.loads(cache[prefix_context].text)
+        else:
+            prefcon = json.loads(prefix_context)
+        if '@context' in prefcon:
+            for key in prefcon['@context']:
+                pref = '{}__'.format(key)
+                if pref in context_prefixes and context_prefixes[pref] != prefcon['@context'][key]:
+                    context_prefixes[pref] = None
+                else:
+                    context_prefixes[pref] = prefcon['@context'][key]
+    for akey in context_prefixes:
+        if context_prefixes[akey] is None:
+            context_prefixes.pop(akey)
+
+    precedence_update(prefixes, context_prefixes)
+
+    # check that default set is handled, i.e. bald__ and rdf__
+    if 'bald__' not in prefixes:
+        prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 
+
+    if 'rdf__' not in prefixes:
+        prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+    alias_var_name = None
+    if hasattr(fhandle, 'bald__isAliasedBy'):
+       alias_var_name  = fhandle.bald__isAliasedBy
+
+    alias_var = (fhandle[fhandle.bald__isAliasedBy]
+                   if hasattr(fhandle, 'bald__isAliasedBy') else {})
+    aliases = {}
+    if alias_var != {}:
+        aliases = (dict([(alias, getattr(alias_var, alias))
+                         for alias in alias_var.ncattrs()]))
+        if isinstance(alias_var, netCDF4._netCDF4.Variable):
+            skipped_variables.append(alias_var.name)
+
+    aliases = careful_update(aliases, alias_dict)
+
+    aliasgraph = rdflib.Graph()
+
+    for alias in aliases:
+        response = cache[aliases[alias]]
+        try:
+            aliasgraph.parse(data=response.text, format='xml')
+        except Exception:
+            print('Failed to parse: {}'.format(aliases[alias]))
+        # try:
+        #     import xml.sax._exceptions
+        #     aliasgraph.parse(data=response.text, format='xml')
+        # except TypeError:
+        #     pass
+        # except xml.sax._exceptions.SAXParseException:
+        #     import pdb; pdb.set_trace()
+        #     pass
+    # if hasattr(fhandle, 'Conventions'):
+    #     conventions = [c.strip() for c in fhandle.Conventions.split(',')]
+    #     for conv in conventions:
+    #         if conv.startswith('CF-'):
+    #             uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
+    #             aliasgraph.parse(uri)
+    #             uri = 'http://vocab.nerc.ac.uk/standard_name/'
+    #             aliasgraph.parse(uri, format='n3')
+        # qstr = ('select ?alias ?uri where '
+        #         '{?uri dct:identifier ?alias .}')
+        # qres = aliasgraph.query(qstr)
+
+        # new_aliases = [(str(q[0]), str(q[1])) for q in list(qres)]
+        # na_keys = [n[0] for n in new_aliases]
+        # if len(set(na_keys)) != len(na_keys):
+        #     raise ValueError('duplicate aliases')
+        # aliases = careful_update(aliases, dict(new_aliases))
+
+    return prefixes, aliases, aliasgraph, prefix_var_name
+
+
+def _load_netcdf_group(fhandle, agroup, baseuri, identity_pref, gk, root_container, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache):
+    file_variables = file_variables.copy()
+    
+    gattrs = {}
+    for k in agroup.ncattrs():
+        gattrs[k] = getattr(agroup, k)
+
+    gidentity = identity_pref + gk + '/'
+
+    gcontainer = Container(baseuri, gidentity, '', gattrs, prefixes=prefixes,
+                           aliases=aliases, alias_graph=aliasgraph)
+
+    gcontainer.attrs['bald__contains'] = set()
+
+    _load_netcdf_group_vars(fhandle, agroup, gcontainer, baseuri, gidentity, gattrs, file_variables, prefixes, prefix_group_name, aliases, aliasgraph, cache)
+    if 'bald__contains' not in root_container.attrs:
+        root_container.attrs['bald__contains'] = set()
+    root_container.attrs['bald__contains'].add(gcontainer)
+    for gk in agroup.groups:
+
+        _load_netcdf_group(fhandle, agroup.groups[gk], baseuri, gidentity, gk, gcontainer, file_variables,
+                           prefixes, prefix_group_name, aliases, aliasgraph, cache)
+
+
+
+def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_pref, attrs, file_variables, prefixes,
+                            prefix_var_name, aliases, aliasgraph, cache):
+
+    for name in agroup.variables:
+        if name ==  prefix_var_name:
+            continue
+
+        sattrs = agroup.variables[name].__dict__.copy()
+
+        identity = name
+        if baseuri is not None:
+            identity = baseuri + name
+
+        # netCDF coordinate variable special case
+        if (len(agroup.variables[name].dimensions) == 1 and
+            agroup.variables[name].dimensions[0] == name and
+            len(agroup.variables[name]) > 0):
+
+            if not isinstance(agroup.variables[name][0], np.ma.core.MaskedConstant):
+                sattrs['bald__arrayFirstValue'] = agroup.variables[name][0]
+                if isinstance(sattrs['bald__arrayFirstValue'], str):
+                    pass
+                    
+                elif np.issubdtype(sattrs['bald__arrayFirstValue'].dtype, np.integer):
+                    sattrs['bald__arrayFirstValue'] = int(sattrs['bald__arrayFirstValue'])
+                elif np.issubdtype(sattrs['bald__arrayFirstValue'].dtype, np.floating):
+                    sattrs['bald__arrayFirstValue'] = float(sattrs['bald__arrayFirstValue'])
+                if (len(agroup.variables[name]) > 1 and
+                    not isinstance(agroup.variables[name][-1], np.ma.core.MaskedConstant)):
+                    sattrs['bald__arrayLastValue'] = agroup.variables[name][-1]
+                    if isinstance(sattrs['bald__arrayLastValue'], str):
+                        pass
+                    elif np.issubdtype(sattrs['bald__arrayLastValue'].dtype, np.integer):
+                        sattrs['bald__arrayLastValue'] = int(sattrs['bald__arrayLastValue'])
+                    elif np.issubdtype(sattrs['bald__arrayLastValue'].dtype, np.floating):
+                        sattrs['bald__arrayLastValue'] = float(sattrs['bald__arrayLastValue'])
+
+            # datetime special case
+            if 'units' in agroup.variables[name].ncattrs():
+                ustr = agroup.variables[name].getncattr('units')
+                pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
+
+                amatch = re.match(pattern, ustr)
+                if amatch:
+                    quantity = amatch.group(1)
+                    origin = amatch.group(2)
+                    ig = datetime.ISOGregorian()
+                    tog = datetime.parse_datetime(origin,
+                                                        calendar=ig)
+                    if tog is not None:
+                        dtype = '{}{}'.format(agroup.variables[name].dtype.kind,
+                                              agroup.variables[name].dtype.itemsize)
+                        fv = netCDF4.default_fillvals.get(dtype)
+                        first = None
+                        if agroup.variables[name][0] == fv:
+                            first = np.ma.MaskedArray(agroup.variables[name][0],
+                                                      mask=True)
+                        else:
+                            first = agroup.variables[name][0]
+                        if first is not None:
+                            try:
+                                first = int(first)
+                            except Exception:
+                                pass
+                            edate_first = datetime.EpochDateTimes(first,
+                                                                  quantity,
+                                                                  epoch=tog)
+                            if first is not np.ma.masked:
+                                sattrs['bald__arrayFirstValue'] = edate_first
+                        if len(agroup.variables[name]) > 1:
+                            if agroup.variables[name][0] == fv:
+                                last = np.ma.MaskedArray(agroup.variables[name][-1],
+                                                         mask=True)
+                            else:
+                                last = agroup.variables[name][-1]
+                            if last:
+                                try:
+                                    last = round(last)
+                                except Exception:
+                                    pass
+                                edate_last = datetime.EpochDateTimes(last,
+                                                                     quantity,
+                                                                     epoch=tog)
+
+                                sattrs['bald__arrayLastValue'] = edate_last
+
+
+
+
+
+        if agroup.variables[name].shape:
+            sattrs['bald__shape'] = list(agroup.variables[name].shape)
+            var = Array(baseuri, identity_pref, name, sattrs, prefixes=prefixes,
+                        aliases=aliases, alias_graph=aliasgraph)
+        else:
+            var = Resource(baseuri, identity_pref, name, sattrs, prefixes=prefixes,
+                          aliases=aliases, alias_graph=aliasgraph)
+        root_container.attrs['bald__contains'].add(var)
+
+        file_variables[name] = var
+
+    for prefix in prefixes:
+        if prefixes[prefix].startswith('http'):
+            # print('parsing: {}'.format(prefixes[prefix][:-1]))
+            try:
+                aliasgraph.parse(data=cache[prefixes[prefix][:-1]].text, format='xml')
+                # print('parsed: {}'.format(prefixes[prefix][:-1]))
+            except Exception:
+                try:
+                    aliasgraph.parse(data=cache[prefixes[prefix][:-1]].text, format='n3')
+                    # print('parsed: {} (n3)'.format(prefixes[prefix][:-1]))
+                except Exception:
+                    pass
+
+    reference_prefixes = dict()
+    # reference_graph = copy.copy(aliasgraph)
+    reference_graph = aliasgraph
+
+    response = cache['https://www.opengis.net/def/binary-array-ld']
+    reference_graph.parse(data=response.text, format='n3')
+
+    # # reference_graph.parse('https://www.opengis.net/def/binary-array-ld')
+    # qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
+    #         'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+    #         'select ?s '
+    #         'where { '
+    #         '  ?s rdfs:range ?type . '
+    #         'filter(?type != rdfs:Literal) '
+    #         'filter(?type != skos:Concept) '
+    #         '}')
+
+    # refs_ = reference_graph.query(qstr)
+
+    qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
+            'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+            'prefix owl: <http://www.w3.org/2002/07/owl#> '
+            'select ?s '
+            'where { '
+            '  ?s rdfs:range ?type . '
+            '  ?type rdf:type ?rtype . '
+            'filter(?rtype = owl:Class) '
+            '}')
+
+    qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
+            'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+            'prefix owl: <http://www.w3.org/2002/07/owl#> '
+            'select ?s '
+            'where { '
+            '  ?s rdfs:range ?type . '
+            'filter(?type in (rdfs:Literal, skos:Concept)) '
+            '}')
+
+    refs = reference_graph.query(qstr)
+
+    non_ref_prefs = [str(ref[0]) for ref in list(refs)]
+
+    qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
+            'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
+            'prefix owl: <http://www.w3.org/2002/07/owl#> '
+            'select ?s '
+            'where { '
+            '   {?s rdfs:range bald:Resource .} '
+            '  UNION '
+            '  {?s rdfs:range ?as . '
+            '  ?as rdfs:subClassOf bald:Resource .} '
+            '}')
+
+    refs = reference_graph.query(qstr)
+
+    ref_prefs = [str(ref[0]) for ref in list(refs)]
+
+    # cycle again and find references
+    for name in agroup.variables:
+
+        if name ==  prefix_var_name:
+            continue
+
+        var = file_variables[name]
+        sattrs = agroup.variables[name].__dict__.copy()
+
+        # coordinate variables are bald__references too
+        if 'bald__Reference' not in var.rdf__type:
+            for dim in agroup.variables[name].dimensions:
+                if file_variables.get(dim) and name != dim:
+                    _make_ref_entities(var, fhandle, agroup, dim, name,
+                                       baseuri, identity_pref, root_container,
+                                       file_variables, prefixes,
+                                       aliases, aliasgraph)
+        # import pdb; pdb.set_trace()
+        # for sattr in sattrs:
+        for sattr in (sattr for sattr in sattrs if
+                      root_container.unpack_predicate(sattr) in ref_prefs):
+            if isinstance(sattrs[sattr], six.string_types):
+
+                if sattrs[sattr].startswith('(') and sattrs[sattr].endswith(')'):
+                    potrefs_list = sattrs[sattr].lstrip('( ').rstrip(' )').split(' ')
+                    refs = np.array([file_variables.get(pref) is not None
+                                     for pref in potrefs_list])
+                    if np.all(refs):
+                        var.attrs[sattr] = [file_variables.get(pref)
+                                            for pref in potrefs_list]
+                        for pref in potrefs_list:
+                            _make_ref_entities(var, fhandle, agroup, 
+                                               pref, name, baseuri, identity_pref,
+                                               root_container,
+                                               file_variables, prefixes,
+                                               aliases, aliasgraph)
+
+                else:
+                    potrefs_set = sattrs[sattr].split(' ')
+                    refs = np.array([file_variables.get(pref) is not None
+                                     for pref in potrefs_set])
+                    if np.all(refs):
+                        var.attrs[sattr] = set([file_variables.get(pref)
+                                                for pref in potrefs_set])
+                        for pref in potrefs_set:
+                            # coordinate variables already handled
+                            if pref not in agroup.variables[name].dimensions:
+                                _make_ref_entities(var, fhandle, agroup, 
+                                                   pref, name, baseuri, identity_pref,
+                                                   root_container,
+                                                   file_variables, prefixes,
+                                                   aliases, aliasgraph)
+
+
+def load_netcdf(afilepath, baseuri=None, alias_dict=None, prefix_contexts=None, cache=None, file_locator=None):
     """
     Load a file with respect to binary-array-linked-data.
     Returns a :class:`bald.Collection`
     """
-    if alias_dict == None:
+
+    if alias_dict is None:
         alias_dict = {}
+    if isinstance(prefix_contexts, str):
+        prefix_contexts = [prefix_contexts]
+    elif prefix_contexts is None:
+        prefix_contexts = []
     if cache is None:
         cache = HttpCache()
 
     with load(afilepath) as fhandle:
+
         # ensure that baseuri always terminates in a '/'
         if baseuri is None:
             baseuri = 'file://{}/'.format(afilepath)
@@ -810,332 +1215,70 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, cache=None, file_locat
 
         identity = baseuri
 
-        # prefixes are defined as group attributes in a dedicated group, and/or
-        # by external resources
-        prefix_var_name  = None
-        if hasattr(fhandle, 'bald__isPrefixedBy'):
-           prefix_var_name  = fhandle.bald__isPrefixedBy
+        prefixes, aliases, aliasgraph, prefix_group_name = _prefixes_and_aliases(fhandle, identity, alias_dict,
+                                                                                 prefix_contexts, cache)
 
-        prefix_ids = (fhandle.bald__isPrefixedBy if
-                      hasattr(fhandle, 'bald__isPrefixedBy') else '')
-        prefix_urls = []
-        prefix_groups = []
-        for pid in prefix_ids.split(' '):
-            if pid in fhandle.groups:
-                prefix_groups.append(fhandle.groups[pid])
-            elif pid.startswith('http://') or pid.startswith('https://'):
-                prefix_urls.append(pid)
-        prefixes = {}
-
-        skipped_variables = []
-        for prefix_group in prefix_groups:
-            if prefix_group != {}:
-                prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
-                                  prefix in prefix_group.ncattrs() if prefix.endswith('__')]))
-                if isinstance(prefix_group, netCDF4._netCDF4.Variable):
-                    skipped_variables.append(prefix_var.name)
-            # else:
-            #     for k in fhandle.ncattrs():
-            #         if k.endswith('__'):
-            #             prefixes[k] = getattr(fhandle, k)
-
-        prefix_graph = rdflib.Graph()
-        for prefix_url in prefix_urls:
-            res = cache[prefix_url]
-            try:
-                prefix_graph.parse(data=res.text, format='xml')
-            except Exception:
-                print('Failed to parse: {} for prefixes.'.format(prefix_url))
-
-        qres = prefix_graph.query("select ?prefix ?uri where \n"
-                                  "{\n"
-                                  "?s <http://purl.org/vocab/vann/preferredNamespacePrefix> ?prefix ;\n"
-                                  "<http://purl.org/vocab/vann/preferredNamespaceUri> ?uri . \n"
-                                  "}")
-        for res in qres:
-            key, value = (str(res[0]), str(res[1]))
-            if key in prefixes and value !=prefixes[key]:
-                prefixes.pop(key)
-            else:
-                prefixes[key] = value
-
-        # check that default set is handled, i.e. bald__ and rdf__
-        if 'bald__' not in prefixes:
-            prefixes['bald__'] = "https://www.opengis.net/def/binary-array-ld/" 
-
-        if 'rdf__' not in prefixes:
-            prefixes['rdf__'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-
-        alias_var_name = None
-        if hasattr(fhandle, 'bald__isAliasedBy'):
-           alias_var_name  = fhandle.bald__isAliasedBy
-
-        alias_var = (fhandle[fhandle.bald__isAliasedBy]
-                       if hasattr(fhandle, 'bald__isAliasedBy') else {})
-        aliases = {}
-        if alias_var != {}:
-            aliases = (dict([(alias, getattr(alias_var, alias))
-                             for alias in alias_var.ncattrs()]))
-            if isinstance(alias_var, netCDF4._netCDF4.Variable):
-                skipped_variables.append(alias_var.name)
-
-        aliases = careful_update(aliases, alias_dict)
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
 
-        aliasgraph = rdflib.Graph()
-
-        for alias in aliases:
-            response = cache[aliases[alias]]
-            try:
-                aliasgraph.parse(data=response.text, format='xml')
-            except Exception:
-                print('Failed to parse: {}'.format(aliases[alias]))
-            # try:
-            #     import xml.sax._exceptions
-            #     aliasgraph.parse(data=response.text, format='xml')
-            # except TypeError:
-            #     pass
-            # except xml.sax._exceptions.SAXParseException:
-            #     import pdb; pdb.set_trace()
-            #     pass
-        # if hasattr(fhandle, 'Conventions'):
-        #     conventions = [c.strip() for c in fhandle.Conventions.split(',')]
-        #     for conv in conventions:
-        #         if conv.startswith('CF-'):
-        #             uri = 'http://def.scitools.org.uk/CFTerms?_format=ttl'
-        #             aliasgraph.parse(uri)
-        #             uri = 'http://vocab.nerc.ac.uk/standard_name/'
-        #             aliasgraph.parse(uri, format='n3')
-            # qstr = ('select ?alias ?uri where '
-            #         '{?uri dct:identifier ?alias .}')
-            # qres = aliasgraph.query(qstr)
-
-            # new_aliases = [(str(q[0]), str(q[1])) for q in list(qres)]
-            # na_keys = [n[0] for n in new_aliases]
-            # if len(set(na_keys)) != len(na_keys):
-            #     raise ValueError('duplicate aliases')
-            # aliases = careful_update(aliases, dict(new_aliases))
-        root_container = Container(baseuri, '', attrs, prefixes=prefixes,
+        root_container = Container(baseuri, baseuri, '', attrs, prefixes=prefixes,
                                    aliases=aliases, alias_graph=aliasgraph,
                                    file_resource=True, file_locator=file_locator)
 
         root_container.attrs['bald__contains'] = set()
+        
         file_variables = {}
-        for name in fhandle.variables:
-            if name ==  prefix_var_name:
+        _load_netcdf_group_vars(fhandle, fhandle, root_container, baseuri, baseuri, attrs, file_variables, prefixes,
+                                prefix_group_name, aliases, aliasgraph, cache)
+
+        for gk in fhandle.groups:
+            if gk == prefix_group_name:
                 continue
 
-            sattrs = fhandle.variables[name].__dict__.copy()
-
-            identity = name
-            if baseuri is not None:
-                identity = baseuri + name
-
-            # netCDF coordinate variable special case
-            if (len(fhandle.variables[name].dimensions) == 1 and
-                fhandle.variables[name].dimensions[0] == name and
-                len(fhandle.variables[name]) > 0):
-
-                if not isinstance(fhandle.variables[name][0], np.ma.core.MaskedConstant):
-                    sattrs['bald__first_value'] = fhandle.variables[name][0]
-                    if np.issubdtype(sattrs['bald__first_value'], np.integer):
-                        sattrs['bald__first_value'] = int(sattrs['bald__first_value'])
-                    elif np.issubdtype(sattrs['bald__first_value'], np.floating):
-                        sattrs['bald__first_value'] = float(sattrs['bald__first_value'])
-                    if (len(fhandle.variables[name]) > 1 and
-                        not isinstance(fhandle.variables[name][-1], np.ma.core.MaskedConstant)):
-                        sattrs['bald__last_value'] = fhandle.variables[name][-1]
-                        if np.issubdtype(sattrs['bald__last_value'], np.integer):
-                            sattrs['bald__last_value'] = int(sattrs['bald__last_value'])
-                        elif np.issubdtype(sattrs['bald__last_value'], np.floating):
-                            sattrs['bald__last_value'] = float(sattrs['bald__last_value'])
-
-                # datetime special case
-                if 'units' in fhandle.variables[name].ncattrs():
-                    ustr = fhandle.variables[name].getncattr('units')
-                    pattern = '^([a-z]+) since ([0-9T:\\. -]+)'
-
-                    amatch = re.match(pattern, ustr)
-                    if amatch:
-                        quantity = amatch.group(1)
-                        origin = amatch.group(2)
-                        ig = datetime.ISOGregorian()
-                        tog = datetime.parse_datetime(origin,
-                                                            calendar=ig)
-                        if tog is not None:
-                            dtype = '{}{}'.format(fhandle.variables[name].dtype.kind,
-                                                  fhandle.variables[name].dtype.itemsize)
-                            fv = netCDF4.default_fillvals.get(dtype)
-                            first = None
-                            if fhandle.variables[name][0] == fv:
-                                first = np.ma.MaskedArray(fhandle.variables[name][0],
-                                                          mask=True)
-                            else:
-                                first = fhandle.variables[name][0]
-                            if first is not None:
-                                try:
-                                    first = int(first)
-                                except Exception:
-                                    pass
-                                edate_first = datetime.EpochDateTimes(first,
-                                                                      quantity,
-                                                                      epoch=tog)
-                                if first is not np.ma.masked:
-                                    sattrs['bald__first_value'] = edate_first
-                            if len(fhandle.variables[name]) > 1:
-                                if fhandle.variables[name][0] == fv:
-                                    last = np.ma.MaskedArray(fhandle.variables[name][-1],
-                                                             mask=True)
-                                else:
-                                    last = fhandle.variables[name][-1]
-                                if last:
-                                    try:
-                                        last = round(last)
-                                    except Exception:
-                                        pass
-                                    edate_last = datetime.EpochDateTimes(last,
-                                                                         quantity,
-                                                                         epoch=tog)
-
-                                    sattrs['bald__last_value'] = edate_last
-
-
-
-
-                
-            if fhandle.variables[name].shape:
-                sattrs['bald__shape'] = list(fhandle.variables[name].shape)
-                var = Array(baseuri, name, sattrs, prefixes=prefixes,
-                            aliases=aliases, alias_graph=aliasgraph)
-            else:
-                var = Resource(baseuri, name, sattrs, prefixes=prefixes,
-                              aliases=aliases, alias_graph=aliasgraph)
-            root_container.attrs['bald__contains'].add(var)
-
-            file_variables[name] = var
-                
-
-        reference_prefixes = dict()
-        reference_graph = copy.copy(aliasgraph)
-
-        response = cache['https://www.opengis.net/def/binary-array-ld']
-        reference_graph.parse(data=response.text, format='n3')
-
-        # # reference_graph.parse('https://www.opengis.net/def/binary-array-ld')
-        # qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
-        #         'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
-        #         'select ?s '
-        #         'where { '
-        #         '  ?s rdfs:range ?type . '
-        #         'filter(?type != rdfs:Literal) '
-        #         'filter(?type != skos:Concept) '
-        #         '}')
-        
-        # refs_ = reference_graph.query(qstr)
-
-        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
-                'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
-                'prefix owl: <http://www.w3.org/2002/07/owl#> '
-                'select ?s '
-                'where { '
-                '  ?s rdfs:range ?type . '
-                '  ?type rdf:type ?rtype . '
-                'filter(?rtype = owl:Class) '
-                '}')
-        
-        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
-                'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
-                'prefix owl: <http://www.w3.org/2002/07/owl#> '
-                'select ?s '
-                'where { '
-                '  ?s rdfs:range ?type . '
-                'filter(?type in (rdfs:Literal, skos:Concept)) '
-                '}')
-        
-        refs = reference_graph.query(qstr)
-
-        non_ref_prefs = [str(ref[0]) for ref in list(refs)]
-
-        qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
-                'prefix skos: <http://www.w3.org/2004/02/skos/core#> '
-                'prefix owl: <http://www.w3.org/2002/07/owl#> '
-                'select ?s '
-                'where { '
-                '   {?s rdfs:range bald:Resource .} '
-                '  UNION '
-                '  {?s rdfs:range ?as . '
-                '  ?as rdfs:subClassOf bald:Resource .} '
-                '}')
-        
-        refs = reference_graph.query(qstr)
-
-        ref_prefs = [str(ref[0]) for ref in list(refs)]
-
-        # cycle again and find references
-        for name in fhandle.variables:
-            if name ==  prefix_var_name:
-                continue
-
-            var = file_variables[name]
-            sattrs = fhandle.variables[name].__dict__.copy()
-
-            # coordinate variables are bald__references too
-            if 'bald__Reference' not in var.rdf__type:
-                for dim in fhandle.variables[name].dimensions:
-                    if file_variables.get(dim) and name != dim:
-                        _make_ref_entities(var, fhandle, dim, name,
-                                           baseuri, root_container,
-                                           file_variables, prefixes,
-                                           aliases, aliasgraph)
-            # import pdb; pdb.set_trace()
-            # for sattr in sattrs:
-            for sattr in (sattr for sattr in sattrs if
-                          root_container.unpack_predicate(sattr) in ref_prefs):
-
-                if isinstance(sattrs[sattr], six.string_types):
-
-                    if sattrs[sattr].startswith('(') and sattrs[sattr].endswith(')'):
-                        potrefs_list = sattrs[sattr].lstrip('( ').rstrip(' )').split(' ')
-                        refs = np.array([file_variables.get(pref) is not None
-                                         for pref in potrefs_list])
-                        if np.all(refs):
-                            var.attrs[sattr] = [file_variables.get(pref)
-                                                for pref in potrefs_list]
-                            for pref in potrefs_list:
-                                _make_ref_entities(var, fhandle,
-                                                   pref, name, baseuri,
-                                                   root_container,
-                                                   file_variables, prefixes,
-                                                   aliases, aliasgraph)
-
-                    else:
-                        potrefs_set = sattrs[sattr].split(' ')
-                        refs = np.array([file_variables.get(pref) is not None
-                                         for pref in potrefs_set])
-                        if np.all(refs):
-                            var.attrs[sattr] = set([file_variables.get(pref)
-                                                    for pref in potrefs_set])
-                            for pref in potrefs_set:
-                                # coordinate variables already handled
-                                if pref not in fhandle.variables[name].dimensions:
-                                    _make_ref_entities(var, fhandle,
-                                                       pref, name, baseuri,
-                                                       root_container,
-                                                       file_variables, prefixes,
-                                                       aliases, aliasgraph)
+            _load_netcdf_group(fhandle, fhandle.groups[gk], baseuri, identity, gk, root_container, file_variables,
+                               prefixes, prefix_group_name, aliases, aliasgraph, cache)
+    # _create_references(root_container,
+    #                    prefixes, prefix_group_name, aliases, aliasgraph, cache)
 
     return root_container
 
-def _make_ref_entities(var, fhandle, pref, name, baseuri,
+def _make_ref_entities(var, fhandle, variables, pref, name, baseuri, identity_pref,
                        root_container, file_variables,
                        prefixes, aliases, aliasgraph):
-    shapematch = (fhandle.variables[name].shape ==
-                  fhandle.variables[pref].shape)
+    namevar = None
+    prefvar = None
+    try:
+        prefvar = variables[pref]
+    except IndexError:
+        try:
+            if not pref.startswith('/'):
+                ppref = '/' + pref
+            prefvar = fhandle[ppref]
+        except IndexError:
+            pass
+    try:
+        namevar = variables[name]
+    except IndexError:
+        try:
+            if not name.startswith('/'):
+                nname = '/' + name
+            namevar = fhandle[nname]
+        except IndexError:
+            pass
 
-    if (fhandle.variables[name].shape and not shapematch and
-        fhandle.variables[pref].shape):
+    # if pref in variables:
+    #     prefvar = variables[pref]
+    # elif pref in fhandle:
+    #     prefvar = fhandle[pref]
+    # if name in variables:
+    #     namevar = variables[name]
+    # elif name in fhandle:
+    #     namevar = fhandle[name]
+    shapematch = (namevar.shape == prefvar.shape)
+
+    if (namevar is not None and prefvar is not None and namevar.shape and not shapematch and
+        prefvar.shape):
         try:
             refset = var.attrs.get('bald__references', set())
             if not isinstance(refset, set):
@@ -1143,31 +1286,31 @@ def _make_ref_entities(var, fhandle, pref, name, baseuri,
             identity = None
             rattrs = {}
 
-            reshapes = netcdf_shared_dimensions(fhandle.variables[name],
-                                                fhandle.variables[pref])
+            reshapes = netcdf_shared_dimensions(namevar, prefvar)
 
-            rattrs['bald__targetShape'] = list(fhandle.variables[pref].shape)
+            rattrs['bald__targetShape'] = list(prefvar.shape)
             sourceReshape =  [i[1] for i in reshapes['sourceReshape'].items()]
-            if sourceReshape != list(fhandle.variables[name].shape):
+            if sourceReshape != list(namevar.shape):
                 rattrs['bald__sourceReshape'] = sourceReshape
             targetReshape = [i[1] for i in reshapes['targetReshape'].items()]
-            if targetReshape != list(fhandle.variables[pref].shape):
+            if targetReshape != list(prefvar.shape):
                 rattrs['bald__targetReshape'] = targetReshape
             rattrs['bald__target'] = set((file_variables.get(pref),))
-            ref_node = Reference(baseuri, identity, rattrs,
+            ref_node = Reference(baseuri, identity_pref, identity, rattrs,
                                prefixes=prefixes,
                                aliases=aliases,
                                alias_graph=aliasgraph)
 
             refset.add(ref_node)
             var.attrs['bald__references'] = refset
+        # Indexing and dimension identification can fail, especially
+        # with unexpectedy formated files.  Fail silently on load, to
+        # that a partial graph may be returned.  Issues like this are
+        # deferred to validation.
         except ValueError:
-            # Indexing and dimension identification can fail, especially
-            # with unexpectedy formated files.  Fail silently on load, to
-            # that a partial graph may be returned.  Issues like this are
-            # deferred to validation.
             pass
-
+        # except IndexError:
+        #     pass
 
 def validate_netcdf(afilepath, baseuri=None, cache=None, uris_resolve=False):
     """
@@ -1227,6 +1370,16 @@ def careful_update(adict, bdict):
         adict.update(bdict)
         return adict
 
+def precedence_update(maindict, updatingdict):
+    """
+    Carefully updates a main dictionary with an updating dictionary,
+    only inputting new values, and never overwriting values.
+    
+    """
+    for akey in updatingdict:
+        if akey not in maindict:
+            maindict[akey] = updatingdict[akey]
+
 def load_hdf5(afilepath, baseuri=None, alias_dict=None, cache=None):
     if cache is None:
         cache = HttpCache()
@@ -1263,7 +1416,7 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
         aliases = careful_update(aliases, dict(fhandle[alias_group].attrs))
     attrs = dict(fhandle.attrs)
     aliasgraph = rdflib.Graph()
-    root_container = Container(baseuri, identity, attrs, prefixes=prefixes,
+    root_container = Container(baseuri, baseuri, identity, attrs, prefixes=prefixes,
                                aliases=aliases, alias_graph=aliasgraph)
 
     root_container.attrs['bald__contains'] = set()
@@ -1283,7 +1436,7 @@ def _hdf_group(fhandle, identity='root', baseuri=None, prefixes=None,
             elif isinstance(dataset, h5py._hl.dataset.Dataset):
                 sattrs = dict(dataset.attrs)
                 sattrs['bald__shape'] = list(dataset.shape)
-                dset = Array(baseuri, name, sattrs, prefixes, aliases, aliasgraph)
+                dset = Array(baseuri, baseuri, name, sattrs, prefixes, aliases, aliasgraph)
                 root_container.attrs['bald__contains'].add(dset)
                 file_variables[dataset.name] = dset
     return root_container, file_variables
