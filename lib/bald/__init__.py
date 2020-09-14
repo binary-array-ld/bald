@@ -2,6 +2,7 @@ from collections import OrderedDict
 import contextlib
 import copy
 from difflib import SequenceMatcher
+
 import operator
 import os
 import re
@@ -18,11 +19,10 @@ import rdflib.namespace
 import requests
 import six
 
-from bald import datetime
+from bald import datetime, distribution
 import bald.validation as bv
 
-__version__ = '0.3'
-
+__version__ = '0.3.1'
 
 def _graph_html():
     return('''<html>
@@ -557,12 +557,12 @@ class Resource(object):
             graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#downloadURL'),  rdflib.URIRef(self.file_locator)))
         dcatmednode = rdflib.BNode()
         graph.add((dcatmednode, rdflib.namespace.RDF.type, rdflib.URIRef('http://www.w3.org/ns/dcat#MediaType')))
-        graph.add((dcatmednode, rdflib.URIRef('http://purl.org/dc/terms/identifier'), rdflib.Literal('application/x-netcdf')))
+        graph.add((dcatmednode, rdflib.URIRef('http://purl.org/dc/terms/identifier'), rdflib.Literal(bald.distribution.BaldDistributionEnum.MIME_TYPE.value)))
         graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#mediaType'), dcatmednode))
 
         graph.add((dcfnode, rdflib.namespace.RDF.type, rdflib.URIRef('http://purl.org/dc/terms/MediaType')))
         graph.add((dcfnode, rdflib.URIRef('http://purl.org/dc/terms/identifier'),
-                   rdflib.URIRef('http://vocab.nerc.ac.uk/collection/M01/current/NC/')))
+                   rdflib.URIRef(bald.distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)))
         graph.add((selfnode, rdflib.URIRef('http://purl.org/dc/terms/format'), dcfnode))
 
 
