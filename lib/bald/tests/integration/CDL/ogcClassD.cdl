@@ -1,0 +1,17 @@
+netcdf ogcClassD {
+dimensions:
+        d0 = 1 ;
+	d1 = 1 ;
+variables:
+	int var0 ;
+	    var0:rdfs__label = "rdfs__label" ;
+	int var1 ;
+	    var1:rdfs__label = "rdfs__label" ;
+        int prefix_list ;
+            prefix_list:bald__ = "http://binary-array-ld.net/latest/" ;
+            prefix_list:rdf__ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ;
+            prefix_list:rdfs__ = "http://www.w3.org/2000/01/rdf-schema#" ;
+        :bald__isPrefixedBy = "prefix_list" ;
+	:title = "Sample netCDF file definition with alias terms from the netCDF user guide" ;
+data:
+}

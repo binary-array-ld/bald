@@ -7,6 +7,13 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix this: <file://CDL/hgroups.cdl/> .
+@prefix this__mozaic_flight_2012030319051051_descent: <file://CDL/hgroups.cdl/mozaic_flight_2012030319051051_descent/> .
+@prefix this__mozaic_flight_2012030321335035_descent: <file://CDL/hgroups.cdl/mozaic_flight_2012030321335035_descent/> .
+@prefix this__mozaic_flight_2012030403540535_ascent: <file://CDL/hgroups.cdl/mozaic_flight_2012030403540535_ascent/> .
+@prefix this__mozaic_flight_2012030403540535_descent: <file://CDL/hgroups.cdl/mozaic_flight_2012030403540535_descent/> .
+@prefix this__mozaic_flight_2012030412545335_ascent: <file://CDL/hgroups.cdl/mozaic_flight_2012030412545335_ascent/> .
+@prefix this__mozaic_flight_2012030419144751_ascent: <file://CDL/hgroups.cdl/mozaic_flight_2012030419144751_ascent/> .
+@prefix this__mozaic_flight_2012030421382353_ascent: <file://CDL/hgroups.cdl/mozaic_flight_2012030421382353_ascent/> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -17,10 +24,375 @@ this: a bald:Container ;
             dcat:downloadURL <https://www.unidata.ucar.edu/software/netcdf/examples/test_hgroups.cdl> ;
             dcat:mediaType [ a dcat:MediaType ;
                     dct:identifier "application/x-netcdf" ] ] ;
-    bald:contains this:UTC_time .
+    bald:contains this:UTC_time,
+        this__mozaic_flight_2012030319051051_descent:,
+        this__mozaic_flight_2012030321335035_descent:,
+        this__mozaic_flight_2012030403540535_ascent:,
+        this__mozaic_flight_2012030403540535_descent:,
+        this__mozaic_flight_2012030412545335_ascent:,
+        this__mozaic_flight_2012030419144751_ascent:,
+        this__mozaic_flight_2012030421382353_ascent: .
 
 this:UTC_time a bald:Array ;
     this:name "time" ;
     this:unit "none" ;
     bald:shape ( 74 ) .
+
+this__mozaic_flight_2012030319051051_descent: a bald:Container ;
+    this:aircraft "2" ;
+    this:airport_arr "FRA" ;
+    this:airport_dep "WDH" ;
+    this:flight "2012030319051051" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "descent" ;
+    this:time_arr "2012-03-04 04:46:40" ;
+    this:time_dep "2012-03-03 07:05:10" ;
+    bald:contains this__mozaic_flight_2012030319051051_descent:CO,
+        this__mozaic_flight_2012030319051051_descent:O3,
+        this__mozaic_flight_2012030319051051_descent:UTC_time,
+        this__mozaic_flight_2012030319051051_descent:air_press,
+        this__mozaic_flight_2012030319051051_descent:altitude,
+        this__mozaic_flight_2012030319051051_descent:lat,
+        this__mozaic_flight_2012030319051051_descent:lon .
+
+this__mozaic_flight_2012030319051051_descent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030319051051_descent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030319051051_descent:UTC_time a bald:Array ;
+    this:name "time" ;
+    this:unit "none" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030319051051_descent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030319051051_descent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030319051051_descent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030319051051_descent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+this__mozaic_flight_2012030321335035_descent: a bald:Container ;
+    this:aircraft "3" ;
+    this:airport_arr "TLV" ;
+    this:airport_dep "FRA" ;
+    this:flight "2012030321335035" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "descent" ;
+    this:time_arr "2012-03-04 01:05:08" ;
+    this:time_dep "2012-03-03 09:33:50" ;
+    bald:contains this__mozaic_flight_2012030321335035_descent:CO,
+        this__mozaic_flight_2012030321335035_descent:O3,
+        this__mozaic_flight_2012030321335035_descent:UTC_time,
+        this__mozaic_flight_2012030321335035_descent:air_press,
+        this__mozaic_flight_2012030321335035_descent:altitude,
+        this__mozaic_flight_2012030321335035_descent:lat,
+        this__mozaic_flight_2012030321335035_descent:lon .
+
+this__mozaic_flight_2012030321335035_descent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 76 ) .
+
+this__mozaic_flight_2012030321335035_descent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 76 ) .
+
+this__mozaic_flight_2012030321335035_descent:UTC_time a bald:Array ;
+    this:name "time" ;
+    this:unit "none" ;
+    bald:shape ( 76 ) .
+
+this__mozaic_flight_2012030321335035_descent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 76 ) .
+
+this__mozaic_flight_2012030321335035_descent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 76 ) .
+
+this__mozaic_flight_2012030321335035_descent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030321335035_descent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+this__mozaic_flight_2012030403540535_ascent: a bald:Container ;
+    this:aircraft "3" ;
+    this:airport_arr "FRA" ;
+    this:airport_dep "TLV" ;
+    this:flight "2012030403540535" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "ascent" ;
+    this:time_arr "2012-03-04 08:01:44" ;
+    this:time_dep "2012-03-04 03:54:05" ;
+    bald:contains this__mozaic_flight_2012030403540535_ascent:CO,
+        this__mozaic_flight_2012030403540535_ascent:O3,
+        this__mozaic_flight_2012030403540535_ascent:air_press,
+        this__mozaic_flight_2012030403540535_ascent:altitude,
+        this__mozaic_flight_2012030403540535_ascent:lat,
+        this__mozaic_flight_2012030403540535_ascent:lon .
+
+this__mozaic_flight_2012030403540535_ascent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 74 ) .
+
+this__mozaic_flight_2012030403540535_ascent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 74 ) .
+
+this__mozaic_flight_2012030403540535_ascent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 74 ) .
+
+this__mozaic_flight_2012030403540535_ascent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 74 ) .
+
+this__mozaic_flight_2012030403540535_ascent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030403540535_ascent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+this__mozaic_flight_2012030403540535_descent: a bald:Container ;
+    this:aircraft "3" ;
+    this:airport_arr "FRA" ;
+    this:airport_dep "TLV" ;
+    this:flight "2012030403540535" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "descent" ;
+    this:time_arr "2012-03-04 08:01:44" ;
+    this:time_dep "2012-03-04 03:54:05" ;
+    bald:contains this__mozaic_flight_2012030403540535_descent:CO,
+        this__mozaic_flight_2012030403540535_descent:O3,
+        this__mozaic_flight_2012030403540535_descent:UTC_time,
+        this__mozaic_flight_2012030403540535_descent:air_press,
+        this__mozaic_flight_2012030403540535_descent:altitude,
+        this__mozaic_flight_2012030403540535_descent:lat,
+        this__mozaic_flight_2012030403540535_descent:lon .
+
+this__mozaic_flight_2012030403540535_descent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030403540535_descent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030403540535_descent:UTC_time a bald:Array ;
+    this:name "time" ;
+    this:unit "none" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030403540535_descent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030403540535_descent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 78 ) .
+
+this__mozaic_flight_2012030403540535_descent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030403540535_descent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+this__mozaic_flight_2012030412545335_ascent: a bald:Container ;
+    this:aircraft "3" ;
+    this:airport_arr "NGO" ;
+    this:airport_dep "FRA" ;
+    this:flight "2012030412545335" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "ascent" ;
+    this:time_arr "2012-03-05 12:21:37" ;
+    this:time_dep "2012-03-04 12:54:53" ;
+    bald:contains this__mozaic_flight_2012030412545335_ascent:CO,
+        this__mozaic_flight_2012030412545335_ascent:O3,
+        this__mozaic_flight_2012030412545335_ascent:UTC_time,
+        this__mozaic_flight_2012030412545335_ascent:air_press,
+        this__mozaic_flight_2012030412545335_ascent:altitude,
+        this__mozaic_flight_2012030412545335_ascent:lat,
+        this__mozaic_flight_2012030412545335_ascent:lon .
+
+this__mozaic_flight_2012030412545335_ascent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030412545335_ascent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030412545335_ascent:UTC_time a bald:Array ;
+    this:name "time" ;
+    this:unit "none" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030412545335_ascent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030412545335_ascent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030412545335_ascent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030412545335_ascent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+this__mozaic_flight_2012030419144751_ascent: a bald:Container ;
+    this:aircraft "2" ;
+    this:airport_arr "WDH" ;
+    this:airport_dep "FRA" ;
+    this:flight "2012030419144751" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "ascent" ;
+    this:time_arr "2012-03-05 04:49:45" ;
+    this:time_dep "2012-03-04 07:14:47" ;
+    bald:contains this__mozaic_flight_2012030419144751_ascent:CO,
+        this__mozaic_flight_2012030419144751_ascent:O3,
+        this__mozaic_flight_2012030419144751_ascent:UTC_time,
+        this__mozaic_flight_2012030419144751_ascent:air_press,
+        this__mozaic_flight_2012030419144751_ascent:altitude,
+        this__mozaic_flight_2012030419144751_ascent:lat,
+        this__mozaic_flight_2012030419144751_ascent:lon .
+
+this__mozaic_flight_2012030419144751_ascent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030419144751_ascent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030419144751_ascent:UTC_time a bald:Array ;
+    this:name "time" ;
+    this:unit "none" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030419144751_ascent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030419144751_ascent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 60 ) .
+
+this__mozaic_flight_2012030419144751_ascent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030419144751_ascent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
+
+this__mozaic_flight_2012030421382353_ascent: a bald:Container ;
+    this:aircraft "4" ;
+    this:airport_arr "TLV" ;
+    this:airport_dep "FRA" ;
+    this:flight "2012030421382353" ;
+    this:level "calibrated" ;
+    this:link <http://www.iagos.fr/extract> ;
+    this:mission "mozaic" ;
+    this:phase "ascent" ;
+    this:time_arr "2012-03-05 01:13:34" ;
+    this:time_dep "2012-03-04 09:38:23" ;
+    bald:contains this__mozaic_flight_2012030421382353_ascent:CO,
+        this__mozaic_flight_2012030421382353_ascent:O3,
+        this__mozaic_flight_2012030421382353_ascent:UTC_time,
+        this__mozaic_flight_2012030421382353_ascent:air_press,
+        this__mozaic_flight_2012030421382353_ascent:altitude,
+        this__mozaic_flight_2012030421382353_ascent:lat,
+        this__mozaic_flight_2012030421382353_ascent:lon .
+
+this__mozaic_flight_2012030421382353_ascent:CO a bald:Array ;
+    this:name "mole_fraction_of_carbon_monoxide_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 75 ) .
+
+this__mozaic_flight_2012030421382353_ascent:O3 a bald:Array ;
+    this:name "mole_fraction_of_ozone_in_air" ;
+    this:unit "ppb" ;
+    bald:shape ( 75 ) .
+
+this__mozaic_flight_2012030421382353_ascent:UTC_time a bald:Array ;
+    this:name "time" ;
+    this:unit "none" ;
+    bald:shape ( 75 ) .
+
+this__mozaic_flight_2012030421382353_ascent:air_press a bald:Array ;
+    this:name "air_pressure" ;
+    this:unit "Pa" ;
+    bald:shape ( 75 ) .
+
+this__mozaic_flight_2012030421382353_ascent:altitude a bald:Array ;
+    this:name "barometric_altitude" ;
+    this:unit "m" ;
+    bald:shape ( 75 ) .
+
+this__mozaic_flight_2012030421382353_ascent:lat a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/latitude/> ;
+    NetCDF:units "degree_north" .
+
+this__mozaic_flight_2012030421382353_ascent:lon a bald:Resource ;
+    CFTerms:standard_name <http://vocab.nerc.ac.uk/standard_name/longitude/> ;
+    NetCDF:units "degree_east" .
 
