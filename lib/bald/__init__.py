@@ -3,6 +3,7 @@ import contextlib
 import copy
 from difflib import SequenceMatcher
 
+import json
 import operator
 import os
 import re
