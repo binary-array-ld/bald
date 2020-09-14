@@ -1456,7 +1456,24 @@ def _hdf_references(fhandle, root_container, file_variables):
         if isinstance(member, Container):
             _hdf_references(fhandle, member, file_variables)
 
-
-
-
-    
+class schemaOrg:
+    def distribution(self, container, schemaGraph, baseuri):
+        """
+          Export a Schema.org distribution
+          
+          Required inputs -
+              container      a bald Container
+              schemaGraph    a rdflib Graph
+              baseuri        a URI string or None
+              
+          Returns a rdflib graph (schemaGraph) with added content
+        """
+        so = rdflib.Namespace("http://schema.org/")
+        distributionNode = rdflib.BNode()
+        schemaGraph.add( (container, so.distribution, distributionNode) )
+        schemaGraph.add( (distributionNode, rdflib.RDF.type, so.DataDownload) )
+        schemaGraph.add( (distributionNode, so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE)) )
+        schemaGraph.add( (distributionNode, so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF)) )
+        if baseuri is not None:
+            schemaGraph.add( (distributionNode, so.contentUrl, rdflib.URIRef(baseuri)) )
+        return schemaGraph

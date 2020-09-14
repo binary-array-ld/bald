@@ -90,16 +90,7 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
     #
     # Add some distrbution details
     #
-    distributionNode = BNode()
-    schema_g.add( (container, so.distribution, distributionNode) )
-    schema_g.add( (distributionNode, RDF.type, so.DataDownload) )
-    for encForm in encodingFormats:
-        if isUrl(encForm.find):
-            schema_g.add( (distributionNode, so.encodingFormat, URIRef(encForm)) )
-        else:
-            schema_g.add( (distributionNode, so.encodingFormat, Literal(encForm)) )
-    if baseuri is not None:
-        schema_g.add( (distributionNode, so.contentUrl, URIRef(baseuri)) )
+    schema_g  =  bald.SchemaOrg.distribution(container, schema_g, baseuri)
     return schema_g
 
 def nc2schemaorg(ncfilename, outformat, baseuri=None):
