@@ -90,7 +90,8 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
     #
     # Add some distrbution details
     #
-    schema_g  =  bald.SchemaOrg.distribution(container, schema_g, baseuri)
+    schema_org_inst  =  bald.schemaOrg()
+    schema_g  =  schema_org_inst.distribution(container, schema_g, baseuri)
     return schema_g
 
 def nc2schemaorg(ncfilename, outformat, baseuri=None):
@@ -100,7 +101,7 @@ def nc2schemaorg(ncfilename, outformat, baseuri=None):
     
     if(outformat == 'json-ld'):
        context = "http://schema.org/"
-       s = schema_g.serialize(format=outformat, context=context, indent=4).decode("utf-8")
+       s = schema_g.serialize(format=outformat, context=context, indent=4)
     else:
        s = schema_g.serialize(format=outformat).decode("utf-8")
     print(s)
