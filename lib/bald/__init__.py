@@ -565,7 +565,6 @@ class Resource(object):
         graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#mediaType'), dcatmednode))
 
         graph.add((dcfnode, rdflib.namespace.RDF.type, rdflib.URIRef('http://purl.org/dc/terms/MediaType')))
-        print(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)
         graph.add((dcfnode, rdflib.URIRef('http://purl.org/dc/terms/identifier'),
                    rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)))
         graph.add((selfnode, rdflib.URIRef('http://purl.org/dc/terms/format'), dcfnode))

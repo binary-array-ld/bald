@@ -101,7 +101,7 @@ def nc2schemaorg(ncfilename, outformat, baseuri=None):
     
     if(outformat == 'json-ld'):
        context = "http://schema.org/"
-       s = schema_g.serialize(format=outformat, context=context, indent=4).decode("utf-8")
+       s = schema_g.serialize(format=outformat, context=context, indent=4)
     else:
        s = schema_g.serialize(format=outformat).decode("utf-8")
     print(s)
