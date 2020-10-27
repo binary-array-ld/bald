@@ -90,7 +90,8 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
     #
     # Add some distrbution details
     #
-    schema_g  =  bald.SchemaOrg.distribution(container, schema_g, baseuri)
+    schema_org_inst  =  bald.schemaOrg()
+    schema_g  =  schema_org_inst.distribution(container, schema_g, baseuri)
     return schema_g
 
 def nc2schemaorg(ncfilename, outformat, baseuri=None):
