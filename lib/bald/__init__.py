@@ -1477,7 +1477,7 @@ class schemaOrg:
         else:
            container = rdflib.BNode()
         self.__baldGraph = graph
-        self.__schemaGraph( (container, URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), so.Dataset) )
+        self.__schemaGraph( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), so.Dataset) )
         
         self.__schemaGraph = self.__distribution(container, baseuri)
         return self.__schemaGraph()
