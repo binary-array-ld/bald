@@ -216,7 +216,7 @@ def _network_js_close():
     return('''    joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false,
                                                nodeSep: 150, rankSep: 100,
                                                marginX: 100, marginY: 100,
-				               rankDir: 'LR' });
+                               rankDir: 'LR' });
 
 
 for (var i = 0; i < instance_list.length; i++) {
@@ -542,17 +542,17 @@ class Resource(object):
         graph.bind('dcat', 'http://www.w3.org/ns/dcat#')
         graph.bind('dct', 'http://purl.org/dc/terms/')
         # template = ('dcat:distribution [
-	# 	a dcat:Distribution;
-	# 	dcat:downloadURL <{}>;
-	# 	dcat:mediaType [
-	# 		a dct:MediaType;
-	# 		dct:identifier "application/x-netcdf"
-	# 	];
-	# 	dct:format [
-	# 		a dct:MediaType;
-	# 		dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/>
-	# 	]
-	#                 ].')
+    #   a dcat:Distribution;
+    #   dcat:downloadURL <{}>;
+    #   dcat:mediaType [
+    #       a dct:MediaType;
+    #       dct:identifier "application/x-netcdf"
+    #   ];
+    #   dct:format [
+    #       a dct:MediaType;
+    #       dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/>
+    #   ]
+    #                 ].')
         dcatnode = rdflib.BNode()
         dcfnode = rdflib.BNode()
         graph.add((selfnode, rdflib.URIRef('http://www.w3.org/ns/dcat#distribution'), dcatnode))
@@ -1457,7 +1457,33 @@ def _hdf_references(fhandle, root_container, file_variables):
             _hdf_references(fhandle, member, file_variables)
 
 class schemaOrg:
-    def distribution(self, container, schemaGraph, baseuri):
+    __schemaGraph = rdflib.Graph()
+    __so = rdflib.Namespace("http://schema.org/")
+    __baldGraph = None
+    
+    def __init__(self, graph, path=None, baseuri=None):
+        """
+          Export a Schema.org graph for a BALD graph
+          
+          Required inputs -
+              graph          a BALD Graph URI
+              path
+              baseuri        a URI string or None
+              
+          Returns a rdflib graph of Schema,org content
+        """
+        if isinstance(container, str):
+            container = rdflib.URIRef(container)
+        self.__baldGraph = graph
+        self.__schemaGraph( (container, URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), so.Dataset) )
+        if baseuri is not None:
+           container = URIRef(baseuri)
+        else:
+           container = BNode()
+        self.__schemaGraph = self.__distribution(container, baseuri)
+        return self.__schemaGraph()
+    
+    def __distribution(self, container, baseuri):
         """
           Export a Schema.org distribution
           
@@ -1468,9 +1494,8 @@ class schemaOrg:
               
           Returns a rdflib graph (schemaGraph) with added content
         """
-        if isinstance(container, str):
-            container = rdflib.URIRef(container)
-        so = rdflib.Namespace("http://schema.org/")
+        schemaGraph = self.__schemaGraph
+        
         distributionNode = rdflib.BNode()
         schemaGraph.add( (container, so.distribution, distributionNode) )
         schemaGraph.add( (distributionNode, rdflib.RDF.type, so.DataDownload) )
