@@ -1472,14 +1472,13 @@ class schemaOrg:
               
           Returns a rdflib graph of Schema,org content
         """
-        if isinstance(container, str):
-            container = rdflib.URIRef(container)
+        if  baseuri is not None:
+           container = rdflib.URIRef(baseuri)
+        else:
+           container = rdflib.BNode()
         self.__baldGraph = graph
         self.__schemaGraph( (container, URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), so.Dataset) )
-        if baseuri is not None:
-           container = URIRef(baseuri)
-        else:
-           container = BNode()
+        
         self.__schemaGraph = self.__distribution(container, baseuri)
         return self.__schemaGraph()
     
