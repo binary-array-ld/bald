@@ -1462,12 +1462,14 @@ class schemaOrg:
           Export a Schema.org distribution
           
           Required inputs -
-              container      a bald Container
+              container      a bald Container URI
               schemaGraph    a rdflib Graph
               baseuri        a URI string or None
               
           Returns a rdflib graph (schemaGraph) with added content
         """
+        if isinstance(container, str):
+            container = rdflib.URIRef(container)
         so = rdflib.Namespace("http://schema.org/")
         distributionNode = rdflib.BNode()
         schemaGraph.add( (container, so.distribution, distributionNode) )
