@@ -277,7 +277,7 @@ class Test(BaldTestCase):
             with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'r') as sf:
                 expected_rdfgraph = rdflib.Graph()
                 expected_rdfgraph.parse(sf, format='n3')
-            self.check_result(rdfgraph, expected_rdfgraph)
+            self.check_result(schema_org_inst, expected_rdfgraph)
             
     def test_group_array_geo(self):
         with self.temp_filename('.nc') as tfile:
