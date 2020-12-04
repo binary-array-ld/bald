@@ -1477,10 +1477,10 @@ class schemaOrg:
         else:
            container = rdflib.BNode()
         self.__baldGraph = graph
-        self.__schemaGraph( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), self.__so.Dataset) )
+        self.__schemaGraph.add( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), self.__so.Dataset) )
         
-        self.__schemaGraph = self.__distribution(container, baseuri)
-        return self.__schemaGraph()
+        self.__distribution(container, baseuri)
+        return self.__schemaGraph
     
     def __distribution(self, container, baseuri):
         """
@@ -1488,18 +1488,16 @@ class schemaOrg:
           
           Required inputs -
               container      a bald Container URI
-              schemaGraph    a rdflib Graph
               baseuri        a URI string or None
               
-          Returns a rdflib graph (schemaGraph) with added content
+          
         """
-        schemaGraph = self.__schemaGraph
         
         distributionNode = rdflib.BNode()
-        schemaGraph.add( (container, so.distribution, distributionNode) )
-        schemaGraph.add( (distributionNode, rdflib.RDF.type, so.DataDownload) )
-        schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
-        schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
+        self.__schemaGraph.add( (container, so.distribution, distributionNode) )
+        self.__schemaGraph.add( (distributionNode, rdflib.RDF.type, so.DataDownload) )
+        self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
+        self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
         if baseuri is not None:
-            schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(baseuri)) )
-        return schemaGraph
+            self.__schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(baseuri)) )
+        return None
