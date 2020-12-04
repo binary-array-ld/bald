@@ -1494,7 +1494,7 @@ class schemaOrg:
         """
         
         distributionNode = rdflib.BNode()
-        self.__schemaGraph.add( (container, so.distribution, distributionNode) )
+        self.__schemaGraph.add( (container, self.__so.distribution, distributionNode) )
         self.__schemaGraph.add( (distributionNode, rdflib.RDF.type, so.DataDownload) )
         self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
         self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
