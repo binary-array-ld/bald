@@ -1477,7 +1477,7 @@ class schemaOrg:
         else:
            container = rdflib.BNode()
         self.__baldGraph = graph
-        self.__schemaGraph( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), so.Dataset) )
+        self.__schemaGraph( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), self.__so.Dataset) )
         
         self.__schemaGraph = self.__distribution(container, baseuri)
         return self.__schemaGraph()
@@ -1498,8 +1498,8 @@ class schemaOrg:
         distributionNode = rdflib.BNode()
         schemaGraph.add( (container, so.distribution, distributionNode) )
         schemaGraph.add( (distributionNode, rdflib.RDF.type, so.DataDownload) )
-        schemaGraph.add( (distributionNode, so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
-        schemaGraph.add( (distributionNode, so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
+        schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
+        schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
         if baseuri is not None:
-            schemaGraph.add( (distributionNode, so.contentUrl, rdflib.URIRef(baseuri)) )
+            schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(baseuri)) )
         return schemaGraph
