@@ -1480,7 +1480,7 @@ class schemaOrg:
         self.__schemaGraph.add( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), self.__so.Dataset) )
         
         self.__distribution(container, baseuri)
-        return self.__schemaGraph
+        
     
     def __distribution(self, container, baseuri):
         """
@@ -1501,3 +1501,6 @@ class schemaOrg:
         if baseuri is not None:
             self.__schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(baseuri)) )
         return None
+    
+    def getSchemaOrgGraph(self):
+        return self.__schemaGraph

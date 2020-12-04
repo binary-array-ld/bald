@@ -268,7 +268,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=baseuri,
                                               alias_dict=alias_dict, cache=self.acache, file_locator=hgurl)
             rdfgraph = root_container.rdfgraph()
-            schema_org_inst  =  bald.schemaOrg(rdfgraph,hgurl,baseuri)
+            schema_org_inst  =  bald.schemaOrg(rdfgraph,hgurl,baseuri).getSchemaOrgGraph()
             #rdfgraph = schema_org_inst.distribution(baseuri, rdfgraph, hgurl)
             ttl = schema_org_inst.serialize(format='n3').decode("utf-8")
             if os.environ.get('bald_update_results') is not None:
