@@ -1479,16 +1479,16 @@ class schemaOrg:
         self.__baldGraph = graph
         self.__schemaGraph.add( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), self.__so.Dataset) )
         
-        self.__distribution(container, baseuri)
+        self.__distribution(container, path)
         
     
-    def __distribution(self, container, baseuri):
+    def __distribution(self, container, path):
         """
           Export a Schema.org distribution
           
           Required inputs -
               container      a bald Container URI
-              baseuri        a URI string or None
+              path        a URI string or None
               
           
         """
@@ -1498,8 +1498,8 @@ class schemaOrg:
         self.__schemaGraph.add( (distributionNode, rdflib.RDF.type, self.__so.DataDownload) )
         self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
         self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
-        if baseuri is not None:
-            self.__schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(baseuri)) )
+        if path is not None:
+            self.__schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(path)) )
         return None
     
     def getSchemaOrgGraph(self):
