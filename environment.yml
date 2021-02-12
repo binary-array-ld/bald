@@ -1,0 +1,12 @@
+# Create full conda environment for development, including some useful tools
+name: bald
+channels:
+  - conda-forge
+dependencies:
+  - python=3
+  - h5py
+  - netCDF4
+  - requests
+  - rdflib
+  - jinja2
+  - six

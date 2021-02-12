@@ -46,6 +46,14 @@ Validation rules are limited in this implementation to require that provided HTT
 
 Suggested configuration steps
 ```
+conda env create
+source activate bald
+python setup.py install
+```
+
+or
+
+```
 conda create -n ncld-bald
 conda config --add channels conda-forge
 conda config --add channels bioconda
