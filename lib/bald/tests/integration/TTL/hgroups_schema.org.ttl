@@ -1,0 +1,8 @@
+@prefix ns1: <http://schema.org/> .
+@prefix this: <https://www.unidata.ucar.edu/software/netcdf/examples/test_hgroups.cdl/> .
+
+this: a ns1:Dataset ;
+    ns1:distribution [ a ns1:DataDownload ;
+            ns1:contentUrl <https://www.unidata.ucar.edu/software/netcdf/examples/test_hgroups.cdl> ;
+            ns1:encodingFormat <http://vocab.nerc.ac.uk/collection/M01/current/NC/>, "application/x-netcdf" ] .
+

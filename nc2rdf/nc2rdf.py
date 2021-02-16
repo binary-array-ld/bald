@@ -35,6 +35,10 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
     # HACK: The following mappings ignore prefixes as well as prefixes in nc file
     # TODO: Fix references to prefixes/aliases proper
 
+    #encoding formats to use - one as Text, one as URL
+    encodingFormats = ["application/x-netcdf",
+                       "http://vocab.nerc.ac.uk/collection/M01/current/NC/"]
+
     #load mappings
     mapping_idx = {}
     mapping_data = []
@@ -83,6 +87,11 @@ def baldgraph2schemaorg(graph, path=None, baseuri=None):
           #print('schemaorg:' + mapping_idx[currField], "\t", row[1])
           lit = Literal(row[1])
           schema_g.add( (container, predUri, lit) )
+    #
+    # Add some distrbution details
+    #
+    schema_org_inst  =  bald.schemaOrg()
+    schema_g  =  schema_org_inst.distribution(container, schema_g, baseuri)
     return schema_g
 
 def nc2schemaorg(ncfilename, outformat, baseuri=None):
@@ -92,7 +101,7 @@ def nc2schemaorg(ncfilename, outformat, baseuri=None):
     
     if(outformat == 'json-ld'):
        context = "http://schema.org/"
-       s = schema_g.serialize(format=outformat, context=context, indent=4).decode("utf-8")
+       s = schema_g.serialize(format=outformat, context=context, indent=4)
     else:
        s = schema_g.serialize(format=outformat).decode("utf-8")
     print(s)

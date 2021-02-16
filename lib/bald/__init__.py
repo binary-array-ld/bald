@@ -2,6 +2,7 @@ from collections import OrderedDict
 import contextlib
 import copy
 from difflib import SequenceMatcher
+
 import json
 import operator
 import os
@@ -19,11 +20,10 @@ import rdflib.namespace
 import requests
 import six
 
-from bald import datetime
+from bald import datetime, distribution
 import bald.validation as bv
 
-__version__ = '0.3'
-
+__version__ = '0.3.1'
 
 def _graph_html():
     return('''<html>
@@ -216,7 +216,7 @@ def _network_js_close():
     return('''    joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false,
                                                nodeSep: 150, rankSep: 100,
                                                marginX: 100, marginY: 100,
-				               rankDir: 'LR' });
+                               rankDir: 'LR' });
 
 
 for (var i = 0; i < instance_list.length; i++) {
@@ -542,17 +542,17 @@ class Resource(object):
         graph.bind('dcat', 'http://www.w3.org/ns/dcat#')
         graph.bind('dct', 'http://purl.org/dc/terms/')
         # template = ('dcat:distribution [
-	# 	a dcat:Distribution;
-	# 	dcat:downloadURL <{}>;
-	# 	dcat:mediaType [
-	# 		a dct:MediaType;
-	# 		dct:identifier "application/x-netcdf"
-	# 	];
-	# 	dct:format [
-	# 		a dct:MediaType;
-	# 		dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/>
-	# 	]
-	#                 ].')
+    #   a dcat:Distribution;
+    #   dcat:downloadURL <{}>;
+    #   dcat:mediaType [
+    #       a dct:MediaType;
+    #       dct:identifier "application/x-netcdf"
+    #   ];
+    #   dct:format [
+    #       a dct:MediaType;
+    #       dct:identifier <http://vocab.nerc.ac.uk/collection/M01/current/NC/>
+    #   ]
+    #                 ].')
         dcatnode = rdflib.BNode()
         dcfnode = rdflib.BNode()
         graph.add((selfnode, rdflib.URIRef('http://www.w3.org/ns/dcat#distribution'), dcatnode))
@@ -561,12 +561,12 @@ class Resource(object):
             graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#downloadURL'),  rdflib.URIRef(self.file_locator)))
         dcatmednode = rdflib.BNode()
         graph.add((dcatmednode, rdflib.namespace.RDF.type, rdflib.URIRef('http://www.w3.org/ns/dcat#MediaType')))
-        graph.add((dcatmednode, rdflib.URIRef('http://purl.org/dc/terms/identifier'), rdflib.Literal('application/x-netcdf')))
+        graph.add((dcatmednode, rdflib.URIRef('http://purl.org/dc/terms/identifier'), rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)))
         graph.add((dcatnode, rdflib.URIRef('http://www.w3.org/ns/dcat#mediaType'), dcatmednode))
 
         graph.add((dcfnode, rdflib.namespace.RDF.type, rdflib.URIRef('http://purl.org/dc/terms/MediaType')))
         graph.add((dcfnode, rdflib.URIRef('http://purl.org/dc/terms/identifier'),
-                   rdflib.URIRef('http://vocab.nerc.ac.uk/collection/M01/current/NC/')))
+                   rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)))
         graph.add((selfnode, rdflib.URIRef('http://purl.org/dc/terms/format'), dcfnode))
 
 
@@ -1456,7 +1456,51 @@ def _hdf_references(fhandle, root_container, file_variables):
         if isinstance(member, Container):
             _hdf_references(fhandle, member, file_variables)
 
-
-
-
+class schemaOrg:
+    __schemaGraph = rdflib.Graph()
+    __so = rdflib.Namespace("http://schema.org/")
+    __baldGraph = None
     
+    def __init__(self, graph, path=None, baseuri=None):
+        """
+          Export a Schema.org graph for a BALD graph
+          
+          Required inputs -
+              graph          a BALD Graph URI
+              path
+              baseuri        a URI string or None
+              
+          Returns a rdflib graph of Schema,org content
+        """
+        if  baseuri is not None:
+           container = rdflib.URIRef(baseuri)
+        else:
+           container = rdflib.BNode()
+        self.__baldGraph = graph
+        self.__schemaGraph.add( (container, rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), self.__so.Dataset) )
+        
+        self.__distribution(container, path)
+        
+    
+    def __distribution(self, container, path):
+        """
+          Export a Schema.org distribution
+          
+          Required inputs -
+              container      a bald Container URI
+              path        a URI string or None
+              
+          
+        """
+        
+        distributionNode = rdflib.BNode()
+        self.__schemaGraph.add( (container, self.__so.distribution, distributionNode) )
+        self.__schemaGraph.add( (distributionNode, rdflib.RDF.type, self.__so.DataDownload) )
+        self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.Literal(distribution.BaldDistributionEnum.MIME_TYPE.value)) )
+        self.__schemaGraph.add( (distributionNode, self.__so.encodingFormat, rdflib.URIRef(distribution.BaldDistributionEnum.LINKED_DATA_RESOURCE_DEFINING_NETCDF.value)) )
+        if path is not None:
+            self.__schemaGraph.add( (distributionNode, self.__so.contentUrl, rdflib.URIRef(path)) )
+        return None
+    
+    def getSchemaOrgGraph(self):
+        return self.__schemaGraph
