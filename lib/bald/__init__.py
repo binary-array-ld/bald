@@ -818,6 +818,8 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache)
     for pid in prefix_ids.split(' '):
         if pid in fhandle.groups:
             prefix_groups.append(fhandle.groups[pid])
+        elif pid in fhandle.variables:
+            prefix_groups.append(fhandle.variables[pid])
         elif pid.startswith('http://') or pid.startswith('https://'):
             prefix_urls.append(pid)
     prefixes = {}
