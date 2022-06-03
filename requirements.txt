@@ -5,3 +5,4 @@ requests
 rdflib
 jinja2
 six
+pyparsing==2.4.7
