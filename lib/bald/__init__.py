@@ -823,12 +823,12 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache)
     prefixes = {}
 
     skipped_variables = []
-    for prefix_group in prefix_groups:
-        if prefix_group != {}:
-            prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
-                              prefix in prefix_group.ncattrs() if prefix.endswith('__')]))
-            if isinstance(prefix_group, netCDF4._netCDF4.Variable):
-                skipped_variables.append(prefix_var.name)
+    for prefix_obj in prefix_groups:
+        if prefix_obj != {}:
+            prefixes = (dict([(prefix, getattr(prefix_obj, prefix)) for
+                              prefix in prefix_obj.ncattrs() if prefix.endswith('__')]))
+            if isinstance(prefix_obj, netCDF4._netCDF4.Variable):
+                skipped_variables.append(prefix_obj.name)
         # else:
         #     for k in fhandle.ncattrs():
         #         if k.endswith('__'):
@@ -1085,6 +1085,8 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
 
     response = cache['https://www.opengis.net/def/binary-array-ld']
     reference_graph.parse(data=response.text, format='n3')
+    #reference_graph.parse(data=response.text, format='turtle')
+
 
     # # reference_graph.parse('https://www.opengis.net/def/binary-array-ld')
     # qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
