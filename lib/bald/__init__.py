@@ -829,6 +829,13 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache)
                               prefix in prefix_group.ncattrs() if prefix.endswith('__')]))
             if isinstance(prefix_group, netCDF4._netCDF4.Variable):
                 skipped_variables.append(prefix_var.name)
+
+    #add prefixes defined in global attributes
+    #note: this will overwrite any in prefix_list
+    for k in fhandle.ncattrs():
+        if k.endswith('__'):
+           prefixes[k] = getattr(fhandle, k)
+
         # else:
         #     for k in fhandle.ncattrs():
         #         if k.endswith('__'):
@@ -1221,6 +1228,11 @@ def load_netcdf(afilepath, baseuri=None, alias_dict=None, prefix_contexts=None, 
         attrs = {}
         for k in fhandle.ncattrs():
             attrs[k] = getattr(fhandle, k)
+
+        #remove any prefixes in global attributes so that it isn't in the output graph container
+        for p in prefixes:
+            if p in attrs:
+                attrs.pop(p)
 
         root_container = Container(baseuri, baseuri, '', attrs, prefixes=prefixes,
                                    aliases=aliases, alias_graph=aliasgraph,
