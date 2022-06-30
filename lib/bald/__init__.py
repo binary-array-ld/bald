@@ -832,9 +832,11 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache)
 
     #add prefixes defined in global attributes
     #note: this will overwrite any in prefix_list
-    for k in fhandle.ncattrs():
-        if k.endswith('__'):
-           prefixes[k] = getattr(fhandle, k)
+    #only process global attrs if bald__isPrefixedBy is not set
+    if not hasattr(fhandle, 'bald__isPrefixedBy'):
+        for k in fhandle.ncattrs():
+            if k.endswith('__'):
+                prefixes[k] = getattr(fhandle, k)
 
         # else:
         #     for k in fhandle.ncattrs():
