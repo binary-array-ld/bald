@@ -818,17 +818,19 @@ def _prefixes_and_aliases(fhandle, identity, alias_dict, prefix_contexts, cache)
     for pid in prefix_ids.split(' '):
         if pid in fhandle.groups:
             prefix_groups.append(fhandle.groups[pid])
+        elif pid in fhandle.variables:
+            prefix_groups.append(fhandle.variables[pid])
         elif pid.startswith('http://') or pid.startswith('https://'):
             prefix_urls.append(pid)
     prefixes = {}
 
     skipped_variables = []
-    for prefix_group in prefix_groups:
-        if prefix_group != {}:
-            prefixes = (dict([(prefix, getattr(prefix_group, prefix)) for
-                              prefix in prefix_group.ncattrs() if prefix.endswith('__')]))
-            if isinstance(prefix_group, netCDF4._netCDF4.Variable):
-                skipped_variables.append(prefix_var.name)
+    for prefix_obj in prefix_groups:
+        if prefix_obj != {}:
+            prefixes = (dict([(prefix, getattr(prefix_obj, prefix)) for
+                              prefix in prefix_obj.ncattrs() if prefix.endswith('__')]))
+            if isinstance(prefix_obj, netCDF4._netCDF4.Variable):
+                skipped_variables.append(prefix_obj.name)
         # else:
         #     for k in fhandle.ncattrs():
         #         if k.endswith('__'):
@@ -1085,6 +1087,8 @@ def _load_netcdf_group_vars(fhandle, agroup, root_container, baseuri, identity_p
 
     response = cache['https://www.opengis.net/def/binary-array-ld']
     reference_graph.parse(data=response.text, format='n3')
+    #reference_graph.parse(data=response.text, format='turtle')
+
 
     # # reference_graph.parse('https://www.opengis.net/def/binary-array-ld')
     # qstr = ('prefix bald: <https://www.opengis.net/def/binary-array-ld/> '
