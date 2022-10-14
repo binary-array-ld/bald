@@ -26,7 +26,7 @@ class Test(BaldTestCase):
         lb = [lbb, lbr, lbe]
 
         self.assertTrue(rdflib.compare.isomorphic(result, expected),
-                        ''.join(list(itertools.chain(*zip(lb, [g.serialize(format='n3').decode("utf-8") for g in
+                        ''.join(list(itertools.chain(*zip(lb, [g.serialize(format='n3') for g in
                                         rdflib.compare.graph_diff(result,
                                                                   # expected)[1:]]))
                                                                   expected)])))))
@@ -45,7 +45,8 @@ class Test(BaldTestCase):
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
+            #ttl = rdfgraph.serialize(format='n3').decode("utf-8")
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'array_reference.ttl'), 'w') as sf:
                     sf.write(ttl)
@@ -60,7 +61,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             root_container = bald.load_netcdf(tfile, baseuri='http://example.org/base', cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'array_reference_withbase.ttl'), 'w') as sf:
                     sf.write(ttl)
@@ -81,7 +82,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, prefix_contexts=prefix_context,
                                               cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'array_reference_external_prefix_context.ttl'), 'w') as sf:
                     sf.write(ttl)
@@ -98,7 +99,7 @@ class Test(BaldTestCase):
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
                     sf.write(ttl)
@@ -120,7 +121,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'point_template.ttl'), 'w') as sf:
                     sf.write(ttl)
@@ -142,7 +143,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'GEMS_CO2_Apr2006.ttl'), 'w') as sf:
                     sf.write(ttl)
@@ -163,7 +164,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
                     sf.write(ttl)
@@ -185,7 +186,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
                     sf.write(ttl)
@@ -208,7 +209,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
                     sf.write(ttl)
@@ -237,7 +238,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache, file_locator=hgurl)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
                     sf.write(ttl)
@@ -270,7 +271,7 @@ class Test(BaldTestCase):
             rdfgraph = root_container.rdfgraph()
             schema_org_inst  =  bald.schemaOrg(rdfgraph,hgurl,baseuri).getSchemaOrgGraph()
             #rdfgraph = schema_org_inst.distribution(baseuri, rdfgraph, hgurl)
-            ttl = schema_org_inst.serialize(format='n3').decode("utf-8")
+            ttl = schema_org_inst.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
                     sf.write(ttl)
@@ -299,7 +300,7 @@ class Test(BaldTestCase):
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri,
                                               alias_dict=alias_dict, cache=self.acache)
             rdfgraph = root_container.rdfgraph()
-            ttl = rdfgraph.serialize(format='n3').decode("utf-8")
+            ttl = rdfgraph.serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, '{}.ttl'.format(name)), 'w') as sf:
                     sf.write(ttl)

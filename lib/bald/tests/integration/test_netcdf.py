@@ -51,9 +51,11 @@ class Test(BaldTestCase):
             validation = bald.validate_netcdf(tfile, cache=self.acache,
                                               uris_resolve=True)
             exns = validation.exceptions()
-            expected = ['https://www.opengis.net/def/binary-array-ld/ is not resolving as a resource (404).', 'https://www.opengis.net/def/binary-array-ld/turtle is not resolving as a resource (404).', 'https://www.opengis.net/def/binary-array-ld/walnut is not resolving as a resource (404).', 'https://www.opengis.net/def/binary-array-ld/ is not resolving as a resource (404).', 'https://www.opengis.net/def/binary-array-ld/ is not resolving as a resource (404).']
+            expected = ['https://www.opengis.net/def/binary-array-ld/ is not resolving as a resource (404).', 
+                        'https://www.opengis.net/def/binary-array-ld/turtle is not resolving as a resource (404).', 
+                        'https://www.opengis.net/def/binary-array-ld/walnut is not resolving as a resource (404).']
 
-            self.assertTrue((not validation.is_valid()) and exns == expected,
+            self.assertTrue((not validation.is_valid()) and list(set((exns)) == expected,
                              msg='{}  != {}'.format(exns, expected))
 
 class TestArrayReference(BaldTestCase):

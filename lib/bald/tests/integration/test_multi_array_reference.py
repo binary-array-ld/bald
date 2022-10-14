@@ -45,7 +45,7 @@ class Test(BaldTestCase):
             subprocess.check_call(['ncgen', '-o', tfile, cdl_file])
             cdl_file_uri = 'file://CDL/{}'.format(cdlname)
             root_container = bald.load_netcdf(tfile, baseuri=cdl_file_uri, cache=self.acache)
-            ttl = root_container.rdfgraph().serialize(format='n3').decode("utf-8")
+            ttl = root_container.rdfgraph().serialize(format='n3')
             if os.environ.get('bald_update_results') is not None:
                 with open(os.path.join(self.ttl_path, 'multi_array_reference.ttl'), 'w') as sf:
                     sf.write(ttl)
